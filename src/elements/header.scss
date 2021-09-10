@@ -5,9 +5,25 @@
 	max-width: 1200px;
 	margin: 0 auto;
 	padding: 1em 2em;
+	position: relative;
 
 	img {
 		max-height: 85px;
+	}
+
+	.NewAnalysis {
+		position: absolute;
+		top: calc(1em + 40px);
+		right: 2em;
+	}
+
+	@media screen and (max-width: 600px) {
+		& {
+			padding-bottom: 4em;
+		}
+		.NewAnalysis {
+			top: calc(1em + 1em + 85px);
+		}
 	}
 }
 
