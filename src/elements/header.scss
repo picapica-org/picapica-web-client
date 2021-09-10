@@ -1,0 +1,63 @@
+@import "../colors.scss";
+
+.BigHeader {
+	color: $white;
+	position: relative;
+	height: 325px;
+	max-width: 1920px;
+	margin: 0 auto;
+
+	.logo-row {
+		padding: 50px;
+		img {
+			max-width: 350px;
+		}
+	}
+	.slogan-row {
+		font-size: 30px;
+		padding: 0 60px;
+	}
+}
+
+#Page.big-header {
+	background-position: 50% -25px;
+	background-image: url("../../assets/images/background.min.svg");
+	background-repeat: no-repeat;
+}
+
+@media screen and (max-width: 1200px) {
+	.BigHeader {
+		.logo-row {
+			padding: 40px 50px;
+		}
+		.slogan-row {
+			padding: 0 60px;
+		}
+	}
+}
+
+@media screen and (max-width: 800px) {
+	.BigHeader {
+		height: 275px;
+		.logo-row {
+			padding: 25px 0;
+			text-align: center;
+		}
+		.slogan-row {
+			padding: 0 1em;
+			font-size: 25px;
+			text-align: center;
+		}
+	}
+	#Page.big-header {
+		background-position: 50% -75px;
+	}
+}
+
+@media screen and (max-width: 600px) {
+	.BigHeader {
+		.slogan-row {
+			font-size: 20px;
+		}
+	}
+}

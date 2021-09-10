@@ -1,0 +1,46 @@
+@import "../colors.scss";
+
+html,
+body,
+#___gatsby,
+#gatsby-focus-wrapper,
+#Page {
+	padding: 0;
+	margin: 0;
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+
+html {
+	font-size: 14px;
+	background-color: $white;
+	color: $grey8;
+}
+
+@media screen and (max-width: 500px) {
+	html {
+		font-size: 14px;
+	}
+}
+
+* {
+	font-family: "Product Sans", "Noto Sans", "Verdana", sans-serif;
+}
+
+#Page {
+	border-collapse: collapse;
+	color: $black;
+	display: table;
+
+	& > #content {
+		margin: 0 auto;
+		max-width: 1200px;
+	}
+
+	& > .footer-wrapper {
+		display: table-row;
+		vertical-align: bottom;
+		height: 1px;
+	}
+}
