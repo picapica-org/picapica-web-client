@@ -1,0 +1,50 @@
+{
+  "name": "picapica-web-client",
+  "private": true,
+  "version": "0.0.0",
+  "description": "The web frontend of Picapica.",
+  "scripts": {
+    "build": "npx tsc && gatsby build",
+    "build:demo": "npx tsc && gatsby build --prefix-paths",
+    "develop": "gatsby develop",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "start": "npm run develop",
+    "serve": "gatsby serve",
+    "clean": "gatsby clean",
+    "lint": "eslint --no-error-on-unmatched-pattern src/**",
+    "test": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/picapica-org/picapica-web-client.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/picapica-org/picapica-web-client/issues"
+  },
+  "homepage": "https://github.com/picapica-org/picapica-web-client#readme",
+  "dependencies": {
+    "gatsby": "^3.13.0",
+    "gatsby-plugin-react-helmet": "^4.13.0",
+    "gatsby-plugin-sass": "^4.13.0",
+    "node-sass": "^6.0.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-helmet": "^6.1.0",
+    "reactjs-popup": "^2.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "^16.7.10",
+    "@types/react": "^17.0.19",
+    "@types/react-dom": "^17.0.9",
+    "@types/react-helmet": "^6.1.2",
+    "@typescript-eslint/eslint-plugin": "^4.30.0",
+    "@typescript-eslint/parser": "^4.30.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-react-app": "^6.0.0",
+    "eslint-plugin-prettier": "^3.4.1",
+    "prettier": "^2.3.2",
+    "typescript": "^4.4.2"
+  }
+}
