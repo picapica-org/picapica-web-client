@@ -25,18 +25,16 @@ function Legal(props: LocalizableProps): JSX.Element {
 	const l = getLocalization(props, locales);
 
 	return (
-		<>
-			<Page {...props} className="Legal" header="small">
-				<H2 id="publisher">{l.publisher}</H2>
-				{l.publisherContent()}
+		<Page {...props} className="Legal" header="small">
+			<H2 id="publisher">{l.publisher}</H2>
+			{l.publisherContent()}
 
-				<H2 id="terms">{l.terms}</H2>
-				{l.termsContent()}
+			<H2 id="terms">{l.terms}</H2>
+			{l.termsContent()}
 
-				<H2 id="privacy">{l.privacy}</H2>
-				{l.privacyContent()}
-			</Page>
-		</>
+			<H2 id="privacy">{l.privacy}</H2>
+			{l.privacyContent()}
+		</Page>
 	);
 }
 
