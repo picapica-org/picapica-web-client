@@ -1,5 +1,16 @@
 @import "../colors.scss";
 
+.SmallHeader {
+	box-sizing: border-box;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 1em 2em;
+
+	img {
+		max-height: 85px;
+	}
+}
+
 .BigHeader {
 	color: $white;
 	position: relative;

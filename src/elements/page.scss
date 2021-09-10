@@ -14,6 +14,7 @@ body,
 
 html {
 	font-size: 14px;
+	font-family: "Product Sans", "Noto Sans", "Verdana", sans-serif;
 	background-color: $white;
 	color: $grey8;
 }
@@ -24,16 +25,20 @@ html {
 	}
 }
 
-* {
-	font-family: "Product Sans", "Noto Sans", "Verdana", sans-serif;
+a {
+	color: $main-blue;
+	text-decoration: none;
+	&:hover {
+		text-decoration: underline;
+	}
 }
 
 #Page {
 	border-collapse: collapse;
-	color: $black;
 	display: table;
 
 	& > #content {
+		box-sizing: border-box;
 		margin: 0 auto;
 		max-width: 1200px;
 	}

@@ -1,13 +1,20 @@
 import React from "react";
 import { getLocalization, Locales, LocalizableProps } from "../lib/localization";
-import "./header.scss";
-import logoMid from "../../assets/images/picapica3-logo2-rgb-white.min.svg";
 import { Link } from "gatsby";
+import "./header.scss";
+import logoDark from "../../assets/images/picapica3-logo2-rgb-dark.min.svg";
+import logoWhite from "../../assets/images/picapica3-logo2-rgb-white.min.svg";
 
 export type Props = LocalizableProps;
 
 export function SmallHeader(props: Props): JSX.Element {
-	return <div className="SmallHeader">Small</div>;
+	return (
+		<div className="SmallHeader">
+			<Link to="/">
+				<img src={logoDark} alt="Picapica Logo" />
+			</Link>
+		</div>
+	);
 }
 
 export function BigHeader(props: Props): JSX.Element {
@@ -17,7 +24,7 @@ export function BigHeader(props: Props): JSX.Element {
 		<div className="BigHeader">
 			<div className="logo-row">
 				<Link to="/">
-					<img src={logoMid} alt="Picapica Logo" />
+					<img src={logoWhite} alt="Picapica Logo" />
 				</Link>
 			</div>
 			<div className="slogan-row">
