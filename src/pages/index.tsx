@@ -1,7 +1,6 @@
 import { Link } from "gatsby";
 import React from "react";
 import { Helmet } from "react-helmet";
-import { Icon } from "../elements/icon";
 import { NewAnalysis } from "../elements/new-analysis";
 import { Page } from "../elements/page";
 import { SharedHead } from "../elements/shared-header";
