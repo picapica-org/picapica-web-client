@@ -19,10 +19,10 @@
 
 	@media screen and (max-width: 600px) {
 		& {
-			padding-bottom: 4em;
+			text-align: center;
 		}
 		.NewAnalysis {
-			top: calc(1em + 1em + 85px);
+			display: none;
 		}
 	}
 }
