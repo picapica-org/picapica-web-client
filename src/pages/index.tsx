@@ -1,8 +1,8 @@
 import { Link } from "gatsby";
 import React from "react";
 import { Helmet } from "react-helmet";
-import { NewAnalysis } from "../elements/new-analysis";
 import { Page } from "../elements/page";
+import { NewAnalysis } from "../elements/new-analysis";
 import { SharedHead } from "../elements/shared-header";
 import { getCurrentLang, Locales, LocalizableProps, getLocalization } from "../lib/localization";
 import { dynamic } from "../lib/react-util";
