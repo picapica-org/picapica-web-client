@@ -32,7 +32,8 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-helmet": "^6.1.0",
-    "reactjs-popup": "^2.0.5"
+    "reactjs-popup": "^2.0.5",
+    "remixicon": "^2.5.0"
   },
   "devDependencies": {
     "@types/node": "^16.7.10",

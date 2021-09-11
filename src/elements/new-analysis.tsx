@@ -10,7 +10,7 @@ export function NewAnalysis(props: LocalizableProps): JSX.Element {
 		<span className="NewAnalysis">
 			<a href="#new">{l.newAnalysis}</a>
 			<a href="#new" title={l.file}>
-				<Icon kind="file" />
+				<Icon kind="file-line" />
 			</a>
 			<a href="#new" title={l.url}>
 				<Icon kind="link" />
