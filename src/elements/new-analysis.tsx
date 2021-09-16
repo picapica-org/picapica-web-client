@@ -1,23 +1,26 @@
 import React from "react";
+import { Link } from "gatsby";
 import { LocalizableProps, Locales, getLocalization } from "../lib/localization";
 import { Icon } from "./icon";
-import "./new-analysis.scss";
+import { Buttons } from "./buttons";
 
 export function NewAnalysis(props: LocalizableProps): JSX.Element {
 	const l = getLocalization(props, locales);
 
 	return (
-		<span className="NewAnalysis">
-			<a href="#new">{l.newAnalysis}</a>
-			<a href="#new" title={l.file}>
+		<span className={"NewAnalysis " + Buttons.BUTTON_GROUP}>
+			<Link to="/submit/" className={Buttons.BUTTON}>
+				{l.newAnalysis}
+			</Link>
+			<Link to="/submit/#file" className={Buttons.BUTTON} title={l.file}>
 				<Icon kind="file-line" />
-			</a>
-			<a href="#new" title={l.url}>
+			</Link>
+			<Link to="/submit/#url" className={Buttons.BUTTON} title={l.url}>
 				<Icon kind="link" />
-			</a>
-			<a href="#new" title={l.text}>
+			</Link>
+			<Link to="/submit/#text" className={Buttons.BUTTON} title={l.text}>
 				<Icon kind="align-left" />
-			</a>
+			</Link>
 		</span>
 	);
 }
