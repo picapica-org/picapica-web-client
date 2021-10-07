@@ -1,3 +1,27 @@
+export type DeepRequired<T> = {
+	[P in keyof T]-?: DeepRequired<T[P]>;
+};
+
+export type DeepReadonly<T> = {
+	readonly [P in keyof T]: DeepReadonly<T[P]>;
+};
+
+export function lazy<T>(supplier: () => NonNullable<T>): () => T {
+	let value: T | undefined = undefined;
+	return () => {
+		if (value === undefined) {
+			value = supplier();
+		}
+		return value;
+	};
+}
+
+export function delay(ms: number): Promise<void> {
+	return new Promise(resolve => {
+		setTimeout(() => resolve(), ms);
+	});
+}
+
 export function firstOf<T>(iter: Iterable<T>): T | undefined {
 	for (const item of iter) {
 		return item;
