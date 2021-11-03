@@ -638,6 +638,46 @@ export class SessionServiceClient {
     this.methodInfoDeleteItem);
   }
 
+  methodInfoComputeResults = new grpcWeb.AbstractClientBase.MethodInfo(
+    v1_services_pb.ComputeResultsResponse,
+    (request: v1_services_pb.ComputeResultsRequest) => {
+      return request.serializeBinary();
+    },
+    v1_services_pb.ComputeResultsResponse.deserializeBinary
+  );
+
+  computeResults(
+    request: v1_services_pb.ComputeResultsRequest,
+    metadata: grpcWeb.Metadata | null): Promise<v1_services_pb.ComputeResultsResponse>;
+
+  computeResults(
+    request: v1_services_pb.ComputeResultsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.Error,
+               response: v1_services_pb.ComputeResultsResponse) => void): grpcWeb.ClientReadableStream<v1_services_pb.ComputeResultsResponse>;
+
+  computeResults(
+    request: v1_services_pb.ComputeResultsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.Error,
+               response: v1_services_pb.ComputeResultsResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/v1.SessionService/ComputeResults',
+        request,
+        metadata || {},
+        this.methodInfoComputeResults,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/v1.SessionService/ComputeResults',
+    request,
+    metadata || {},
+    this.methodInfoComputeResults);
+  }
+
   methodInfoGetResults = new grpcWeb.AbstractClientBase.MethodInfo(
     v1_services_pb.GetResultsResponse,
     (request: v1_services_pb.GetResultsRequest) => {
