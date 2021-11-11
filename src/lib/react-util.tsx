@@ -51,3 +51,54 @@ export function useAsyncEffect<T>(
 		deps
 	);
 }
+
+export function addLocationChangeListener(listener: () => void): () => void {
+	urlChangeListener.add(listener);
+
+	return () => {
+		urlChangeListener.delete(listener);
+	};
+}
+
+const urlChangeListener = new Set<() => void>();
+
+function addUrlChange(): void {
+	const pushState = history.pushState;
+	const replaceState = history.replaceState;
+
+	history.pushState = function () {
+		// eslint-disable-next-line prefer-rest-params
+		pushState.apply(history, arguments as any);
+		onChange();
+	};
+
+	history.replaceState = function () {
+		// eslint-disable-next-line prefer-rest-params
+		replaceState.apply(history, arguments as any);
+		onChange();
+	};
+
+	window.addEventListener("popstate", function () {
+		onChange();
+	});
+
+	let id: NodeJS.Timeout | undefined = undefined;
+	function onChange(): void {
+		if (id !== undefined) {
+			clearTimeout(id);
+		}
+
+		id = setTimeout(() => {
+			id = undefined;
+			console.log("change");
+
+			for (const listener of urlChangeListener) {
+				listener();
+			}
+		}, 0);
+	}
+}
+
+if (typeof history !== "undefined") {
+	addUrlChange();
+}
