@@ -78,6 +78,18 @@ export function endsWith<A, B>(sequence: readonly A[], needle: readonly B[], com
 	return true;
 }
 
+export function shorten(text: string, maxLength: number): string {
+	if (text.length <= maxLength) {
+		return text;
+	} else {
+		const chars = [...text];
+		if (chars.length <= maxLength) {
+			return text;
+		}
+		return chars.slice(0, maxLength).join("") + "…";
+	}
+}
+
 export function debugAssert(condition: boolean, message?: string): asserts condition {
 	if (!condition) {
 		throw new Error(message);
