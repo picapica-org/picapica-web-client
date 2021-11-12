@@ -1,0 +1,54 @@
+@import "../colors.scss";
+
+.Submit {
+	// TODO
+
+	table.ItemTable {
+		width: 100%;
+		border-collapse: collapse;
+
+		th, td {
+			padding: .3em;
+		}
+
+		tbody > tr:nth-child(2n + 1) {
+			background-color: $grey1;
+		}
+		tbody > tr {
+			border-top: 1px solid $grey2;
+		}
+
+		th.name,
+		td.name {
+			text-align: left;
+			width: 100%;
+		}
+		th.size,
+		td.size {
+			padding: .3em .6em;
+			text-align: right;
+			white-space: nowrap;
+		}
+		th.action,
+		td.action {
+			text-align: right;
+			white-space: nowrap;
+		}
+
+		td.name > span.Icon {
+			margin-right: .3em;
+		}
+
+		button.delete {
+			// TODO: The color contrast is too low
+			--button-background: #{$main-red};
+			--button-color: #{$white};
+			--button-border-color: #{$red-dark};
+
+			&:hover {
+				--button-background: #{$red-dark};
+				--button-border-color: #{$red-darker};
+			}
+		}
+	}
+}

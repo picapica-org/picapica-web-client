@@ -43,3 +43,12 @@ export function getCurrentLang(): SupportedLanguage {
 export function setCurrentLang(lang: SupportedLanguage): void {
 	localStorage.setItem(currentLangKey, lang);
 }
+
+const intlLocales: Record<SupportedLanguage, string> = {
+	en: "en-GB",
+	de: "de-DE",
+};
+
+export function getIntlLocales(props: LocalizableProps): string | string[] {
+	return intlLocales[props.lang];
+}
