@@ -1,0 +1,33 @@
+@import "../colors.scss";
+
+.StepSelector {
+	font-size: 125%;
+	color: $black;
+
+	.Button {
+		border: 1px solid var(--button-border-color)
+	}
+
+	.Icon {
+		font-weight: bold;
+		margin-right: .5em;
+	}
+}
+
+.StepSelectorGroup {
+	--group-heading-height: 4em;
+	margin: 0 2em;
+
+	& > .Group > * > .heading-wrapper {
+		text-align: center;
+		height: var(--group-heading-height);
+		position: relative;
+
+		& > .StepSelector {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
+	}
+}

@@ -1,0 +1,24 @@
+@import "../colors.scss";
+
+:root {
+	--group-heading-height: 5em;
+}
+
+.Group {
+	box-sizing: border-box;
+
+	& > .group-heading {
+		box-sizing: border-box;
+		z-index: 1;
+
+		height: var(--group-heading-height);
+		margin-bottom: calc(var(--group-heading-height) / -2);
+	}
+	& > .group-container {
+		box-sizing: border-box;
+		border-radius: 0.3em;
+		border: 0.1em solid $grey3;
+
+		padding-top: calc(var(--group-heading-height) / 2);
+	}
+}
