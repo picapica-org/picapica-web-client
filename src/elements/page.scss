@@ -19,6 +19,10 @@ html {
 	color: $grey8;
 	line-height: 1.42857;
 }
+input,
+button {
+	font-family: "Product Sans", "Noto Sans", "Verdana", sans-serif;
+}
 
 @media screen and (max-width: 500px) {
 	html {
