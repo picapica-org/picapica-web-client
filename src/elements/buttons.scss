@@ -34,7 +34,9 @@
 	cursor: pointer;
 
 	&:not(.disabled) {
-		&:hover {
+		&:hover,
+		&:active,
+		&.active {
 			text-decoration: none;
 
 			--button-background: #{$grey2};
@@ -47,7 +49,6 @@
 }
 
 .ButtonGroup {
-	background-color: var(--button-background);
 	display: inline-block;
 	white-space: nowrap;
 	border: none;
