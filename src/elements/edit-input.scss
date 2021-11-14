@@ -1,0 +1,53 @@
+@import "../colors.scss";
+
+:root {
+	--edit-button-opacity: 1;
+}
+
+.EditInput {
+	display: inline-block;
+
+	.EditView {
+		display: flex;
+
+		input {
+			flex-grow: 1;
+
+			&.error {
+				--button-background: #{$main-red};
+				--button-border-color: #{$dark-red-2};
+			}
+		}
+		button.accept {
+			color: $dark-green-1;
+			font-weight: bold;
+		}
+		button.cancel {
+			color: $dark-red-1;
+			font-weight: bold;
+		}
+	}
+
+	.TextView {
+		display: flex;
+
+		.text {
+			vertical-align: middle;
+			flex-grow: 1;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+		.edit {
+			opacity: .5;
+			&:not(:hover):not(:active):not(:focus) {
+				--button-background: transparent;
+				--button-border-color: transparent;
+			}
+			&:hover,
+			&:active,
+			&:focus {
+				opacity: 1;
+			}
+		}
+	}
+}

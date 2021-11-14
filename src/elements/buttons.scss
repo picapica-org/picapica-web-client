@@ -6,7 +6,8 @@
 	--button-border-color: #{$grey3};
 }
 
-.Button {
+.Button,
+.NonButton {
 	display: inline-block;
 	white-space: nowrap;
 	text-decoration: none;
@@ -18,8 +19,6 @@
 	color: var(--button-color);
 	border-radius: 0.3em;
 
-	cursor: pointer;
-
 	&:not(.small) {
 		padding: 0.4em 0.85em;
 	}
@@ -30,6 +29,9 @@
 
 		--button-color: #{$grey3};
 	}
+}
+.Button {
+	cursor: pointer;
 
 	&:not(.disabled) {
 		&:hover {
@@ -51,7 +53,8 @@
 	border: none;
 	padding: 0;
 
-	& > .Button {
+	& > .Button,
+	& > .NonButton {
 		border-radius: 0;
 
 		&:last-child {
