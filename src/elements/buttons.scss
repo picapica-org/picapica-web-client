@@ -40,10 +40,11 @@
 			text-decoration: none;
 
 			--button-background: #{$grey2};
+			--button-border-color: #{$grey4};
 		}
 		&:active,
 		&.active {
-			box-shadow: inset 0 0.2em 0.4em rgba(0, 0, 0, 0.13);
+			box-shadow: inset 0 0.2em 0.3em rgba(0, 0, 0, 0.13);
 		}
 	}
 }
