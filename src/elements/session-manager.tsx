@@ -58,7 +58,7 @@ export interface SessionMethods {
 	 * This method is intended to be called synchronously. Calling this method asynchronously will result in undefined
 	 * behavior.
 	 */
-	readonly update: (updatedSession: Session.AsObject, action: Promise<unknown>) => void;
+	readonly update: (action: Promise<unknown>, updatedSession?: Session.AsObject) => void;
 }
 
 export type StateVisitor<S extends State, R> = {
@@ -216,12 +216,12 @@ export function SessionManager(props: SessionManagerProps): JSX.Element {
 	const [concurrentUpdates, setConcurrentUpdates] = useState(0);
 
 	const update: SessionMethods["update"] = useCallback(
-		(updatedSession, action) => {
+		(action, updatedSession) => {
 			setConcurrentUpdates(prev => prev + 1);
 
 			// Setting a temporary session state only makes sense when 1) we are not currently doing an update and
 			// 2) we are not currently reloading the session.
-			if (state.type === "Ready" && concurrentUpdates === 0) {
+			if (updatedSession && state.type === "Ready" && concurrentUpdates === 0) {
 				setTempState({ forState: state, temp: { type: "Ready", session: updatedSession } });
 				action.then(
 					() => {
