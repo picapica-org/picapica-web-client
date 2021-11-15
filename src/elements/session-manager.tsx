@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { getSessionClient } from "../lib/client";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
+import { getSessionClient } from "../lib/session/client";
 import {
 	CreateSessionRequest,
 	CreateSessionResponse,
@@ -33,23 +33,43 @@ export type CreateState = Ready | Loading | Creating;
 export type LoadState = Ready | Loading | NoSessionParam;
 type InternalState = Ready | Loading | Creating;
 
-export type SessionStateVisitor<S extends State> = {
-	[K in S["type"]]: S extends { readonly type: K } ? (state: S) => React.ReactNode : never;
-};
-
-export interface ManagedState<S extends State> {
-	readonly state: S;
-	readonly visit: (visitor: SessionStateVisitor<S>) => React.ReactNode;
-	readonly reload: () => void;
-	readonly change: (sessionId: string) => void;
+interface TempState {
+	readonly forState: State;
+	readonly temp: Ready;
 }
 
-export type CreateHandler = (s: ManagedState<CreateState>) => React.ReactNode;
-export type LoadHandler = (s: ManagedState<LoadState>) => React.ReactNode;
+export interface SessionMethods {
+	/**
+	 * Reloads the current session.
+	 *
+	 * This will request the current session information from the server and re-render the page afterwards.
+	 */
+	readonly reload: () => void;
+	/**
+	 * This will temporarily change the currently displayed state to the given session object. After the given action
+	 * completes (successfully or unsuccessfully), the session will be reloaded.
+	 *
+	 * This given session is only a temporary state to apply changes immediately on the user side.
+	 *
+	 * This function **will not** completely ignore the result/error of the given action promise. If the action
+	 * succeeds, then the session will simply be reloaded. If the action fails, then the temporary change will
+	 * immediately be rolled back and the session will be reloaded.
+	 *
+	 * This method is intended to be called synchronously. Calling this method asynchronously will result in undefined
+	 * behavior.
+	 */
+	readonly update: (updatedSession: Session.AsObject, action: Promise<unknown>) => void;
+}
+
+export type StateVisitor<S extends State, R> = {
+	[K in S["type"]]: S extends { readonly type: K }
+		? (state: S, methods: K extends Ready["type"] ? SessionMethods : undefined) => R
+		: never;
+};
 
 export type SessionManagerProps =
-	| { readonly create: true; readonly handler: CreateHandler }
-	| { readonly create: false; readonly handler: LoadHandler };
+	| { readonly create: true; readonly visitor: StateVisitor<CreateState, React.ReactNode> }
+	| { readonly create: false; readonly visitor: StateVisitor<LoadState, React.ReactNode> };
 
 export function SessionManager(props: SessionManagerProps): JSX.Element {
 	const [state, setState] = useState<InternalState>(getDefaultState());
@@ -145,7 +165,7 @@ export function SessionManager(props: SessionManagerProps): JSX.Element {
 	);
 
 	// memoize a few functions
-	const reload: ManagedState<State>["reload"] = useCallback(
+	const reload: SessionMethods["reload"] = useCallback(
 		() =>
 			setState(prev => {
 				switch (prev.type) {
@@ -159,10 +179,6 @@ export function SessionManager(props: SessionManagerProps): JSX.Element {
 						assertNever(prev);
 				}
 			}),
-		[setState]
-	);
-	const change: ManagedState<State>["change"] = useCallback(
-		id => setState({ type: "Loading", retries: 0, sessionId: id }),
 		[setState]
 	);
 
@@ -182,25 +198,71 @@ export function SessionManager(props: SessionManagerProps): JSX.Element {
 	// the last ready state while internally working on uploading the session.
 	const stableState = getStableState(state, lastReady);
 
-	let result;
-	if (props.create) {
-		result = props.handler({
-			state: stableState,
-			reload,
-			change,
-			visit: visitor => visit(stableState, visitor),
-		});
-	} else {
-		const s = toLoadState(stableState);
+	// Temporary state is a trick to apply updates to a session immediately without waiting for a reload.
+	//
+	// Basically, we want to be able to say: "Here is a Promise of some update action I did and a session object that
+	// you will get from the server after my action succeeds. Display display this session object until you reload
+	// again."
+	//
+	// Conceptually, temporary state is dependent on stable state. Once the stable state changes, the temporary state
+	// is no longer valid.
+	const [tempState, setTempState] = useState<TempState>();
+	useEffect(() => {
+		if (tempState && tempState.forState !== stableState) {
+			setTempState(undefined);
+		}
+	}, [tempState, setTempState, stableState]);
 
-		result = props.handler({
-			state: s,
-			reload,
-			change,
-			visit: visitor => visit(s, visitor),
-		});
+	const [concurrentUpdates, setConcurrentUpdates] = useState(0);
+
+	const update: SessionMethods["update"] = useCallback(
+		(updatedSession, action) => {
+			setConcurrentUpdates(prev => prev + 1);
+
+			// Setting a temporary session state only makes sense when 1) we are not currently doing an update and
+			// 2) we are not currently reloading the session.
+			if (state.type === "Ready" && concurrentUpdates === 0) {
+				setTempState({ forState: state, temp: { type: "Ready", session: updatedSession } });
+				action.then(
+					() => {
+						setConcurrentUpdates(prev => prev - 1);
+						reload();
+					},
+					() => {
+						setConcurrentUpdates(prev => prev - 1);
+						setTempState(undefined);
+						reload();
+					}
+				);
+			} else {
+				action.then(
+					() => {
+						setConcurrentUpdates(prev => prev - 1);
+						reload();
+					},
+					() => {
+						setConcurrentUpdates(prev => prev - 1);
+						reload();
+					}
+				);
+			}
+		},
+		[state, setTempState, concurrentUpdates, setConcurrentUpdates, reload]
+	);
+
+	const displayState = tempState?.forState === stableState ? tempState.temp : stableState;
+
+	const methods: SessionMethods = useMemo(() => ({ reload, update }), [reload, update]);
+
+	return <>{runPropsVisitor(props, displayState, methods)}</>;
+}
+
+function runPropsVisitor(props: SessionManagerProps, state: InternalState, methods: SessionMethods): React.ReactNode {
+	if (props.create) {
+		return visitState(state, methods, props.visitor);
+	} else {
+		return visitState(toLoadState(state), methods, props.visitor);
 	}
-	return <>{result}</>;
 }
 
 function getDefaultState(): InternalState {
@@ -256,7 +318,7 @@ function getStableState(state: InternalState, lastReady: Ready | undefined): Int
 	return state;
 }
 
-function visit<S extends State>(state: S, visitor: SessionStateVisitor<S>): React.ReactNode {
-	const fn = visitor[state.type as never] as (state: S) => React.ReactNode;
-	return fn(state);
+function visitState<S extends State, R>(state: S, methods: SessionMethods, visitor: StateVisitor<S, R>): R {
+	const fn = visitor[state.type as never] as (state: S, methods: SessionMethods | undefined) => R;
+	return fn(state, state.type === "Ready" ? methods : undefined);
 }
