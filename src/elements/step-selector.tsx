@@ -34,6 +34,7 @@ export function StepSelector(props: StepSelectorProps): JSX.Element {
 
 				return (
 					<Link
+						key={step}
 						to={`/${step}/?id=${props.sessionId}`}
 						className={`${Buttons.BUTTON}${step === props.current ? " " + Buttons.ACTIVE : ""}`}
 						title={title}>
