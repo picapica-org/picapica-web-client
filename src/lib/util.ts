@@ -99,3 +99,16 @@ export function debugAssert(condition: boolean, message?: string): asserts condi
 export function assertNever(value: never): never {
 	throw new Error(`Unexpected value: ${value}`);
 }
+
+export function noop(): void {
+	// noop
+}
+
+export function isValidUrl(url: string): boolean {
+	try {
+		new URL(url);
+		return true;
+	} catch (e) {
+		return false;
+	}
+}
