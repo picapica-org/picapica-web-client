@@ -11,19 +11,19 @@ import { addLocationChangeListener, useAsyncEffect } from "../lib/react-util";
 import { changeURLSearchParams, getURLSearchParams } from "../lib/url-params";
 import { assertNever, DeepReadonly, delay } from "../lib/util";
 
-interface Creating {
+export interface Creating {
 	readonly type: "Creating";
 	readonly retries: number;
 }
-interface Loading {
+export interface Loading {
 	readonly type: "Loading";
 	readonly sessionId: string;
 	readonly retries: number;
 }
-interface NoSessionParam {
+export interface NoSessionParam {
 	readonly type: "NoSessionParam";
 }
-interface Ready {
+export interface Ready {
 	readonly type: "Ready";
 	readonly session: DeepReadonly<Session.AsObject>;
 }
