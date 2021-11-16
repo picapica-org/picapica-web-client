@@ -2300,7 +2300,9 @@ export type PicaIconKind =
 	| "upload"
 	| "analyse"
 	| "checkout"
-	| "results";
+	| "results"
+	| "next"
+	| "back";
 
 const KIND_MAP: Record<PicaIconKind, IconKind> = {
 	file: "file-line",
@@ -2312,6 +2314,8 @@ const KIND_MAP: Record<PicaIconKind, IconKind> = {
 	analyse: "search-line",
 	checkout: "shopping-cart-2-line",
 	results: "list-check",
+	next: "arrow-right-s-line",
+	back: "arrow-left-s-line",
 };
 
 export interface PicaIconProps {

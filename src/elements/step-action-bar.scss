@@ -1,0 +1,19 @@
+@import "../colors.scss";
+
+.StepActionBar {
+	margin: 1em;
+	display: flex;
+	gap: 2em;
+
+	& > * {
+		display: flex;
+		justify-content: center;
+		flex-direction: column;
+
+		&.instruction {
+			flex-grow: 1;
+			text-align: center;
+			color: $grey6;
+		}
+	}
+}

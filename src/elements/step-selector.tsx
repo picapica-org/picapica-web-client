@@ -8,6 +8,10 @@ import "./step-selector.scss";
 
 export type StepKind = "submit" | "analysis" | "checkout" | "results";
 
+export function getLinkToStep(step: StepKind, sessionId: string): string {
+	return `/${step}/?id=${sessionId}`;
+}
+
 const STEPS = ["submit", "analysis", "checkout", "results"] as const;
 
 export interface StepSelectorProps extends LocalizableProps {
@@ -35,7 +39,7 @@ export function StepSelector(props: StepSelectorProps): JSX.Element {
 				return (
 					<Link
 						key={step}
-						to={`/${step}/?id=${props.sessionId}`}
+						to={getLinkToStep(step, props.sessionId)}
 						className={`${Buttons.BUTTON}${step === props.current ? " " + Buttons.ACTIVE : ""}`}
 						title={title}>
 						<PicaIcon kind={ICONS[step]} />
