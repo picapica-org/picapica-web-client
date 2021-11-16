@@ -1,9 +1,10 @@
 import React, { useCallback, useRef, useState } from "react";
 import { LocalizableProps } from "../lib/localization";
 import { Buttons } from "./buttons";
-import { Icon } from "./icon";
-import "./edit-input.scss";
+import { Icon, PicaIcon } from "./icon";
 import Popup from "reactjs-popup";
+import { PopupActions } from "reactjs-popup/dist/types";
+import "./edit-input.scss";
 
 export interface EditInputProps extends LocalizableProps {
 	readonly text: string;
@@ -26,8 +27,6 @@ export function EditInput(props: EditInputProps): JSX.Element {
 		</span>
 	);
 }
-
-type PopupActions = NonNullable<Extract<NonNullable<Parameters<typeof Popup>[0]["ref"]>, { current: any }>["current"]>;
 
 function EditView(props: EditInputProps & { toggleIsEditing: () => void }): JSX.Element {
 	const [text, setText] = useState(props.text);
@@ -108,7 +107,7 @@ function TextView(props: EditInputProps & { toggleIsEditing: () => void }): JSX.
 		<span className="TextView">
 			<span className="text">{props.text.replace(/[\r\n]+/g, " ")}</span>
 			<button className={`edit ${Buttons.BUTTON} ${Buttons.SMALL}`} onClick={props.toggleIsEditing}>
-				<Icon kind="pencil-line" />
+				<PicaIcon kind="rename" />
 			</button>
 		</span>
 	);

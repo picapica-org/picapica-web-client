@@ -2275,7 +2275,7 @@ export type IconKind =
 	| "windy-fill"
 	| "windy-line";
 
-export interface Props {
+export interface IconProps {
 	kind: IconKind;
 	id?: string;
 }
@@ -2287,6 +2287,38 @@ export interface Props {
  * @param props
  * @returns
  */
-export function Icon(props: Props): JSX.Element {
+export function Icon(props: IconProps): JSX.Element {
 	return <span className={"Icon ri-" + props.kind} id={props.id}></span>;
+}
+
+export type PicaIconKind =
+	| "file"
+	| "url"
+	| "text"
+	| "rename"
+	| "delete"
+	| "upload"
+	| "analyse"
+	| "checkout"
+	| "results";
+
+const KIND_MAP: Record<PicaIconKind, IconKind> = {
+	file: "file-line",
+	url: "link",
+	text: "align-left",
+	rename: "pencil-line",
+	delete: "delete-bin-5-line",
+	upload: "upload-cloud-2-line",
+	analyse: "search-line",
+	checkout: "shopping-cart-2-line",
+	results: "list-check",
+};
+
+export interface PicaIconProps {
+	kind: PicaIconKind;
+	id?: string;
+}
+
+export function PicaIcon(props: PicaIconProps): JSX.Element {
+	return Icon({ kind: KIND_MAP[props.kind], id: props.id });
 }

@@ -3,7 +3,7 @@ import React from "react";
 import { getLocalization, Locales, LocalizableProps, SimpleString } from "../lib/localization";
 import { Buttons } from "./buttons";
 import { Group } from "./group";
-import { Icon, IconKind } from "./icon";
+import { PicaIcon, PicaIconKind } from "./icon";
 import "./step-selector.scss";
 
 export type StepKind = "submit" | "analysis" | "checkout" | "results";
@@ -15,11 +15,11 @@ export interface StepSelectorProps extends LocalizableProps {
 	readonly current: StepKind;
 }
 
-const ICONS: Readonly<Record<StepKind, IconKind>> = {
-	submit: "upload-cloud-2-line",
-	analysis: "search-line",
-	checkout: "shopping-cart-2-line",
-	results: "list-check",
+const ICONS: Readonly<Record<StepKind, PicaIconKind>> = {
+	submit: "upload",
+	analysis: "analyse",
+	checkout: "checkout",
+	results: "results",
 };
 
 const ENABLE_CHECKOUT = false;
@@ -38,7 +38,7 @@ export function StepSelector(props: StepSelectorProps): JSX.Element {
 						to={`/${step}/?id=${props.sessionId}`}
 						className={`${Buttons.BUTTON}${step === props.current ? " " + Buttons.ACTIVE : ""}`}
 						title={title}>
-						<Icon kind={ICONS[step]} />
+						<PicaIcon kind={ICONS[step]} />
 						{title}
 					</Link>
 				);
