@@ -6,7 +6,6 @@ export const enum Buttons {
 	BUTTON_GROUP = "ButtonGroup",
 
 	// modifiers
-	DISABLED = "disabled",
 	ACTIVE = "active",
 	SMALL = "small",
 }
