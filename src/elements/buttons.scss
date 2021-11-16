@@ -95,8 +95,18 @@
 		&:first-child {
 			border-radius: 0.3em 0 0 0.3em;
 		}
-		&:not(:first-child) {
-			border-left: none;
+
+		&:not(:last-child):not(:hover):not(:active):not(.active) {
+			border-right: none;
+		}
+
+		&:hover,
+		&:active,
+		&.active {
+			& + .Button,
+			& + .NonButton {
+				border-left: none;
+			}
 		}
 	}
 }
