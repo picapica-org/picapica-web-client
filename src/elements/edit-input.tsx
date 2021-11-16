@@ -18,13 +18,13 @@ export function EditInput(props: EditInputProps): JSX.Element {
 	const toggleIsEditing = useCallback(() => setIsEditing(prev => !prev), [setIsEditing]);
 
 	return (
-		<span className="EditInput">
+		<div className="EditInput">
 			{isEditing ? (
 				<EditView {...props} toggleIsEditing={toggleIsEditing} />
 			) : (
 				<TextView {...props} toggleIsEditing={toggleIsEditing} />
 			)}
-		</span>
+		</div>
 	);
 }
 
@@ -59,10 +59,11 @@ function EditView(props: EditInputProps & { toggleIsEditing: () => void }): JSX.
 	};
 
 	return (
-		<span className={`EditView ${Buttons.BUTTON_GROUP}`}>
+		<div className={`EditView ${Buttons.BUTTON_GROUP}`}>
 			<Popup
 				position="top center"
 				ref={ref}
+				className="error-popup"
 				on={[]}
 				trigger={
 					<input
@@ -98,17 +99,17 @@ function EditView(props: EditInputProps & { toggleIsEditing: () => void }): JSX.
 			<button className={`cancel ${Buttons.BUTTON} ${Buttons.SMALL}`} onClick={props.toggleIsEditing}>
 				<Icon kind="close-line" />
 			</button>
-		</span>
+		</div>
 	);
 }
 
 function TextView(props: EditInputProps & { toggleIsEditing: () => void }): JSX.Element {
 	return (
-		<span className="TextView">
+		<div className="TextView">
 			<span className="text">{props.text.replace(/[\r\n]+/g, " ")}</span>
 			<button className={`edit ${Buttons.BUTTON} ${Buttons.SMALL}`} onClick={props.toggleIsEditing}>
 				<PicaIcon kind="rename" />
 			</button>
-		</span>
+		</div>
 	);
 }

@@ -5,8 +5,6 @@
 }
 
 .EditInput {
-	display: inline-block;
-
 	.EditView {
 		display: flex;
 
@@ -38,7 +36,7 @@
 			text-overflow: ellipsis;
 		}
 		.edit {
-			opacity: .5;
+			opacity: 0.5;
 			&:not(:hover):not(:active):not(:focus) {
 				--button-background: transparent;
 				--button-border-color: transparent;
@@ -50,4 +48,9 @@
 			}
 		}
 	}
+}
+
+.popup-content.error-popup-content {
+	color: $dark-red-3;
+	border-color: $grey3;
 }
