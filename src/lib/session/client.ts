@@ -1,9 +1,9 @@
-import { SessionServiceClient } from "./generated/v1/ServicesServiceClientPb";
-import * as v1_services_pb from "./generated/v1/services_pb";
-import { Item } from "./generated/v1/types_pb";
+import { SessionServiceClient } from "../generated/v1/ServicesServiceClientPb";
+import * as v1_services_pb from "../generated/v1/services_pb";
+import { Item } from "../generated/v1/types_pb";
 import type * as grpcWeb from "grpc-web";
 import { v4 as uuidv4 } from "uuid";
-import { lazy } from "./util";
+import { delay, lazy } from "../util";
 
 const CLIENT: SessionServiceClient = new SessionServiceClient("api.picapica.org");
 const mock = true;
@@ -48,7 +48,14 @@ class MockClient extends SessionServiceClient {
 		super("foo.test");
 	}
 
-	private _getSessionRef(id: string): Promise<v1_services_pb.Session> {
+	private async delay(): Promise<void> {
+		const DELAY = 500;
+		const DELAY_SPREAD = 1000;
+
+		await delay(DELAY + Math.random() * DELAY_SPREAD - DELAY_SPREAD / 2);
+	}
+
+	private async _getSessionRef(id: string): Promise<v1_services_pb.Session> {
 		const session = this._sessions.get(id);
 		if (session === undefined) {
 			return Promise.reject("Invalid session id");
@@ -66,6 +73,8 @@ class MockClient extends SessionServiceClient {
 	}
 
 	createSession = mockUnary<v1_services_pb.CreateSessionRequest, v1_services_pb.CreateSessionResponse>(async req => {
+		await this.delay();
+
 		const id = uuidv4();
 		const session = new v1_services_pb.Session();
 		session.setId(id);
@@ -74,36 +83,50 @@ class MockClient extends SessionServiceClient {
 		return new v1_services_pb.CreateSessionResponse().setSessionId(id);
 	});
 	getSession = mockUnary<v1_services_pb.GetSessionRequest, v1_services_pb.GetSessionResponse>(async req => {
+		await this.delay();
+
 		const sessionRef = await this._getSessionRef(req.getSessionId());
 		return new v1_services_pb.GetSessionResponse().setSession(sessionRef.clone());
 	});
 	deleteSession = mockUnary<v1_services_pb.DeleteSessionRequest, v1_services_pb.DeleteSessionResponse>(async req => {
+		await this.delay();
+
 		const success = this._sessions.delete(req.getSessionId());
 		return new v1_services_pb.DeleteSessionResponse().setSuccess(success);
 	});
 
 	getCollections = mockUnary<v1_services_pb.GetCollectionsRequest, v1_services_pb.GetCollectionsResponse>(
 		async req => {
+			await this.delay();
+
 			return new v1_services_pb.GetCollectionsResponse();
 		}
 	);
 
 	getConfig = mockUnary<v1_services_pb.GetConfigRequest, v1_services_pb.GetConfigResponse>(async req => {
+		await this.delay();
+
 		const sessionRef = await this._getSessionRef(req.getSessionId());
 		return new v1_services_pb.GetConfigResponse().setConfig(sessionRef.getConfig()?.clone());
 	});
 	updateConfig = mockUnary<v1_services_pb.UpdateConfigRequest, v1_services_pb.UpdateConfigResponse>(async req => {
+		await this.delay();
+
 		const sessionRef = await this._getSessionRef(req.getSessionId());
 		sessionRef.setConfig(req.getConfig()?.clone());
 		return new v1_services_pb.UpdateConfigResponse().setSuccess(true);
 	});
 	deleteConfig = mockUnary<v1_services_pb.DeleteConfigRequest, v1_services_pb.DeleteConfigResponse>(async req => {
+		await this.delay();
+
 		const sessionRef = await this._getSessionRef(req.getSessionId());
 		sessionRef.setConfig(undefined);
 		return new v1_services_pb.DeleteConfigResponse().setSuccess(true);
 	});
 
 	createItem = mockUnary<v1_services_pb.CreateItemRequest, v1_services_pb.CreateItemResponse>(async req => {
+		await this.delay();
+
 		const sessionRef = await this._getSessionRef(req.getSessionId());
 
 		const raw = req.getRaw_asU8();
@@ -146,11 +169,15 @@ class MockClient extends SessionServiceClient {
 		return new v1_services_pb.CreateItemResponse().setId(item.getUrn());
 	});
 	updateItem = mockUnary<v1_services_pb.UpdateItemRequest, v1_services_pb.UpdateItemResponse>(async req => {
+		await this.delay();
+
 		const itemRef = await this._getItemRef(req.getSessionId(), req.getItemId());
 		itemRef.setMeta(req.getMeta()?.clone());
 		return new v1_services_pb.UpdateItemResponse().setSuccess(true);
 	});
 	getItem = mockUnary<v1_services_pb.GetItemRequest, v1_services_pb.GetItemResponse>(async req => {
+		await this.delay();
+
 		const res = new v1_services_pb.GetItemResponse();
 		for (const urn of req.getItemIdsList()) {
 			const itemRef = await this._getItemRef(req.getSessionId(), urn);
@@ -160,6 +187,8 @@ class MockClient extends SessionServiceClient {
 		return res;
 	});
 	deleteItem = mockUnary<v1_services_pb.DeleteItemRequest, v1_services_pb.DeleteItemResponse>(async req => {
+		await this.delay();
+
 		const sessionRef = await this._getSessionRef(req.getSessionId());
 		const itemRef = await this._getItemRef(req.getSessionId(), req.getItemId());
 		sessionRef.setItemsList(sessionRef.getItemsList().filter(i => i !== itemRef));

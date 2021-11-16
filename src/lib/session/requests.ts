@@ -1,6 +1,6 @@
-import { CreateItemRequest } from "./generated/v1/services_pb";
-import { Item } from "./generated/v1/types_pb";
-import { shorten } from "./util";
+import { CreateItemRequest } from "../generated/v1/services_pb";
+import { Item } from "../generated/v1/types_pb";
+import { shorten } from "../util";
 
 const encoder = new TextEncoder();
 
