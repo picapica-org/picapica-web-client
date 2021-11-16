@@ -49,6 +49,36 @@
 	}
 }
 
+.Button,
+.NonButton {
+	&.red {
+		// TODO: The color contrast is too low
+		--button-background: #{$main-red};
+		--button-color: #{$white};
+		--button-border-color: #{$dark-red-2};
+
+		&:hover,
+		&:active,
+		&.active {
+			--button-background: #{$dark-red-2};
+			--button-border-color: #{$dark-red-3};
+		}
+	}
+	&.green.green {
+		// TODO: The color contrast is too low
+		--button-background: #{$main-green};
+		--button-color: #{$white};
+		--button-border-color: #{$dark-green-2};
+
+		&:hover,
+		&:active,
+		&.active {
+			--button-background: #{$dark-green-2};
+			--button-border-color: #{$dark-green-3};
+		}
+	}
+}
+
 .ButtonGroup {
 	display: inline-block;
 	white-space: nowrap;
