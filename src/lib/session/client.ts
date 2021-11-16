@@ -49,10 +49,10 @@ class MockClient extends SessionServiceClient {
 	}
 
 	private async delay(): Promise<void> {
-		const DELAY = 500;
-		const DELAY_SPREAD = 1000;
+		const DELAY_MIN = 500;
+		const DELAY_MAX = 1000;
 
-		await delay(DELAY + Math.random() * DELAY_SPREAD - DELAY_SPREAD / 2);
+		await delay(DELAY_MIN + Math.random() * (DELAY_MAX - DELAY_MIN));
 	}
 
 	private async _getSessionRef(id: string): Promise<v1_services_pb.Session> {
