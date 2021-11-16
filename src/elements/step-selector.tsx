@@ -39,7 +39,7 @@ export function StepSelector(props: StepSelectorProps): JSX.Element {
 						className={`${Buttons.BUTTON}${step === props.current ? " " + Buttons.ACTIVE : ""}`}
 						title={title}>
 						<PicaIcon kind={ICONS[step]} />
-						{title}
+						<span className="text">{title}</span>
 					</Link>
 				);
 			})}

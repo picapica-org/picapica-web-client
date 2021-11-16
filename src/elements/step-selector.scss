@@ -5,12 +5,12 @@
 	color: $black;
 
 	.Button {
-		border: 1px solid var(--button-border-color)
+		border: 1px solid var(--button-border-color);
 	}
 
 	.Icon {
 		font-weight: bold;
-		margin-right: .5em;
+		margin-right: 0.5em;
 	}
 }
 
@@ -28,6 +28,29 @@
 			top: 50%;
 			left: 50%;
 			transform: translate(-50%, -50%);
+
+			@media screen and (max-width: 600px) {
+				& {
+					.Icon {
+						margin-right: 0;
+					}
+					.text {
+						display: none;
+					}
+				}
+			}
+		}
+	}
+
+	@media screen and (max-width: 600px) {
+		& {
+			margin: 0;
+
+			& > .Group > .group-container {
+				border-radius: 0;
+				border-left: none;
+				border-right: none;
+			}
 		}
 	}
 }
