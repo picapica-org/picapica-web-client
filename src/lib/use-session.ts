@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getSessionClient } from "../lib/session/client";
 import {
 	CreateSessionRequest,
@@ -20,31 +20,38 @@ export interface Loading {
 	readonly sessionId: string;
 	readonly retries: number;
 }
-export interface NoSessionParam {
-	readonly type: "NoSessionParam";
-}
 export interface Ready {
 	readonly type: "Ready";
 	readonly session: DeepReadonly<Session.AsObject>;
 }
 
-export type State = Ready | Loading | Creating | NoSessionParam;
+export type State = Ready | Loading | Creating;
 export type CreateState = Ready | Loading | Creating;
-export type LoadState = Ready | Loading | NoSessionParam;
+export type LoadState = Ready | Loading;
 type InternalState = Ready | Loading | Creating;
+
+export type StateVisitor<S extends State, R> = {
+	[K in S["type"]]: S extends { readonly type: K } ? (state: S) => R : never;
+};
+
+export function visitState<S extends State, R>(state: S, visitor: StateVisitor<S, R>): R {
+	const fn = visitor[state.type as never] as (state: S) => R;
+	return fn(state);
+}
 
 interface TempState {
 	readonly forState: State;
 	readonly temp: Ready;
 }
 
-export interface SessionMethods {
+export type UseSessionArray<S extends State = State> = [
+	state: S,
 	/**
 	 * Reloads the current session.
 	 *
 	 * This will request the current session information from the server and re-render the page afterwards.
 	 */
-	readonly reload: () => void;
+	reload: () => void,
 	/**
 	 * This will temporarily change the currently displayed state to the given session object. After the given action
 	 * completes (successfully or unsuccessfully), the session will be reloaded.
@@ -58,20 +65,19 @@ export interface SessionMethods {
 	 * This method is intended to be called synchronously. Calling this method asynchronously will result in undefined
 	 * behavior.
 	 */
-	readonly update: (action: Promise<unknown>, updatedSession?: Session.AsObject) => void;
+	update: (action: Promise<void>, updatedSession?: Session.AsObject | undefined) => void
+];
+
+export function useCreateSession(): UseSessionArray<CreateState> {
+	return useSession(true);
 }
 
-export type StateVisitor<S extends State, R> = {
-	[K in S["type"]]: S extends { readonly type: K }
-		? (state: S, methods: K extends Ready["type"] ? SessionMethods : undefined) => R
-		: never;
-};
+export function useLoadSession(): UseSessionArray<LoadState> {
+	const [state, reload, update] = useSession(false);
+	return [toLoadState(state), reload, update];
+}
 
-export type SessionManagerProps =
-	| { readonly create: true; readonly visitor: StateVisitor<CreateState, React.ReactNode> }
-	| { readonly create: false; readonly visitor: StateVisitor<LoadState, React.ReactNode> };
-
-export function SessionManager(props: SessionManagerProps): JSX.Element {
+function useSession(create: boolean): UseSessionArray<InternalState> {
 	const [state, setState] = useState<InternalState>(getDefaultState());
 	console.log(state);
 
@@ -110,7 +116,7 @@ export function SessionManager(props: SessionManagerProps): JSX.Element {
 		async token => {
 			switch (state.type) {
 				case "Creating": {
-					if (!props.create) {
+					if (!create) {
 						return;
 					}
 					await delay(getRetryDelay(state.retries));
@@ -161,11 +167,11 @@ export function SessionManager(props: SessionManagerProps): JSX.Element {
 					console.warn("Reached unreachable part");
 			}
 		},
-		[state, setState, props.create]
+		[state, setState, create]
 	);
 
 	// memoize a few functions
-	const reload: SessionMethods["reload"] = useCallback(
+	const reload: UseSessionArray[1] = useCallback(
 		() =>
 			setState(prev => {
 				switch (prev.type) {
@@ -215,7 +221,7 @@ export function SessionManager(props: SessionManagerProps): JSX.Element {
 
 	const [concurrentUpdates, setConcurrentUpdates] = useState(0);
 
-	const update: SessionMethods["update"] = useCallback(
+	const update: UseSessionArray[2] = useCallback(
 		(action, updatedSession) => {
 			setConcurrentUpdates(prev => prev + 1);
 
@@ -252,17 +258,7 @@ export function SessionManager(props: SessionManagerProps): JSX.Element {
 
 	const displayState = tempState?.forState === stableState ? tempState.temp : stableState;
 
-	const methods: SessionMethods = useMemo(() => ({ reload, update }), [reload, update]);
-
-	return <>{runPropsVisitor(props, displayState, methods)}</>;
-}
-
-function runPropsVisitor(props: SessionManagerProps, state: InternalState, methods: SessionMethods): React.ReactNode {
-	if (props.create) {
-		return visitState(state, methods, props.visitor);
-	} else {
-		return visitState(toLoadState(state), methods, props.visitor);
-	}
+	return [displayState, reload, update];
 }
 
 function getDefaultState(): InternalState {
@@ -301,7 +297,7 @@ function getRetryDelay(retries: number): number {
 	}
 }
 
-const NO_SESSION_PARAM: NoSessionParam = { type: "NoSessionParam" };
+const NO_SESSION_PARAM: Loading = { type: "Loading", sessionId: "", retries: Infinity };
 
 function toLoadState(state: InternalState): LoadState {
 	if (state.type === "Creating") {
@@ -316,9 +312,4 @@ function getStableState(state: InternalState, lastReady: Ready | undefined): Int
 		return lastReady;
 	}
 	return state;
-}
-
-function visitState<S extends State, R>(state: S, methods: SessionMethods, visitor: StateVisitor<S, R>): R {
-	const fn = visitor[state.type as never] as (state: S, methods: SessionMethods | undefined) => R;
-	return fn(state, state.type === "Ready" ? methods : undefined);
 }

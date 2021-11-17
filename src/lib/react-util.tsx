@@ -90,7 +90,6 @@ function addUrlChange(): void {
 
 		id = setTimeout(() => {
 			id = undefined;
-			console.log("change");
 
 			for (const listener of urlChangeListener) {
 				listener();

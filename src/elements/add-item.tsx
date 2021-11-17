@@ -4,30 +4,24 @@ import { Buttons } from "./buttons";
 import { Icon, PicaIcon } from "./icon";
 import { PopupActions } from "reactjs-popup/dist/types";
 import Popup from "reactjs-popup";
-import { shorten, isValidUrl } from "../lib/util";
+import { isValidUrl } from "../lib/util";
 import { useOpenFileDialog } from "../lib/react-util";
+import { ItemProto, ItemType } from "../lib/session/create-item";
 import "./add-item.scss";
-
-export interface ItemProto {
-	name: string;
-	data: ItemData;
-}
-export type ItemData = { type: "Text"; text: string } | { type: "Url"; url: string } | { type: "File"; file: File };
 
 export interface AddItemProps extends LocalizableProps {
 	onAdd: (items: ItemProto[]) => void;
 }
 
-type InputKind = "file" | "url" | "text";
 const INPUT_KINDS = ["file", "url", "text"] as const;
 
 export function AddItem(props: AddItemProps): JSX.Element {
 	const l = getLocalization(props, locales);
 
-	const [currentTab, setCurrentTab] = useState<InputKind>("file");
+	const [currentTab, setCurrentTab] = useState<ItemType>("file");
 
 	const ref = useRef<PopupActions>(null);
-	const openModal = (tab: InputKind): void => {
+	const openModal = (tab: ItemType): void => {
 		setCurrentTab(tab);
 		ref.current?.open();
 	};
@@ -42,7 +36,7 @@ export function AddItem(props: AddItemProps): JSX.Element {
 
 	const onSelect = useCallback(
 		(files: File[]): void => {
-			submit(convertFiles(files)).then(() => {
+			submit(files.map(ItemProto.fromFile)).then(() => {
 				closeModal();
 			});
 		},
@@ -51,7 +45,7 @@ export function AddItem(props: AddItemProps): JSX.Element {
 
 	const [openFiles, input] = useOpenFileDialog(onSelect, { multiple: true });
 
-	const modalContent: Record<InputKind, (close: () => void) => JSX.Element> = {
+	const modalContent: Record<ItemType, (close: () => void) => JSX.Element> = {
 		file(close) {
 			return <ModalFileInput lang={props.lang} close={close} openFiles={openFiles} />;
 		},
@@ -149,15 +143,6 @@ function ModalFileInput(props: OpenFilesProps & ClosableProps & LocalizableProps
 	);
 }
 
-function convertFiles(files: readonly File[]): ItemProto[] {
-	return files.map(file => {
-		return {
-			name: file.name,
-			data: { type: "File", file },
-		};
-	});
-}
-
 function ModalUrlInput(props: SubmitProps & ClosableProps & LocalizableProps): JSX.Element {
 	const l = getLocalization(props, locales);
 
@@ -172,12 +157,7 @@ function ModalUrlInput(props: SubmitProps & ClosableProps & LocalizableProps): J
 		} else {
 			setError("");
 
-			const item: ItemProto = {
-				name: shorten(url, 100),
-				data: { type: "Url", url },
-			};
-
-			props.submit([item]).then(() => {
+			props.submit([ItemProto.fromUrl(url)]).then(() => {
 				setUrl("");
 				props.close();
 			});
@@ -221,12 +201,7 @@ function ModalTextInput(props: SubmitProps & ClosableProps & LocalizableProps): 
 		} else {
 			setError("");
 
-			const item: ItemProto = {
-				name: extractNameFromText(text),
-				data: { type: "Text", text },
-			};
-
-			props.submit([item]).then(() => {
+			props.submit([ItemProto.fromText(text)]).then(() => {
 				setText("");
 				props.close();
 			});
@@ -250,10 +225,6 @@ function ModalTextInput(props: SubmitProps & ClosableProps & LocalizableProps): 
 	);
 }
 
-function extractNameFromText(text: string): string {
-	return shorten(text.replace(/\s+/g, " ").trim(), 50);
-}
-
 function ModalFooter(props: { add?: () => void } & ClosableProps & LocalizableProps): JSX.Element {
 	const l = getLocalization(props, locales);
 
@@ -274,8 +245,8 @@ function ModalFooter(props: { add?: () => void } & ClosableProps & LocalizablePr
 
 const locales: Locales<
 	Record<
-		| InputKind
-		| `modal-tab-${InputKind}`
+		| ItemType
+		| `modal-tab-${ItemType}`
 		| "cancel"
 		| "add"
 		| "chooseFiles"

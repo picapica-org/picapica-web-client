@@ -1,11 +1,11 @@
 import React, { useCallback } from "react";
-import { PicaIcon } from "../elements/icon";
-import { SessionMethods } from "../elements/session-manager";
+import { PicaIcon, ItemTypeIcon } from "../elements/icon";
+import { UseSessionArray } from "../lib/use-session";
 import { getSessionClient } from "../lib/session/client";
 import { Session } from "../lib/generated/v1/services_pb";
 import { Item } from "../lib/generated/v1/types_pb";
 import { LocalizableProps, Locales, SimpleString, getLocalization, getIntlLocales } from "../lib/localization";
-import { assertNever, DeepReadonly } from "../lib/util";
+import { DeepReadonly, noop } from "../lib/util";
 import { Buttons } from "../elements/buttons";
 import { EditInput } from "../elements/edit-input";
 import { deleteItemAction, updateItemAction } from "../lib/session/actions";
@@ -13,7 +13,7 @@ import "./item-table.scss";
 
 export interface ItemTableProps extends LocalizableProps {
 	readonly session: DeepReadonly<Session.AsObject>;
-	readonly methods: SessionMethods;
+	readonly update: UseSessionArray[2];
 }
 export function ItemTable(props: ItemTableProps): JSX.Element {
 	const l = getLocalization(props, locales);
@@ -21,10 +21,10 @@ export function ItemTable(props: ItemTableProps): JSX.Element {
 	function deleteItem(item: Item.AsObject): void {
 		const { updatedSession, request } = deleteItemAction(props.session, item.urn);
 
-		props.methods.update(
+		props.update(
 			getSessionClient()
 				.deleteItem(request, null)
-				.catch(err => {
+				.then(noop, err => {
 					console.log(err);
 				}),
 			updatedSession
@@ -44,10 +44,10 @@ export function ItemTable(props: ItemTableProps): JSX.Element {
 
 		const { updatedSession, request } = updateItemAction(props.session, item.urn, meta);
 
-		props.methods.update(
+		props.update(
 			getSessionClient()
 				.updateItem(request, null)
-				.catch(err => {
+				.then(noop, err => {
 					console.log(err);
 				}),
 			updatedSession
@@ -80,7 +80,7 @@ export function ItemTable(props: ItemTableProps): JSX.Element {
 					return (
 						<tr key={item.urn}>
 							<td className="icon">
-								{getIcon(item.resource?.type ?? Item.Resource.Type.TYPE_UNSPECIFIED)}
+								<ItemTypeIcon type={item.resource?.type ?? Item.Resource.Type.TYPE_UNSPECIFIED} />
 							</td>
 							<td className="name">
 								<EditInput
@@ -134,21 +134,6 @@ function formatBytes(bytes: number, props: LocalizableProps): string {
 		unit,
 	});
 	return formatter.format(bytes);
-}
-
-function getIcon(type: Item.Resource.Type): JSX.Element {
-	switch (type) {
-		case Item.Resource.Type.TYPE_UNSPECIFIED:
-			return <>?</>;
-		case Item.Resource.Type.TYPE_TEXT:
-			return <PicaIcon kind="text" />;
-		case Item.Resource.Type.TYPE_URL:
-			return <PicaIcon kind="url" />;
-		case Item.Resource.Type.TYPE_FILE:
-			return <PicaIcon kind="file" />;
-		default:
-			assertNever(type);
-	}
 }
 
 const locales: Locales<SimpleString<"emptyItemList" | "file" | "size" | "delete" | "emptyItemName">> = {

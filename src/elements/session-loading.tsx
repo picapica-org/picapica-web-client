@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "gatsby";
 import { getLocalization, Locales, LocalizableProps, SimpleString } from "../lib/localization";
-import { Loading } from "./session-manager";
+import { Loading } from "../lib/use-session";
 import "./session-loading.scss";
 
 export interface SessionLoadingProps extends LocalizableProps {

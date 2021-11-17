@@ -1,4 +1,6 @@
 import React from "react";
+import { Item } from "../lib/generated/v1/types_pb";
+import { ItemType, toItemType } from "../lib/session/create-item";
 import "./icon.scss";
 
 // This type was generated from the files in node_modules/remixicons/icons
@@ -2295,6 +2297,7 @@ export type PicaIconKind =
 	| "file"
 	| "url"
 	| "text"
+	| "unknown"
 	| "rename"
 	| "delete"
 	| "upload"
@@ -2308,6 +2311,7 @@ const KIND_MAP: Record<PicaIconKind, IconKind> = {
 	file: "file-line",
 	url: "link",
 	text: "align-left",
+	unknown: "file-unknow-line",
 	rename: "pencil-line",
 	delete: "delete-bin-5-line",
 	upload: "upload-cloud-2-line",
@@ -2325,4 +2329,14 @@ export interface PicaIconProps {
 
 export function PicaIcon(props: PicaIconProps): JSX.Element {
 	return Icon({ kind: KIND_MAP[props.kind], id: props.id });
+}
+
+export interface ItemTypeIconProps {
+	type: ItemType | Item.Resource.Type;
+	id?: string;
+}
+
+export function ItemTypeIcon(props: ItemTypeIconProps): JSX.Element {
+	const type = typeof props.type === "string" ? props.type : toItemType(props.type);
+	return PicaIcon({ kind: type ?? "unknown", id: props.id });
 }
