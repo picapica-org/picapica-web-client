@@ -1,53 +1,106 @@
 @import "../colors.scss";
 
 .Submit {
-	// TODO
+	padding: 0 0 2em 0;
 
-	table.ItemTable {
-		width: 100%;
-		border-collapse: collapse;
+	.blank-session {
+		padding: 3em 1em;
+		text-align: center;
 
-		th, td {
-			padding: .3em;
+		.AddItem {
+			font-size: 150%;
+
+			@media screen and (max-width: 600px) {
+				& {
+					font-size: 120%;
+				}
+			}
 		}
 
-		tbody > tr:nth-child(2n + 1) {
-			background-color: $grey1;
-		}
-		tbody > tr {
-			border-top: 1px solid $grey2;
+		.spacer {
+			height: 1em;
 		}
 
-		th.name,
-		td.name {
-			text-align: left;
-			width: 100%;
-		}
-		th.size,
-		td.size {
-			padding: .3em .6em;
-			text-align: right;
-			white-space: nowrap;
-		}
-		th.action,
-		td.action {
-			text-align: right;
-			white-space: nowrap;
+		@keyframes fade-in {
+			from {
+				opacity: 0;
+			}
+			90% {
+				opacity: 0;
+			}
+			to {
+				opacity: 1;
+			}
 		}
 
-		td.name > span.Icon {
-			margin-right: .3em;
+		.pseudo-tooltip {
+			font-size: 90%;
+			background-color: $grey8;
+			color: $white;
+			padding: 0.3em 1em;
+			border-radius: 0.3em;
+			position: relative;
+			margin-top: 5em;
+			animation: fade-in 5s;
+
+			&::before {
+				content: "";
+				width: 1em;
+				height: 1em;
+				left: 20%;
+				position: absolute;
+				background-color: $grey8;
+				top: -0.3em;
+				z-index: -1;
+				transform: rotate(45deg);
+			}
 		}
+	}
 
-		button.delete {
-			// TODO: The color contrast is too low
-			--button-background: #{$main-red};
-			--button-color: #{$white};
-			--button-border-color: #{$red-dark};
+	@media screen and (max-width: 800px) {
+		.StepActionBar .AddItem .group {
+			.Icon {
+				margin-right: 0;
+			}
+			.text {
+				display: none;
+			}
+		}
+	}
 
-			&:hover {
-				--button-background: #{$red-dark};
-				--button-border-color: #{$red-darker};
+	.UploadingList {
+		margin: 1em;
+
+		& > .uploading-item {
+			padding: .2em 0;
+			display: flex;
+
+			& >.loading {
+				flex-shrink: 0;
+
+				@keyframes rotating {
+					from {
+						transform: rotate(0deg);
+					}
+					to {
+						transform: rotate(360deg);
+					}
+				}
+
+				.Icon {
+					animation: rotating 1s linear infinite;
+					display: inline-block;
+				}
+			}
+			& >.icon {
+				flex-shrink: 0;
+				padding-right: .3em;
+				padding-left: 1em;
+			}
+			& >.name {
+				flex-grow: 1;
+				word-break: normal;
+				overflow-wrap: anywhere;
 			}
 		}
 	}

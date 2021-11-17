@@ -1,25 +1,22 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Helmet } from "react-helmet";
 import { Page } from "../elements/page";
-import { Icon } from "../elements/icon";
-import { CreateState, ManagedState, SessionManager } from "../elements/session-manager";
 import { SharedHead } from "../elements/shared-header";
-import { getSessionClient } from "../lib/client";
-import { CreateItemRequest, DeleteItemRequest, Session } from "../lib/generated/v1/services_pb";
-import { Item } from "../lib/generated/v1/types_pb";
-import {
-	getCurrentLang,
-	LocalizableProps,
-	Locales,
-	SimpleString,
-	getLocalization,
-	getIntlLocales,
-} from "../lib/localization";
+import { getCurrentLang, LocalizableProps, Locales, SimpleString, getLocalization } from "../lib/localization";
 import { dynamic } from "../lib/react-util";
-import { newCreateTextItemRequest, newCreateUrlItemRequest } from "../lib/requests";
-import { assertNever, DeepReadonly } from "../lib/util";
+import { getLinkToStep, StepSelectorGroup } from "../elements/step-selector";
+import { AddItem } from "../elements/add-item";
+import { ItemTable } from "../elements/item-table";
+import { StepActionBar } from "../elements/step-action-bar";
+import { NextButton } from "../elements/step-buttons";
+import { SessionCreating, SessionLoading } from "../elements/session-creating-loading";
+import { ItemProto, toItemResourceType } from "../lib/session/create-item";
+import { CreateState, useCreateSession, visitState } from "../lib/use-session";
 import "./submit.scss";
-import { Buttons } from "../elements/buttons";
+import { FailedItem, UploadedItem, UploadingItem, useUpload } from "../lib/use-upload";
+import { Icon, ItemTypeIcon } from "../elements/icon";
+import { cloneSession } from "../lib/session/actions";
+import { Session } from "../lib/generated/v1/services_pb";
 
 export default function SubmitPage(): JSX.Element {
 	return (
@@ -38,216 +35,152 @@ export default function SubmitPage(): JSX.Element {
 function Submit(props: LocalizableProps): JSX.Element {
 	const l = getLocalization(props, locales);
 
-	const handler = useCallback(
-		(s: ManagedState<CreateState>) => {
-			return s.visit({
-				Creating({ retries }) {
-					return (
-						<div className="CreateSession">
-							<span>{retries === 0 ? l.creatingSession : l.failedCreatingSession}</span>
-						</div>
-					);
-				},
-				Loading({ sessionId, retries }) {
-					return (
-						<div className="LoadSession">
-							<span>{retries === 0 ? l.loadingSession : l.failedLoadingSession}</span>
-						</div>
-					);
-				},
-				Ready({ session }) {
-					return (
-						<div className="Session">
-							<button
-								onClick={() =>
-									getSessionClient()
-										.createItem(
-											newCreateTextItemRequest(createRandomText()).setSessionId(session.id),
-											null
-										)
-										.then(
-											() => s.reload(),
-											() => console.log("error")
-										)
-								}>
-								Random Text
-							</button>
-							<button
-								onClick={() =>
-									getSessionClient()
-										.createItem(
-											newCreateUrlItemRequest(prompt() ?? "empty").setSessionId(session.id),
-											null
-										)
-										.then(
-											() => s.reload(),
-											() => console.log("error")
-										)
-								}>
-								URL
-							</button>
+	const [state, reload, update] = useCreateSession();
 
-							<ul>
-								{session.itemsList.map((item, i) => {
-									return <li key={i}>{JSON.stringify(item)}</li>;
-								})}
-							</ul>
+	const [failed, setFailed] = useState<readonly FailedItem[]>([]);
+	const addFailed = useCallback((failed: FailedItem): void => setFailed(prev => [...prev, failed]), [setFailed]);
 
-							<ItemTable {...props} session={session} reload={s.reload} />
-						</div>
-					);
-				},
-			});
+	const successfulUpload = useCallback(
+		({ item, itemUrn }: UploadedItem): void => {
+			let updatedSession: Session.AsObject | undefined = undefined;
+			if (state.type === "Ready") {
+				updatedSession = cloneSession(state.session);
+				updatedSession.itemsList.push({
+					urn: itemUrn,
+					meta: { name: item.name },
+					resource: {
+						id: "",
+						type: toItemResourceType(item.type),
+						properties: { contentMd5: "fake", length: 0, rawMd5: "fake", size: item.size },
+					},
+				});
+			}
+
+			update(Promise.resolve(), updatedSession);
 		},
-		[l, props]
+		[state, update]
 	);
+
+	const [uploading, upload] = useUpload(successfulUpload, addFailed);
+
+	const emptySession = useCallback((): boolean => {
+		return (
+			!(state.type === "Ready" && state.session.itemsList.length > 0) &&
+			uploading.length === 0 &&
+			failed.length === 0
+		);
+	}, [state, failed, uploading]);
+	const [blank, setBlank] = useState(true);
+	useEffect(() => {
+		if (!emptySession()) {
+			setBlank(false);
+		}
+	}, [emptySession, setBlank]);
+
+	const content = visitState<CreateState, JSX.Element>(state, {
+		Creating(state) {
+			return (
+				<StepSelectorGroup lang={props.lang} sessionId={""} current="submit">
+					<SessionCreating {...props} state={state} />
+				</StepSelectorGroup>
+			);
+		},
+		Loading(state) {
+			return (
+				<StepSelectorGroup lang={props.lang} sessionId={state.sessionId} current="submit">
+					<SessionLoading {...props} state={state} />
+				</StepSelectorGroup>
+			);
+		},
+		Ready({ session }) {
+			const addItem = <AddItem {...props} onAdd={items => upload(items, session.id)} />;
+
+			return (
+				<StepSelectorGroup lang={props.lang} sessionId={session.id} current="submit">
+					<button onClick={() => upload([ItemProto.fromText(randomText())], session.id)}>Random Text</button>
+
+					{emptySession() && blank ? (
+						<>
+							<div className="blank-session">
+								{addItem}
+								<div className="spacer"></div>
+								<span className="pseudo-tooltip">{l.addItemHint}</span>
+							</div>
+						</>
+					) : (
+						<>
+							<StepActionBar
+								left={addItem}
+								right={<NextButton {...props} to={getLinkToStep("analysis", session.id)} />}
+								instruction={l.instruction}
+							/>
+
+							<UploadingList uploading={uploading} />
+
+							<ItemTable {...props} session={session} update={update} />
+						</>
+					)}
+				</StepSelectorGroup>
+			);
+		},
+	});
 
 	return (
 		<Page {...props} className="Submit" header="small">
-			<SessionManager create handler={handler} />
+			{content}
 		</Page>
 	);
 }
 
-function createRandomText(): string {
-	const len = 10 ** (Math.random() * 6);
-
-	return Array.from({ length: len }, () => {
-		if (Math.random() < 1 / 100) {
-			return "\n";
-		}
-		if (Math.random() < 1 / 4) {
-			return " ";
-		}
-
-		return String.fromCodePoint(65 + Math.floor(Math.random() * 26));
-	}).join("");
-}
-
-function ItemTable(
-	props: { session: DeepReadonly<Session.AsObject>; reload: () => void } & LocalizableProps
-): JSX.Element {
-	const l = getLocalization(props, locales);
-
-	function deleteItem(item: Item.AsObject): void {
-		const req = new DeleteItemRequest();
-		req.setSessionId(props.session.id);
-		req.setItemId(item.urn);
-
-		getSessionClient()
-			.deleteItem(req, null)
-			.then(
-				() => {
-					props.reload();
-				},
-				err => {
-					console.log(err);
-				}
-			);
-	}
-
+function UploadingList(props: { uploading: readonly UploadingItem[] }): JSX.Element {
 	return (
-		<table className="ItemTable">
-			<thead>
-				<tr>
-					<th className="name">{l.file}</th>
-					<th className="size">{l.size}</th>
-					<th className="action"></th>
-				</tr>
-			</thead>
-			<tbody>
-				{props.session.itemsList.map((item, i) => {
-					return (
-						<tr key={i}>
-							<td className="name">
-								{getIcon(item.resource?.type ?? Item.Resource.Type.TYPE_UNSPECIFIED)}
-								<span className="name">{item.meta?.name ?? ""}</span>
-							</td>
-							<td className="size">
-								<span className="size">{formatBytes(item.resource?.properties?.size ?? 0, props)}</span>
-							</td>
-							<td className="action">
-								<button
-									className={`delete ${Buttons.BUTTON} ${Buttons.SMALL}`}
-									onClick={() => deleteItem(item)}>
-									<Icon kind="delete-bin-5-line" />
-									{l.delete}
-								</button>
-							</td>
-						</tr>
-					);
-				})}
-			</tbody>
-		</table>
+		<div className="UploadingList">
+			{props.uploading.map(({ uploadId, item }) => {
+				return (
+					<div key={uploadId} className="uploading-item">
+						<span className="loading">
+							<Icon kind="loader-5-line" />
+						</span>
+						<span className="icon">
+							<ItemTypeIcon type={item.type} />
+						</span>
+						<span className="name">{item.name}</span>
+					</div>
+				);
+			})}
+		</div>
 	);
 }
 
-function formatBytes(bytes: number, props: LocalizableProps): string {
-	let unit;
-	if (bytes < 1_000) {
-		unit = "byte";
-	} else if (bytes < 1_000_000) {
-		unit = "kilobyte";
-		bytes /= 1_000;
-	} else {
-		unit = "megabyte";
-		bytes /= 1_000_000;
+function randomText(): string {
+	const len = 10 ** (Math.random() * 6.5);
+
+	let s = String.fromCodePoint(65 + Math.floor(Math.random() * 26));
+	let space = false;
+
+	for (let i = 0; i < len; i++) {
+		if (!space && Math.random() < 1 / 100) {
+			s += "\n";
+			space = true;
+		} else if (!space && Math.random() < 1 / 4) {
+			s += " ";
+			space = true;
+		} else {
+			s += String.fromCodePoint(65 + Math.floor(Math.random() * 26));
+			space = false;
+		}
 	}
 
-	const formatter = new Intl.NumberFormat(getIntlLocales(props), {
-		maximumSignificantDigits: 2,
-		style: "unit",
-		unit,
-	});
-	return formatter.format(bytes);
+	return s;
 }
 
-function getIcon(type: Item.Resource.Type): JSX.Element {
-	switch (type) {
-		case Item.Resource.Type.TYPE_UNSPECIFIED:
-			return <>?</>;
-		case Item.Resource.Type.TYPE_TEXT:
-			return <Icon kind="align-left" />;
-		case Item.Resource.Type.TYPE_URL:
-			return <Icon kind="link" />;
-		case Item.Resource.Type.TYPE_FILE:
-			return <Icon kind="file-line" />;
-		default:
-			assertNever(type);
-	}
-}
-
-const locales: Locales<
-	SimpleString<
-		| "creatingSession"
-		| "failedCreatingSession"
-		| "loadingSession"
-		| "failedLoadingSession"
-		| "file"
-		| "size"
-		| "delete"
-	>
-> = {
+const locales: Locales<SimpleString<"instruction" | "addItemHint">> = {
 	en: {
-		creatingSession: "Creating session...",
-		failedCreatingSession: "Failed to create session. Trying again...",
-		loadingSession: "Loading session...",
-		failedLoadingSession: "Failed to loading session. Trying again...",
-
-		file: "File",
-		size: "Size",
-
-		delete: "Delete",
+		instruction: "Add more files, or proceed",
+		addItemHint: "Click here to upload documents.",
 	},
 	de: {
-		creatingSession: "Sitzung wird erstellt...",
-		failedCreatingSession: "Sitzung konnte nicht erstellt werden. Es wird erneut versucht...",
-		loadingSession: "Sitzung wird geladed...",
-		failedLoadingSession: "Sitzung konnte nicht geladen werden. Es wird erneut versucht...",
-
-		file: "Datei",
-		size: "Größe",
-
-		delete: "Löschen",
+		instruction: "Es können weitere Dateien hinzugefügt werden",
+		addItemHint: "Hier klicken, um Dokumente hochzuladen.",
 	},
 };

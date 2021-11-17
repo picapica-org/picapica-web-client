@@ -7,7 +7,7 @@ export interface ActionResult<Req> {
 	request: Req;
 }
 
-function cloneSession(session: DeepReadonly<Session.AsObject>): Session.AsObject {
+export function cloneSession(session: DeepReadonly<Session.AsObject>): Session.AsObject {
 	return JSON.parse(JSON.stringify(session));
 }
 
