@@ -7,6 +7,11 @@ export interface UploadingItem {
 	readonly uploadId: string;
 	readonly item: ItemMeta;
 }
+export interface UploadedItem {
+	readonly uploadId: string;
+	readonly item: ItemMeta;
+	readonly itemUrn: string;
+}
 export interface FailedItem {
 	readonly uploadId: string;
 	readonly item: ItemMeta;
@@ -17,7 +22,7 @@ type Result<O, E> = { readonly type: "Ok"; readonly value: O } | { readonly type
 
 interface Done {
 	readonly item: UploadingItem;
-	readonly result: Result<void, unknown>;
+	readonly result: Result<string, unknown>;
 }
 
 export type UseUploadArray = [
@@ -25,7 +30,7 @@ export type UseUploadArray = [
 	upload: (items: readonly ItemProto[], sessionId: string) => void
 ];
 export function useUpload(
-	successfulUpload: (item: ItemMeta) => void,
+	successfulUpload: (item: UploadedItem) => void,
 	failedUpload: (item: FailedItem) => void
 ): UseUploadArray {
 	const [uploadingItems, setUploadingItems] = useState<readonly UploadingItem[]>([]);
@@ -55,7 +60,8 @@ export function useUpload(
 					.read()
 					.then(async item => {
 						const request = item.getRequest(sessionId);
-						await getSessionClient().createItem(request, null);
+						const response = await getSessionClient().createItem(request, null);
+						return response.getId();
 					})
 					.then(
 						value => addDone({ item: uploading, result: { type: "Ok", value } }),
@@ -74,7 +80,7 @@ export function useUpload(
 		if (done.length > 0) {
 			for (const { item, result } of done) {
 				if (result.type === "Ok") {
-					successfulUpload(item.item);
+					successfulUpload({ ...item, itemUrn: result.value });
 				} else {
 					failedUpload({ ...item, error: result.error });
 				}
