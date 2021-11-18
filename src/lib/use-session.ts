@@ -47,12 +47,6 @@ interface TempState {
 export type UseSessionArray<S extends State = State> = [
 	state: S,
 	/**
-	 * Reloads the current session.
-	 *
-	 * This will request the current session information from the server and re-render the page afterwards.
-	 */
-	reload: () => void,
-	/**
 	 * This will temporarily change the currently displayed state to the given session object. After the given action
 	 * completes (successfully or unsuccessfully), the session will be reloaded.
 	 *
@@ -73,8 +67,8 @@ export function useCreateSession(): UseSessionArray<CreateState> {
 }
 
 export function useLoadSession(): UseSessionArray<LoadState> {
-	const [state, reload, update] = useSession(false);
-	return [toLoadState(state), reload, update];
+	const [state, update] = useSession(false);
+	return [toLoadState(state), update];
 }
 
 function useSession(create: boolean): UseSessionArray<InternalState> {
@@ -171,7 +165,7 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 	);
 
 	// memoize a few functions
-	const reload: UseSessionArray[1] = useCallback(
+	const reload = useCallback(
 		() =>
 			setState(prev => {
 				switch (prev.type) {
@@ -221,7 +215,7 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 
 	const [concurrentUpdates, setConcurrentUpdates] = useState(0);
 
-	const update: UseSessionArray[2] = useCallback(
+	const update: UseSessionArray[1] = useCallback(
 		(action, updatedSession) => {
 			setConcurrentUpdates(prev => prev + 1);
 
@@ -258,7 +252,7 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 
 	const displayState = tempState?.forState === stableState ? tempState.temp : stableState;
 
-	return [displayState, reload, update];
+	return [displayState, update];
 }
 
 function getDefaultState(): InternalState {

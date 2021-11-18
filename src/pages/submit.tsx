@@ -35,7 +35,7 @@ export default function SubmitPage(): JSX.Element {
 function Submit(props: LocalizableProps): JSX.Element {
 	const l = getLocalization(props, locales);
 
-	const [state, reload, update] = useCreateSession();
+	const [state, update] = useCreateSession();
 
 	const [failed, setFailed] = useState<readonly FailedItem[]>([]);
 	const addFailed = useCallback((failed: FailedItem): void => setFailed(prev => [...prev, failed]), [setFailed]);

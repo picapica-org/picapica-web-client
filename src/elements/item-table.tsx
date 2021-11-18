@@ -13,7 +13,7 @@ import "./item-table.scss";
 
 export interface ItemTableProps extends LocalizableProps {
 	readonly session: DeepReadonly<Session.AsObject>;
-	readonly update: UseSessionArray[2];
+	readonly update: UseSessionArray[1];
 }
 export function ItemTable(props: ItemTableProps): JSX.Element {
 	const l = getLocalization(props, locales);

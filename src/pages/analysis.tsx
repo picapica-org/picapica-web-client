@@ -37,7 +37,7 @@ export default function AnalysisPage(): JSX.Element {
 function Analysis(props: LocalizableProps): JSX.Element {
 	const l = getLocalization(props, locales);
 
-	const [state, reload, update] = useLoadSession();
+	const [state, update] = useLoadSession();
 
 	const updateConfig = useCallback(
 		(config: AnalysisConfig) => {
