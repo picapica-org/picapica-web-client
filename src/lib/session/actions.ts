@@ -1,6 +1,8 @@
-import { DeleteItemRequest, Session, UpdateItemRequest } from "../generated/v1/services_pb";
+import { SessionConfig } from "../generated/v1/configs_pb";
+import { DeleteItemRequest, Session, UpdateConfigRequest, UpdateItemRequest } from "../generated/v1/services_pb";
 import { Item } from "../generated/v1/types_pb";
 import { DeepReadonly } from "../util";
+import { AnalysisConfig } from "./analysis-config";
 
 export interface ActionResult<Req> {
 	updatedSession: Session.AsObject;
@@ -40,6 +42,26 @@ export function updateItemAction(
 	request.setSessionId(session.id);
 	request.setItemId(itemUrn);
 	request.setMeta(meta);
+
+	return { updatedSession, request };
+}
+
+export function updateConfigAction(
+	session: DeepReadonly<Session.AsObject>,
+	analysisConfig: AnalysisConfig
+): ActionResult<UpdateConfigRequest> {
+	const pairs = analysisConfig.getResourcePairs();
+
+	const updatedSession = cloneSession(session);
+	updatedSession.config ??= { pairingsList: [] };
+	updatedSession.config.pairingsList = pairs.map(p => p.toObject());
+
+	const sessionConfig = new SessionConfig();
+	sessionConfig.setPairingsList(pairs);
+
+	const request = new UpdateConfigRequest();
+	request.setSessionId(session.id);
+	request.setConfig(sessionConfig);
 
 	return { updatedSession, request };
 }
