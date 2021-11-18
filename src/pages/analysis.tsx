@@ -1,20 +1,16 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Helmet } from "react-helmet";
 import { Page } from "../elements/page";
 import { SharedHead } from "../elements/shared-header";
 import { getCurrentLang, LocalizableProps, Locales, SimpleString, getLocalization } from "../lib/localization";
 import { dynamic } from "../lib/react-util";
 import { getLinkToStep, StepSelectorGroup } from "../elements/step-selector";
-import { AddItem } from "../elements/add-item";
-import { ItemTable } from "../elements/item-table";
 import { StepActionBar } from "../elements/step-action-bar";
 import { BackButton, NextButton } from "../elements/step-buttons";
-import { SessionCreating, SessionLoading } from "../elements/session-creating-loading";
-import { ItemProto, toItemResourceType } from "../lib/session/create-item";
-import { CreateState, LoadState, useCreateSession, useLoadSession, visitState } from "../lib/use-session";
-import { FailedItem, UploadedItem, UploadingItem, useUpload } from "../lib/use-upload";
+import { SessionLoading } from "../elements/session-creating-loading";
+import { LoadState, useLoadSession, visitState } from "../lib/use-session";
 import { Icon, ItemTypeIcon, PicaIcon } from "../elements/icon";
-import { cloneSession, updateConfigAction } from "../lib/session/actions";
+import { updateConfigAction } from "../lib/session/actions";
 import { Session } from "../lib/generated/v1/services_pb";
 import { AnalysisConfig } from "../lib/session/analysis-config";
 import { DeepReadonly, EMPTY_ARRAY, EMPTY_SET, noop } from "../lib/util";
@@ -313,7 +309,6 @@ function toggleSetValue<T>(set: ReadonlySet<T>, value: T): Set<T> {
 const locales: Locales<
 	SimpleString<
 		| "instruction"
-		| "addItemHint"
 		| "all"
 		| "none"
 		| "file"
@@ -325,7 +320,6 @@ const locales: Locales<
 > = {
 	en: {
 		instruction: "Select analysis options",
-		addItemHint: "Click here to upload documents.",
 
 		all: "All",
 		none: "None",
@@ -338,7 +332,6 @@ const locales: Locales<
 	},
 	de: {
 		instruction: "Analyseoptionen auswählen",
-		addItemHint: "Hier klicken, um Dokumente hochzuladen.",
 
 		all: "Alles",
 		none: "Nichts",
