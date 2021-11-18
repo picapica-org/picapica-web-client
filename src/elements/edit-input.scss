@@ -30,10 +30,17 @@
 		display: flex;
 
 		.text {
-			vertical-align: middle;
 			flex-grow: 1;
-			word-break: normal;
-			overflow-wrap: anywhere;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+
+			span {
+				height: 1.42857em;
+				white-space: normal;
+				word-break: break-all;
+				overflow: hidden;
+			}
 		}
 		.edit {
 			opacity: 0.5;

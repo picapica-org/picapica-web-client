@@ -106,7 +106,9 @@ function EditView(props: EditInputProps & { toggleIsEditing: () => void }): JSX.
 function TextView(props: EditInputProps & { toggleIsEditing: () => void }): JSX.Element {
 	return (
 		<div className="TextView">
-			<span className="text">{props.text.replace(/[\r\n]+/g, " ")}</span>
+			<span className="text">
+				<span>{props.text.replace(/[\r\n]+/g, " ")}</span>
+			</span>
 			<button className={`edit ${Buttons.BUTTON} ${Buttons.SMALL}`} onClick={props.toggleIsEditing}>
 				<PicaIcon kind="rename" />
 			</button>
