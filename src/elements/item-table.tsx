@@ -19,7 +19,7 @@ export function ItemTable(props: ItemTableProps): JSX.Element {
 	const l = getLocalization(props, locales);
 
 	function deleteItem(item: Item.AsObject): void {
-		const { updatedSession, request } = deleteItemAction(props.session, item.urn);
+		const { mutate, request } = deleteItemAction(props.session, item.urn);
 
 		props.update(
 			getSessionClient()
@@ -27,7 +27,7 @@ export function ItemTable(props: ItemTableProps): JSX.Element {
 				.then(noop, err => {
 					console.log(err);
 				}),
-			updatedSession
+			mutate
 		);
 	}
 
@@ -42,7 +42,7 @@ export function ItemTable(props: ItemTableProps): JSX.Element {
 		const meta = new Item.Metadata();
 		meta.setName(newName);
 
-		const { updatedSession, request } = updateItemAction(props.session, item.urn, meta);
+		const { mutate, request } = updateItemAction(props.session, item.urn, meta);
 
 		props.update(
 			getSessionClient()
@@ -50,7 +50,7 @@ export function ItemTable(props: ItemTableProps): JSX.Element {
 				.then(noop, err => {
 					console.log(err);
 				}),
-			updatedSession
+			mutate
 		);
 	}
 

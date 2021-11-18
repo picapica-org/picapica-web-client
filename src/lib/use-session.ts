@@ -59,7 +59,10 @@ export type UseSessionArray<S extends State = State> = [
 	 * This method is intended to be called synchronously. Calling this method asynchronously will result in undefined
 	 * behavior.
 	 */
-	update: (action: Promise<void>, updatedSession?: Session.AsObject | undefined) => void
+	update: (
+		action: Promise<void>,
+		mutate: (session: DeepReadonly<Session.AsObject>) => DeepReadonly<Session.AsObject>
+	) => void
 ];
 
 export function useCreateSession(): UseSessionArray<CreateState> {
@@ -216,13 +219,14 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 	const [concurrentUpdates, setConcurrentUpdates] = useState(0);
 
 	const update: UseSessionArray[1] = useCallback(
-		(action, updatedSession) => {
+		(action, mutate) => {
 			setConcurrentUpdates(prev => prev + 1);
 
 			// Setting a temporary session state only makes sense when 1) we are not currently doing an update and
 			// 2) we are not currently reloading the session.
-			if (updatedSession && state.type === "Ready" && concurrentUpdates === 0) {
-				setTempState({ forState: state, temp: { type: "Ready", session: updatedSession } });
+			if (state.type === "Ready" && concurrentUpdates === 0) {
+				setTempState({ forState: state, temp: { type: "Ready", session: mutate(state.session) } });
+
 				action.then(
 					() => {
 						setConcurrentUpdates(prev => prev - 1);

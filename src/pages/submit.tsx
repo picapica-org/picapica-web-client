@@ -15,8 +15,7 @@ import { CreateState, useCreateSession, visitState } from "../lib/use-session";
 import "./submit.scss";
 import { FailedItem, UploadedItem, UploadingItem, useUpload } from "../lib/use-upload";
 import { Icon, ItemTypeIcon } from "../elements/icon";
-import { cloneSession } from "../lib/session/actions";
-import { Session } from "../lib/generated/v1/services_pb";
+import { cloneSession } from "../lib/session/util";
 
 export default function SubmitPage(): JSX.Element {
 	return (
@@ -42,10 +41,9 @@ function Submit(props: LocalizableProps): JSX.Element {
 
 	const successfulUpload = useCallback(
 		({ item, itemUrn }: UploadedItem): void => {
-			let updatedSession: Session.AsObject | undefined = undefined;
-			if (state.type === "Ready") {
-				updatedSession = cloneSession(state.session);
-				updatedSession.itemsList.push({
+			update(Promise.resolve(), oldSession => {
+				const session = cloneSession(oldSession);
+				session.itemsList.push({
 					urn: itemUrn,
 					meta: { name: item.name },
 					resource: {
@@ -54,11 +52,10 @@ function Submit(props: LocalizableProps): JSX.Element {
 						properties: { contentMd5: "fake", length: 0, rawMd5: "fake", size: item.size },
 					},
 				});
-			}
-
-			update(Promise.resolve(), updatedSession);
+				return session;
+			});
 		},
-		[state, update]
+		[update]
 	);
 
 	const [uploading, upload] = useUpload(successfulUpload, addFailed);

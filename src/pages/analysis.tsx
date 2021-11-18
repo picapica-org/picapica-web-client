@@ -42,9 +42,9 @@ function Analysis(props: LocalizableProps): JSX.Element {
 	const updateConfig = useCallback(
 		(config: AnalysisConfig) => {
 			if (state.type === "Ready") {
-				const { updatedSession, request } = updateConfigAction(state.session, config);
+				const { mutate, request } = updateConfigAction(state.session, config);
 				// TODO: Handle errors
-				update(getSessionClient().updateConfig(request, null).then(noop), updatedSession);
+				update(getSessionClient().updateConfig(request, null).then(noop), mutate);
 			}
 		},
 		[state, update]
