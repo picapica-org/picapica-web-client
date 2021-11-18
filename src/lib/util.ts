@@ -112,3 +112,7 @@ export function isValidUrl(url: string): boolean {
 		return false;
 	}
 }
+
+export const EMPTY_ARRAY: readonly never[] = [];
+export const EMPTY_SET: ReadonlySet<never> = new Set();
+export const EMPTY_MAP: ReadonlyMap<never, never> = new Map<never, never>();
