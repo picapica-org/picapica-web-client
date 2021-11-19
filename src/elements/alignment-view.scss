@@ -42,12 +42,12 @@
 		background: radial-gradient(closest-side, $light-green, $light-green, transparent);
 	}
 	.partial-low::before {
-		opacity: 0.3;
+		opacity: 30%;
 	}
 	.partial-medium::before {
-		opacity: 0.5;
+		opacity: 50%;
 	}
 	.partial-high::before {
-		opacity: 1;
+		opacity: 100%;
 	}
 }

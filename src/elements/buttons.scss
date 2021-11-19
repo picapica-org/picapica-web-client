@@ -1,50 +1,93 @@
 @import "../colors.scss";
 
-.Button {
+:root {
+	--button-background: #{$white};
+	--button-color: #{$grey8};
+	--button-border-color: #{$grey3};
+}
+
+.Button,
+.NonButton {
 	display: inline-block;
-	padding: 0.4em 0.85em;
 	white-space: nowrap;
 	text-decoration: none;
-	height: 1.5em;
+	height: 1.42857em;
+	box-sizing: content-box;
 
-	border: 0.1em solid $grey3;
-	background-color: $white;
-	color: $grey8;
+	border: 0.1em solid var(--button-border-color);
+	background-color: var(--button-background);
+	color: var(--button-color);
 	border-radius: 0.3em;
 
-	cursor: pointer;
-
-	& > span {
-		vertical-align: middle;
+	&:not(.small) {
+		padding: 0.4em 0.85em;
 	}
 
-	&.disabled {
+	&[disabled] {
 		cursor: not-allowed;
 		pointer-events: none;
 
-		color: $grey3;
+		--button-color: #{$grey3};
 	}
+}
+.Button {
+	cursor: pointer;
 
-	&:not(.disabled) {
-		&:hover {
+	&:not([disabled]) {
+		&:hover,
+		&:active,
+		&.active {
 			text-decoration: none;
-			background-color: $grey2;
+
+			--button-background: #{$grey2};
+			--button-border-color: #{$grey4};
 		}
 		&:active,
 		&.active {
-			box-shadow: inset 0 0.2em 0.4em rgba(0, 0, 0, 0.13);
+			box-shadow: inset 0 0.2em 0.3em rgba(0, 0, 0, 13%);
+		}
+	}
+}
+
+/* stylelint-disable-next-line no-duplicate-selectors */
+.Button,
+.NonButton {
+	&.red {
+		// TODO: The color contrast is too low
+		--button-background: #{$main-red};
+		--button-color: #{$white};
+		--button-border-color: #{$dark-red-2};
+
+		&:hover,
+		&:active,
+		&.active {
+			--button-background: #{$dark-red-2};
+			--button-border-color: #{$dark-red-3};
+		}
+	}
+	&.green.green {
+		// TODO: The color contrast is too low
+		--button-background: #{$main-green};
+		--button-color: #{$white};
+		--button-border-color: #{$dark-green-2};
+
+		&:hover,
+		&:active,
+		&.active {
+			--button-background: #{$dark-green-2};
+			--button-border-color: #{$dark-green-3};
 		}
 	}
 }
 
 .ButtonGroup {
-	background-color: $white;
 	display: inline-block;
 	white-space: nowrap;
 	border: none;
 	padding: 0;
 
-	& > .Button {
+	& > .Button,
+	& > .NonButton {
 		border-radius: 0;
 
 		&:last-child {
@@ -53,8 +96,18 @@
 		&:first-child {
 			border-radius: 0.3em 0 0 0.3em;
 		}
-		&:not(:first-child) {
-			border-left: none;
+
+		&:not(:last-child):not(:hover):not(:active):not(.active) {
+			border-right: none;
+		}
+
+		&:hover,
+		&:active,
+		&.active {
+			& + .Button,
+			& + .NonButton {
+				border-left: none;
+			}
 		}
 	}
 }

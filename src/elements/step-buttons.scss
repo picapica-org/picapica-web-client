@@ -1,0 +1,29 @@
+.NextButton,
+.StartButton {
+	.Icon {
+		margin-left: 0.3em;
+	}
+}
+.BackButton {
+	.Icon {
+		margin-right: 0.3em;
+	}
+}
+
+.NextButton,
+.StartButton,
+.BackButton {
+	.Icon {
+		font-weight: bold;
+		top: -0.05em;
+	}
+
+	@media screen and (max-width: 600px) {
+		.Icon {
+			margin: 0;
+		}
+		.text {
+			display: none;
+		}
+	}
+}

@@ -1,4 +1,6 @@
 import React from "react";
+import { Item } from "../lib/generated/v1/types_pb";
+import { ItemType, toItemType } from "../lib/session/create-item";
 import "./icon.scss";
 
 // This type was generated from the files in node_modules/remixicons/icons
@@ -2275,7 +2277,7 @@ export type IconKind =
 	| "windy-fill"
 	| "windy-line";
 
-export interface Props {
+export interface IconProps {
 	kind: IconKind;
 	id?: string;
 }
@@ -2287,6 +2289,54 @@ export interface Props {
  * @param props
  * @returns
  */
-export function Icon(props: Props): JSX.Element {
+export function Icon(props: IconProps): JSX.Element {
 	return <span className={"Icon ri-" + props.kind} id={props.id}></span>;
+}
+
+export type PicaIconKind =
+	| "file"
+	| "url"
+	| "text"
+	| "unknown"
+	| "rename"
+	| "delete"
+	| "upload"
+	| "analyse"
+	| "checkout"
+	| "results"
+	| "next"
+	| "back";
+
+const KIND_MAP: Record<PicaIconKind, IconKind> = {
+	file: "file-line",
+	url: "link",
+	text: "align-left",
+	unknown: "file-unknow-line",
+	rename: "pencil-line",
+	delete: "delete-bin-5-line",
+	upload: "upload-cloud-2-line",
+	analyse: "search-line",
+	checkout: "shopping-cart-2-line",
+	results: "list-check",
+	next: "arrow-right-s-line",
+	back: "arrow-left-s-line",
+};
+
+export interface PicaIconProps {
+	kind: PicaIconKind;
+	id?: string;
+}
+
+export function PicaIcon(props: PicaIconProps): JSX.Element {
+	return Icon({ kind: KIND_MAP[props.kind], id: props.id });
+}
+
+export interface ItemTypeIconProps {
+	type: ItemType | Item.Resource.Type;
+	id?: string;
+}
+
+export function ItemTypeIcon(props: ItemTypeIconProps): JSX.Element {
+	const type = typeof props.type === "string" ? props.type : toItemType(props.type);
+	return PicaIcon({ kind: type ?? "unknown", id: props.id });
 }

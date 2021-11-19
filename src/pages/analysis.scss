@@ -1,0 +1,104 @@
+@import "../colors.scss";
+
+.Analysis {
+	.ItemConfig,
+	.CollectionConfig {
+		margin: 4em 0;
+		border-top: 1px solid $grey3;
+
+		& > .heading {
+			background-color: $grey1;
+			padding: 0.75em 1em;
+			display: flex;
+			gap: 0.5em;
+
+			& > .title {
+				font-size: 120%;
+				flex-grow: 1;
+
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+
+				.Icon {
+					margin-right: 0.3em;
+				}
+			}
+			& > .buttons {
+				flex-shrink: 0;
+				font-size: 90%;
+			}
+		}
+		& > .content {
+			padding: 0 1em;
+
+			& > .instruction {
+				margin: 1em 0;
+				font-size: 130%;
+
+				@media screen and (max-width: 600px) {
+					& {
+						font-size: 110%;
+					}
+				}
+			}
+
+			& > .table {
+				& > div {
+					display: flex;
+					max-width: 400px;
+
+					@media screen and (max-width: 600px) {
+						& {
+							max-width: none;
+						}
+					}
+
+					&:first-child * {
+						font-weight: bold;
+					}
+
+					&:not(:last-child) > * {
+						border-bottom: none;
+						&:first-child {
+							border-bottom-left-radius: 0;
+						}
+						&:last-child {
+							border-bottom-right-radius: 0;
+						}
+					}
+					&:not(:first-child) > * {
+						&:first-child {
+							border-top-left-radius: 0;
+						}
+						&:last-child {
+							border-top-right-radius: 0;
+						}
+					}
+
+					& > span.NonButton {
+						flex-grow: 1;
+						white-space: normal;
+						word-break: break-all;
+						overflow: hidden;
+
+						.Icon {
+							margin-right: 0.3em;
+						}
+					}
+
+					button {
+						flex-shrink: 0;
+						width: 1.5em;
+						padding: 0.4em 0.5em;
+						text-align: center;
+					}
+				}
+			}
+		}
+	}
+
+	.CollectionConfig .table button {
+		font-weight: bold;
+	}
+}

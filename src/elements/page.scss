@@ -14,10 +14,15 @@ body,
 
 html {
 	font-size: 14px;
-	font-family: "Product Sans", "Noto Sans", "Verdana", sans-serif;
+	font-family: "Product Sans", "Noto Sans", Verdana, sans-serif;
 	background-color: $white;
 	color: $grey8;
 	line-height: 1.42857;
+}
+input,
+button {
+	font-family: "Product Sans", "Noto Sans", Verdana, sans-serif;
+	font-size: inherit;
 }
 
 @media screen and (max-width: 500px) {
@@ -27,7 +32,7 @@ html {
 }
 
 a {
-	color: $main-blue;
+	color: $bold-blue;
 	text-decoration: none;
 	&:hover {
 		text-decoration: underline;

@@ -1,0 +1,151 @@
+@import "../colors.scss";
+
+.AddItem {
+	display: inline-flex;
+	white-space: nowrap;
+
+	& > .big-plus {
+		--button-border-color: #{$white} !important;
+		border-radius: 100%;
+
+		margin-right: -1em;
+		width: 1.5em;
+		height: 1.5em;
+		padding: 0.9em;
+		position: relative;
+
+		.Icon {
+			font-size: 150%;
+			top: -0.05em;
+		}
+	}
+	& > .group {
+		display: inline-flex;
+		align-items: center;
+		flex-direction: row;
+
+		button:first-child {
+			padding-left: 1.4em;
+		}
+
+		.Icon {
+			margin-right: 0.3em;
+		}
+	}
+}
+
+.AddItemModal-content {
+	background-color: $white;
+	border-radius: 0.5em;
+	box-shadow: 0 0.3em 1em rgba(0, 0, 0, 50%);
+	padding: 0;
+	border: 1px solid $grey7;
+	margin-top: 2em !important;
+
+	width: calc(min(600px, 100% - 4em));
+
+	div.tabs {
+		padding: 2em 0 0 1em;
+		border-bottom: 1px solid $grey3;
+
+		button {
+			padding: 0.75em 1em;
+			cursor: pointer;
+			background: none;
+			border: 1px solid transparent;
+			border-bottom-color: $grey3;
+			position: relative;
+			bottom: -1px;
+
+			&.tab {
+				border-radius: 0.3em 0.3em 0 0;
+				margin-right: 0.1em;
+
+				&.active {
+					color: $grey8;
+					border: 1px solid $grey3;
+					border-bottom-color: $white;
+				}
+				&:not(.active) {
+					color: $bold-blue;
+
+					&:hover,
+					&:active {
+						background-color: $grey1;
+					}
+				}
+
+				.Icon {
+					margin-right: 0.3em;
+				}
+			}
+
+			&.close {
+				float: right;
+
+				color: $grey4;
+
+				&:hover,
+				&:active {
+					background-color: $grey1;
+					color: $grey6;
+					border-radius: 0.3em 0 0 0;
+				}
+			}
+		}
+	}
+
+	.modal-content {
+		padding: 1em;
+		min-height: 10em;
+
+		& > label {
+			display: block;
+			font-weight: bold;
+			margin-bottom: 0.5em;
+		}
+
+		input[type="url"],
+		textarea {
+			width: 100%;
+			box-sizing: border-box;
+			padding: 0.5em;
+			font-family: inherit;
+			font-size: inherit;
+			border: 1px solid $grey3;
+			border-radius: 0.3em;
+			outline: none;
+			&:focus {
+				border-color: $light-blue;
+				box-shadow: 0 0 0.5em $light-blue;
+			}
+		}
+		textarea {
+			height: 7.75em;
+			resize: vertical;
+		}
+
+		p.hint {
+			color: $grey6;
+			font-style: italic;
+		}
+		p.error {
+			color: $dark-red-3;
+			font-style: italic;
+		}
+	}
+
+	.ModalFooter {
+		border-top: 1px solid $grey3;
+		padding: 1em;
+		text-align: right;
+
+		button.green {
+			margin-left: 1em;
+
+			.Icon {
+				margin-right: 0.3em;
+			}
+		}
+	}
+}

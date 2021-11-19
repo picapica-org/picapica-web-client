@@ -1,0 +1,30 @@
+@import "../colors.scss";
+
+@keyframes fade-in {
+	from {
+		opacity: 0%;
+	}
+	50% {
+		opacity: 0%;
+	}
+	to {
+		opacity: 100%;
+	}
+}
+
+.SessionCreating,
+.SessionLoading {
+	padding: 1em;
+
+	p {
+		text-align: center;
+	}
+
+	.first {
+		p {
+			color: $grey6;
+
+			animation: fade-in 2s;
+		}
+	}
+}

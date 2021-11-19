@@ -1,0 +1,134 @@
+@import "../colors.scss";
+
+.Submit {
+	padding: 0 0 2em 0;
+
+	.blank-session {
+		padding: 3em 1em;
+		text-align: center;
+
+		.AddItem {
+			font-size: 150%;
+
+			@media screen and (max-width: 600px) {
+				& {
+					font-size: 120%;
+				}
+			}
+			@media screen and (max-width: 400px) {
+				& {
+					font-size: 100%;
+				}
+			}
+		}
+
+		.spacer {
+			height: 1em;
+		}
+
+		@keyframes fade-in {
+			from {
+				opacity: 0%;
+			}
+			90% {
+				opacity: 0%;
+			}
+			to {
+				opacity: 100%;
+			}
+		}
+
+		.pseudo-tooltip {
+			font-size: 90%;
+			background-color: $grey8;
+			color: $white;
+			padding: 0.3em 1em;
+			border-radius: 0.3em;
+			position: relative;
+			margin-top: 5em;
+			animation: fade-in 5s;
+
+			&::before {
+				content: "";
+				width: 1em;
+				height: 1em;
+				left: 20%;
+				position: absolute;
+				background-color: $grey8;
+				top: -0.3em;
+				z-index: -1;
+				transform: rotate(45deg);
+			}
+		}
+	}
+
+	.StepActionBar {
+		@media screen and (max-width: 800px) {
+			.AddItem .group {
+				.Icon {
+					margin-right: 0;
+				}
+				.text {
+					display: none;
+				}
+			}
+		}
+
+		@media screen and (max-width: 500px) {
+			& {
+				display: grid;
+				gap: 0;
+				row-gap: 0.5em;
+			}
+			& > .instruction {
+				grid-row: 1;
+				grid-column: 1 / span 2;
+			}
+			& > .left {
+				grid-row: 2;
+				grid-column: 1;
+			}
+			& > .right {
+				grid-row: 2;
+				grid-column: 2;
+			}
+		}
+	}
+
+	.UploadingList {
+		margin: 1em;
+
+		& > .uploading-item {
+			padding: 0.2em 0;
+			display: flex;
+
+			& > .loading {
+				flex-shrink: 0;
+
+				@keyframes rotating {
+					from {
+						transform: rotate(0deg);
+					}
+					to {
+						transform: rotate(360deg);
+					}
+				}
+
+				.Icon {
+					animation: rotating 1s linear infinite;
+					display: inline-block;
+				}
+			}
+			& > .icon {
+				flex-shrink: 0;
+				padding-right: 0.3em;
+				padding-left: 1em;
+			}
+			& > .name {
+				flex-grow: 1;
+				word-break: normal;
+				overflow-wrap: anywhere;
+			}
+		}
+	}
+}

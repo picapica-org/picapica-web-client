@@ -82,11 +82,10 @@ function LangSelect(props: { lang: string; thisLang: SupportedLanguage; children
 		window.location.reload();
 	};
 
-	// TODO: Make this a button
 	return (
-		<a className={className} href="#" onClick={clickHandler}>
+		<button className={className} onClick={clickHandler}>
 			{props.children}
-		</a>
+		</button>
 	);
 }
 

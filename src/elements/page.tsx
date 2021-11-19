@@ -3,6 +3,7 @@ import { LocalizableProps } from "../lib/localization";
 import { Footer } from "./footer";
 import { BigHeader, SmallHeader } from "./header";
 import "./page.scss";
+import "reactjs-popup/dist/index.css";
 
 type HeaderType = "small" | "big";
 

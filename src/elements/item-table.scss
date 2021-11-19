@@ -1,0 +1,67 @@
+@import "../colors.scss";
+
+.ItemTable {
+	width: 100%;
+	border-collapse: collapse;
+
+	th,
+	td {
+		padding: 0.3em;
+	}
+
+	thead > tr {
+		border-bottom: 2px solid $grey2;
+	}
+	tbody > tr:nth-child(2n + 1) {
+		background-color: $grey1;
+	}
+	tbody > tr {
+		border-top: 1px solid $grey2;
+	}
+
+	th.name,
+	td.name {
+		text-align: left;
+		width: 100%;
+	}
+	th.size,
+	td.size {
+		padding: 0.3em 0.6em;
+		text-align: right;
+		white-space: nowrap;
+	}
+	th.action,
+	td.action {
+		text-align: right;
+		white-space: nowrap;
+	}
+
+	td.empty {
+		user-select: none;
+		color: $grey6;
+	}
+
+	button.delete {
+		.Icon {
+			margin-right: 0.3em;
+		}
+
+		@media screen and (max-width: 600px) {
+			.Icon {
+				margin-right: 0;
+			}
+			.text {
+				display: none;
+			}
+		}
+	}
+
+	.EditInput {
+		width: 100%;
+
+		--edit-button-opacity: 0;
+	}
+	tr:hover .EditInput {
+		--edit-button-opacity: 1;
+	}
+}

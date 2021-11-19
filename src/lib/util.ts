@@ -1,3 +1,27 @@
+export type DeepRequired<T> = {
+	[P in keyof T]-?: DeepRequired<T[P]>;
+};
+
+export type DeepReadonly<T> = {
+	readonly [P in keyof T]: DeepReadonly<T[P]>;
+};
+
+export function lazy<T>(supplier: () => NonNullable<T>): () => T {
+	let value: T | undefined = undefined;
+	return () => {
+		if (value === undefined) {
+			value = supplier();
+		}
+		return value;
+	};
+}
+
+export function delay(ms: number): Promise<void> {
+	return new Promise(resolve => {
+		setTimeout(() => resolve(), ms);
+	});
+}
+
 export function firstOf<T>(iter: Iterable<T>): T | undefined {
 	for (const item of iter) {
 		return item;
@@ -54,6 +78,18 @@ export function endsWith<A, B>(sequence: readonly A[], needle: readonly B[], com
 	return true;
 }
 
+export function shorten(text: string, maxLength: number): string {
+	if (text.length <= maxLength) {
+		return text;
+	} else {
+		const chars = [...text];
+		if (chars.length <= maxLength) {
+			return text;
+		}
+		return chars.slice(0, maxLength).join("") + "…";
+	}
+}
+
 export function debugAssert(condition: boolean, message?: string): asserts condition {
 	if (!condition) {
 		throw new Error(message);
@@ -63,3 +99,20 @@ export function debugAssert(condition: boolean, message?: string): asserts condi
 export function assertNever(value: never): never {
 	throw new Error(`Unexpected value: ${value}`);
 }
+
+export function noop(): void {
+	// noop
+}
+
+export function isValidUrl(url: string): boolean {
+	try {
+		new URL(url);
+		return true;
+	} catch (e) {
+		return false;
+	}
+}
+
+export const EMPTY_ARRAY: readonly never[] = [];
+export const EMPTY_SET: ReadonlySet<never> = new Set();
+export const EMPTY_MAP: ReadonlyMap<never, never> = new Map<never, never>();
