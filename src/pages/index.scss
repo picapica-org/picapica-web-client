@@ -3,14 +3,41 @@
 
 	.new-analysis-container {
 		text-align: center;
-		margin: 100px 0 100px 0;
+		margin: 7em 0;
 
 		.NewAnalysis {
 			font-size: 200%;
+		}
 
-			@media screen and (max-width: 700px) {
-				& {
+		@media screen and (max-width: 700px) {
+			& {
+				margin: 5em 0;
+
+				.NewAnalysis {
 					font-size: 150%;
+				}
+			}
+		}
+		@media screen and (max-width: 450px) {
+			& {
+				.NewAnalysis {
+					font-size: 130%;
+				}
+			}
+		}
+		@media screen and (max-width: 400px) {
+			& {
+				margin: 3em 0;
+
+				.NewAnalysis {
+					font-size: 115%;
+				}
+			}
+		}
+		@media screen and (max-width: 350px) {
+			& {
+				.NewAnalysis {
+					font-size: 100%;
 				}
 			}
 		}

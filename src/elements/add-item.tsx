@@ -62,19 +62,21 @@ export function AddItem(props: AddItemProps): JSX.Element {
 			<button className={`${Buttons.BUTTON} green big-plus`} onClick={() => openModal("file")}>
 				<Icon kind="add-line" />
 			</button>
-			<span className={`group ${Buttons.BUTTON_GROUP}`}>
-				<button className={`${Buttons.BUTTON} green`} onClick={openFiles}>
-					<PicaIcon kind="file" />
-					<span className="text">{l.file}</span>
-				</button>
-				<button className={`${Buttons.BUTTON} green`} onClick={() => openModal("url")}>
-					<PicaIcon kind="url" />
-					<span className="text">{l.url}</span>
-				</button>
-				<button className={`${Buttons.BUTTON} green`} onClick={() => openModal("text")}>
-					<PicaIcon kind="text" />
-					<span className="text">{l.text}</span>
-				</button>
+			<span className="group">
+				<span className={Buttons.BUTTON_GROUP}>
+					<button className={`${Buttons.BUTTON} green`} onClick={openFiles}>
+						<PicaIcon kind="file" />
+						<span className="text">{l.file}</span>
+					</button>
+					<button className={`${Buttons.BUTTON} green`} onClick={() => openModal("url")}>
+						<PicaIcon kind="url" />
+						<span className="text">{l.url}</span>
+					</button>
+					<button className={`${Buttons.BUTTON} green`} onClick={() => openModal("text")}>
+						<PicaIcon kind="text" />
+						<span className="text">{l.text}</span>
+					</button>
+				</span>
 			</span>
 
 			{input}

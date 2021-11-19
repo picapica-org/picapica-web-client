@@ -15,5 +15,12 @@
 			text-align: center;
 			color: $grey6;
 		}
+
+		&.left * {
+			text-align: left;
+		}
+		&.right * {
+			text-align: right;
+		}
 	}
 }

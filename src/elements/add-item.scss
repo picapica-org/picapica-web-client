@@ -1,7 +1,7 @@
 @import "../colors.scss";
 
 .AddItem {
-	display: inline-block;
+	display: inline-flex;
 	white-space: nowrap;
 
 	& > .big-plus {
@@ -20,7 +20,9 @@
 		}
 	}
 	& > .group {
-		vertical-align: middle;
+		display: inline-flex;
+		align-items: center;
+		flex-direction: row;
 
 		button:first-child {
 			padding-left: 1.4em;

@@ -15,6 +15,11 @@
 					font-size: 120%;
 				}
 			}
+			@media screen and (max-width: 400px) {
+				& {
+					font-size: 100%;
+				}
+			}
 		}
 
 		.spacer {
@@ -57,13 +62,35 @@
 		}
 	}
 
-	@media screen and (max-width: 800px) {
-		.StepActionBar .AddItem .group {
-			.Icon {
-				margin-right: 0;
+	.StepActionBar {
+		@media screen and (max-width: 800px) {
+			.AddItem .group {
+				.Icon {
+					margin-right: 0;
+				}
+				.text {
+					display: none;
+				}
 			}
-			.text {
-				display: none;
+		}
+
+		@media screen and (max-width: 500px) {
+			& {
+				display: grid;
+				gap: 0;
+				row-gap: .5em;
+			}
+			& > .instruction {
+				grid-row: 1;
+				grid-column: 1 / span 2;
+			}
+			& > .left {
+				grid-row: 2;
+				grid-column: 1;
+			}
+			& > .right {
+				grid-row: 2;
+				grid-column: 2;
 			}
 		}
 	}
@@ -72,10 +99,10 @@
 		margin: 1em;
 
 		& > .uploading-item {
-			padding: .2em 0;
+			padding: 0.2em 0;
 			display: flex;
 
-			& >.loading {
+			& > .loading {
 				flex-shrink: 0;
 
 				@keyframes rotating {
@@ -92,12 +119,12 @@
 					display: inline-block;
 				}
 			}
-			& >.icon {
+			& > .icon {
 				flex-shrink: 0;
-				padding-right: .3em;
+				padding-right: 0.3em;
 				padding-left: 1em;
 			}
-			& >.name {
+			& > .name {
 				flex-grow: 1;
 				word-break: normal;
 				overflow-wrap: anywhere;

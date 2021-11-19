@@ -94,7 +94,11 @@ function Submit(props: LocalizableProps): JSX.Element {
 
 			return (
 				<StepSelectorGroup lang={props.lang} sessionId={session.id} current="submit">
-					<button onClick={() => upload([ItemProto.fromText(randomText())], session.id)}>Random Text</button>
+					<button
+						onClick={() => upload([ItemProto.fromText(randomText())], session.id)}
+						style={{ position: "absolute", opacity: ".3", zIndex: 1000 }}>
+						Random Text
+					</button>
 
 					{emptySession() && blank ? (
 						<>
