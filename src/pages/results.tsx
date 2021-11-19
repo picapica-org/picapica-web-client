@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React from "react";
 import { Helmet } from "react-helmet";
 import { Page } from "../elements/page";
 import { SharedHead } from "../elements/shared-header";
@@ -6,7 +6,7 @@ import { getCurrentLang, LocalizableProps, Locales, SimpleString, getLocalizatio
 import { dynamic } from "../lib/react-util";
 import { getLinkToStep, StepSelectorGroup } from "../elements/step-selector";
 import { StepActionBar } from "../elements/step-action-bar";
-import { BackButton, NextButton } from "../elements/step-buttons";
+import { BackButton } from "../elements/step-buttons";
 import { SessionLoading } from "../elements/session-creating-loading";
 import { LoadState, useLoadSession, visitState } from "../lib/use-session";
 import "./results.scss";
