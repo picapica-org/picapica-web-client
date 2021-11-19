@@ -303,9 +303,11 @@ function getSessionId(state: State): string | null {
 }
 
 function getRetryDelay(retries: number): number {
-	if (retries < 3) {
+	if (retries === 0) {
+		return 0;
+	} else if (retries < 3) {
 		// the first 3 retires should be fast
-		return 1_000;
+		return 500;
 	} else if (retries <= 10) {
 		// then we slow down a little
 		return 5_000;
