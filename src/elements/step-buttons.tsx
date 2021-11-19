@@ -33,13 +33,27 @@ export function BackButton(props: StepButtonProps): JSX.Element {
 	);
 }
 
-const locales: Locales<SimpleString<"next" | "back">> = {
+export function StartButton(props: StepButtonProps): JSX.Element {
+	const l = getLocalization(props, locales);
+	const title = l.start;
+
+	return (
+		<Link to={props.to} className={`StartButton ${Buttons.BUTTON} ${Buttons.GREEN}`} title={title}>
+			<span className="text">{title}</span>
+			<PicaIcon kind="next" />
+		</Link>
+	);
+}
+
+const locales: Locales<SimpleString<"next" | "back" | "start">> = {
 	en: {
 		next: "Next",
 		back: "Back",
+		start: "Start",
 	},
 	de: {
 		next: "Weiter",
 		back: "Zurück",
+		start: "Start",
 	},
 };

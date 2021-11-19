@@ -6,7 +6,7 @@ import { getCurrentLang, LocalizableProps, Locales, SimpleString, getLocalizatio
 import { dynamic } from "../lib/react-util";
 import { getLinkToStep, StepSelectorGroup } from "../elements/step-selector";
 import { StepActionBar } from "../elements/step-action-bar";
-import { BackButton, NextButton } from "../elements/step-buttons";
+import { BackButton, StartButton } from "../elements/step-buttons";
 import { SessionLoading } from "../elements/session-creating-loading";
 import { LoadState, useLoadSession, visitState } from "../lib/use-session";
 import { Icon, ItemTypeIcon, PicaIcon } from "../elements/icon";
@@ -70,7 +70,7 @@ function Analysis(props: LocalizableProps): JSX.Element {
 				<StepSelectorGroup lang={props.lang} sessionId={session.id} current="analysis">
 					<StepActionBar
 						left={<BackButton {...props} to={getLinkToStep("submit", session.id)} />}
-						right={<NextButton {...props} to={getLinkToStep("results", session.id)} />}
+						right={<StartButton {...props} to={getLinkToStep("results", session.id)} />}
 						instruction={l.instruction}
 					/>
 
@@ -87,7 +87,7 @@ function Analysis(props: LocalizableProps): JSX.Element {
 
 					<StepActionBar
 						left={<BackButton {...props} to={getLinkToStep("submit", session.id)} />}
-						right={<NextButton {...props} to={getLinkToStep("results", session.id)} />}
+						right={<StartButton {...props} to={getLinkToStep("results", session.id)} />}
 						instruction={""}
 					/>
 				</StepSelectorGroup>
