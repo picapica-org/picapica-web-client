@@ -1,18 +1,82 @@
-export type PicapicaUrnType = "item" | "collection" | "none";
-
-export type ItemUrn = string & { readonly __itemUrn?: never };
-export type CollectionUrn = string & { readonly __itemUrn?: never };
+import URI, { URIComponents } from "uri-js";
 
 export const NONE_URN = "urn:none:";
 
-export function getPicapicaUrnType(urn: string): "item" | "collection" | "none" {
-	if (/^urn:item:/.test(urn)) {
-		return "item";
-	} else if (/^urn:collection:/.test(urn)) {
-		return "collection";
-	} else if (/^urn:none:/.test(urn)) {
-		return "none";
-	} else {
-		throw new Error("Invalid URN format");
+export type PicapicaUrn = PicapicaCollectionUrn | PicapicaDocumentUrn | PicapicaSessionUrn | PicapicaItemUrn;
+export interface PicapicaCollectionUrn {
+	type: "collection";
+	collectionId: string;
+}
+export interface PicapicaDocumentUrn {
+	type: "document";
+	collectionId: string;
+	documentId: string;
+}
+export interface PicapicaSessionUrn {
+	type: "session";
+	sessionId: string;
+}
+export interface PicapicaItemUrn {
+	type: "item";
+	sessionId: string;
+	itemId: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-namespace, @typescript-eslint/no-redeclare
+export namespace PicapicaUrn {
+	export function parse(urn: string): PicapicaUrn {
+		const parsed = URI.parse(urn) as URIComponents & { nid?: string; nss?: string };
+		if (parsed.scheme !== "urn" || parsed.nid !== "picapica" || !parsed.nss) {
+			throw new SyntaxError(`Invalid Picapica URN: ${urn}`);
+		}
+
+		const parts = parsed.nss.split(/:/);
+		const type = parts[0];
+		const args = parts.slice(1);
+
+		switch (type) {
+			case "collection":
+				if (args.length === 1) {
+					return { type, collectionId: args[0] };
+				}
+				throw new SyntaxError(`Invalid Picapica ${type} URN: ${urn}`);
+
+			case "document":
+				if (args.length === 2) {
+					return { type, collectionId: args[0], documentId: args[1] };
+				}
+				throw new SyntaxError(`Invalid Picapica ${type} URN: ${urn}`);
+
+			case "session":
+				if (args.length === 1) {
+					return { type, sessionId: args[0] };
+				}
+				throw new SyntaxError(`Invalid Picapica ${type} URN: ${urn}`);
+
+			case "item":
+				if (args.length === 2) {
+					return { type, sessionId: args[0], itemId: args[1] };
+				}
+				throw new SyntaxError(`Invalid Picapica ${type} URN: ${urn}`);
+
+			default:
+				throw new SyntaxError(`Invalid Picapica URN: ${urn}`);
+		}
+	}
+
+	export function stringify(urn: PicapicaUrn): string {
+		return `urn:picapica:${urn.type}${stringifyContent(urn)}`;
+	}
+	function stringifyContent(urn: PicapicaUrn): string {
+		switch (urn.type) {
+			case "collection":
+				return `:${urn.collectionId}`;
+			case "document":
+				return `:${urn.collectionId}:${urn.documentId}`;
+			case "session":
+				return `:${urn.sessionId}`;
+			case "item":
+				return `:${urn.sessionId}:${urn.itemId}`;
+		}
 	}
 }

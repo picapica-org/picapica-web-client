@@ -4,6 +4,7 @@ import { Item } from "../generated/v1/types_pb";
 import type * as grpcWeb from "grpc-web";
 import { v4 as uuidv4 } from "uuid";
 import { delay, lazy } from "../util";
+import { PicapicaUrn } from "./urn";
 
 const CLIENT: SessionServiceClient = new SessionServiceClient("api.picapica.org");
 const mock = true;
@@ -54,7 +55,7 @@ class MockClient extends SessionServiceClient {
 
 		await delay(DELAY_MIN + Math.random() * (DELAY_MAX - DELAY_MIN));
 
-		const FAILURE_RATE = 0.3;
+		const FAILURE_RATE = 0;
 
 		if (Math.random() < FAILURE_RATE) {
 			throw new Error("Network error");
@@ -156,8 +157,8 @@ class MockClient extends SessionServiceClient {
 		const props = new Item.Resource.Properties();
 		props.setSize(raw.length);
 		props.setLength([...content].length);
-		props.setRawMd5("fake");
-		props.setContentMd5("fake");
+		props.setRawMd5(randomHex(32));
+		props.setContentMd5(randomHex(32));
 
 		const resource = new Item.Resource();
 		resource.setId(uuidv4());
@@ -165,7 +166,7 @@ class MockClient extends SessionServiceClient {
 		resource.setProperties(props);
 
 		const item = new Item();
-		item.setUrn("urn:item:" + uuidv4());
+		item.setUrn(PicapicaUrn.stringify({ type: "item", sessionId: sessionRef.getId(), itemId: randomHex(64) }));
 		item.setMeta(req.getMeta()?.clone());
 		item.setResource(resource);
 
@@ -201,4 +202,8 @@ class MockClient extends SessionServiceClient {
 
 		return new v1_services_pb.DeleteItemResponse().setSuccess(true);
 	});
+}
+
+function randomHex(length: number): string {
+	return Array.from({ length }, () => Math.floor(Math.random() * 16).toString(16)).join("");
 }

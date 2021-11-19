@@ -12,13 +12,12 @@ import { LoadState, useLoadSession, visitState } from "../lib/use-session";
 import { Icon, ItemTypeIcon, PicaIcon } from "../elements/icon";
 import { updateConfigAction } from "../lib/session/actions";
 import { Session } from "../lib/generated/v1/services_pb";
-import { AnalysisConfig } from "../lib/session/analysis-config";
+import { AnalysisConfig, CollectionUrn, ItemUrn } from "../lib/session/analysis-config";
 import { DeepReadonly, EMPTY_ARRAY, EMPTY_SET, noop } from "../lib/util";
 import { getSessionClient } from "../lib/session/client";
 import { Buttons } from "../elements/buttons";
-import "./analysis.scss";
 import { Item } from "../lib/generated/v1/types_pb";
-import { CollectionUrn, ItemUrn } from "../lib/session/urn";
+import "./analysis.scss";
 
 export default function AnalysisPage(): JSX.Element {
 	return (

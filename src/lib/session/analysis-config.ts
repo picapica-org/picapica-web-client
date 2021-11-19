@@ -1,6 +1,9 @@
 import { ResourcePair } from "../generated/v1/types_pb";
 import { EMPTY_MAP, EMPTY_SET } from "../util";
-import { CollectionUrn, getPicapicaUrnType, ItemUrn, NONE_URN } from "./urn";
+import { PicapicaUrn, NONE_URN } from "./urn";
+
+export type ItemUrn = string & { readonly __itemUrn?: never };
+export type CollectionUrn = string & { readonly __itemUrn?: never };
 
 export class AnalysisConfig {
 	readonly groupA: ReadonlySet<ItemUrn>;
@@ -145,4 +148,12 @@ export class AnalysisConfig {
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace AnalysisConfig {
 	export const EMPTY = new AnalysisConfig(EMPTY_SET, EMPTY_SET, EMPTY_MAP);
+}
+
+function getPicapicaUrnType(urn: string): PicapicaUrn["type"] | undefined {
+	try {
+		return PicapicaUrn.parse(urn).type;
+	} catch (error) {
+		return undefined;
+	}
 }
