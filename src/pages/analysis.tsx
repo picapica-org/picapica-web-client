@@ -80,7 +80,7 @@ function Analysis(props: LocalizableProps): JSX.Element {
 						session={session}
 						config={config}
 						update={updateConfig}
-						collection="urn:collection:wikipedia"
+						collection="urn:picapica:collection:wikipedia"
 						title={l.wikipediaTitle}
 						instruction={l.wikipediaInstruction}
 					/>

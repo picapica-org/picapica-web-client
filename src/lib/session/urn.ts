@@ -1,4 +1,4 @@
-import URI, { URIComponents } from "uri-js";
+import { parse as parseURI, URIComponents } from "uri-js";
 
 export const NONE_URN = "urn:none:";
 
@@ -25,7 +25,7 @@ export interface PicapicaItemUrn {
 // eslint-disable-next-line @typescript-eslint/no-namespace, @typescript-eslint/no-redeclare
 export namespace PicapicaUrn {
 	export function parse(urn: string): PicapicaUrn {
-		const parsed = URI.parse(urn) as URIComponents & { nid?: string; nss?: string };
+		const parsed = parseURI(urn) as URIComponents & { nid?: string; nss?: string };
 		if (parsed.scheme !== "urn" || parsed.nid !== "picapica" || !parsed.nss) {
 			throw new SyntaxError(`Invalid Picapica URN: ${urn}`);
 		}
