@@ -2,7 +2,12 @@ import { parse as parseURI, URIComponents } from "uri-js";
 
 export const NONE_URN = "urn:none:";
 
-export type PicapicaUrn = PicapicaCollectionUrn | PicapicaDocumentUrn | PicapicaSessionUrn | PicapicaItemUrn;
+export type PicapicaUrn =
+	| PicapicaCollectionUrn
+	| PicapicaDocumentUrn
+	| PicapicaSessionUrn
+	| PicapicaItemUrn
+	| PicapicaResultUrn;
 export interface PicapicaCollectionUrn {
 	type: "collection";
 	collectionId: string;
@@ -20,6 +25,11 @@ export interface PicapicaItemUrn {
 	type: "item";
 	sessionId: string;
 	itemId: string;
+}
+export interface PicapicaResultUrn {
+	type: "result";
+	sessionId: string;
+	resultId: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-namespace, @typescript-eslint/no-redeclare
@@ -59,6 +69,12 @@ export namespace PicapicaUrn {
 				}
 				throw new SyntaxError(`Invalid Picapica ${type} URN: ${urn}`);
 
+			case "result":
+				if (args.length === 2) {
+					return { type, sessionId: args[0], resultId: args[1] };
+				}
+				throw new SyntaxError(`Invalid Picapica ${type} URN: ${urn}`);
+
 			default:
 				throw new SyntaxError(`Invalid Picapica URN: ${urn}`);
 		}
@@ -77,6 +93,8 @@ export namespace PicapicaUrn {
 				return `:${urn.sessionId}`;
 			case "item":
 				return `:${urn.sessionId}:${urn.itemId}`;
+			case "result":
+				return `:${urn.sessionId}:${urn.resultId}`;
 		}
 	}
 }
