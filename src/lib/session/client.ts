@@ -48,11 +48,17 @@ class MockClient extends SessionServiceClient {
 		super("foo.test");
 	}
 
-	private async delay(): Promise<void> {
+	private async simulateNetwork(): Promise<void> {
 		const DELAY_MIN = 500;
 		const DELAY_MAX = 1000;
 
 		await delay(DELAY_MIN + Math.random() * (DELAY_MAX - DELAY_MIN));
+
+		const FAILURE_RATE = 0.3;
+
+		if (Math.random() < FAILURE_RATE) {
+			throw new Error("Network error");
+		}
 	}
 
 	private async _getSessionRef(id: string): Promise<v1_services_pb.Session> {
@@ -73,7 +79,7 @@ class MockClient extends SessionServiceClient {
 	}
 
 	createSession = mockUnary<v1_services_pb.CreateSessionRequest, v1_services_pb.CreateSessionResponse>(async req => {
-		await this.delay();
+		await this.simulateNetwork();
 
 		const id = uuidv4();
 		const session = new v1_services_pb.Session();
@@ -83,13 +89,13 @@ class MockClient extends SessionServiceClient {
 		return new v1_services_pb.CreateSessionResponse().setSessionId(id);
 	});
 	getSession = mockUnary<v1_services_pb.GetSessionRequest, v1_services_pb.GetSessionResponse>(async req => {
-		await this.delay();
+		await this.simulateNetwork();
 
 		const sessionRef = await this._getSessionRef(req.getSessionId());
 		return new v1_services_pb.GetSessionResponse().setSession(sessionRef.clone());
 	});
 	deleteSession = mockUnary<v1_services_pb.DeleteSessionRequest, v1_services_pb.DeleteSessionResponse>(async req => {
-		await this.delay();
+		await this.simulateNetwork();
 
 		const success = this._sessions.delete(req.getSessionId());
 		return new v1_services_pb.DeleteSessionResponse().setSuccess(success);
@@ -97,27 +103,27 @@ class MockClient extends SessionServiceClient {
 
 	getCollections = mockUnary<v1_services_pb.GetCollectionsRequest, v1_services_pb.GetCollectionsResponse>(
 		async req => {
-			await this.delay();
+			await this.simulateNetwork();
 
 			return new v1_services_pb.GetCollectionsResponse();
 		}
 	);
 
 	getConfig = mockUnary<v1_services_pb.GetConfigRequest, v1_services_pb.GetConfigResponse>(async req => {
-		await this.delay();
+		await this.simulateNetwork();
 
 		const sessionRef = await this._getSessionRef(req.getSessionId());
 		return new v1_services_pb.GetConfigResponse().setConfig(sessionRef.getConfig()?.clone());
 	});
 	updateConfig = mockUnary<v1_services_pb.UpdateConfigRequest, v1_services_pb.UpdateConfigResponse>(async req => {
-		await this.delay();
+		await this.simulateNetwork();
 
 		const sessionRef = await this._getSessionRef(req.getSessionId());
 		sessionRef.setConfig(req.getConfig()?.clone());
 		return new v1_services_pb.UpdateConfigResponse().setSuccess(true);
 	});
 	deleteConfig = mockUnary<v1_services_pb.DeleteConfigRequest, v1_services_pb.DeleteConfigResponse>(async req => {
-		await this.delay();
+		await this.simulateNetwork();
 
 		const sessionRef = await this._getSessionRef(req.getSessionId());
 		sessionRef.setConfig(undefined);
@@ -125,7 +131,7 @@ class MockClient extends SessionServiceClient {
 	});
 
 	createItem = mockUnary<v1_services_pb.CreateItemRequest, v1_services_pb.CreateItemResponse>(async req => {
-		await this.delay();
+		await this.simulateNetwork();
 
 		const sessionRef = await this._getSessionRef(req.getSessionId());
 
@@ -169,14 +175,14 @@ class MockClient extends SessionServiceClient {
 		return new v1_services_pb.CreateItemResponse().setId(item.getUrn());
 	});
 	updateItem = mockUnary<v1_services_pb.UpdateItemRequest, v1_services_pb.UpdateItemResponse>(async req => {
-		await this.delay();
+		await this.simulateNetwork();
 
 		const itemRef = await this._getItemRef(req.getSessionId(), req.getItemId());
 		itemRef.setMeta(req.getMeta()?.clone());
 		return new v1_services_pb.UpdateItemResponse().setSuccess(true);
 	});
 	getItem = mockUnary<v1_services_pb.GetItemRequest, v1_services_pb.GetItemResponse>(async req => {
-		await this.delay();
+		await this.simulateNetwork();
 
 		const res = new v1_services_pb.GetItemResponse();
 		for (const urn of req.getItemIdsList()) {
@@ -187,7 +193,7 @@ class MockClient extends SessionServiceClient {
 		return res;
 	});
 	deleteItem = mockUnary<v1_services_pb.DeleteItemRequest, v1_services_pb.DeleteItemResponse>(async req => {
-		await this.delay();
+		await this.simulateNetwork();
 
 		const sessionRef = await this._getSessionRef(req.getSessionId());
 		const itemRef = await this._getItemRef(req.getSessionId(), req.getItemId());
