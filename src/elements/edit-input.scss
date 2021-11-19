@@ -43,7 +43,7 @@
 			}
 		}
 		.edit {
-			opacity: 0.5;
+			opacity: 50%;
 			&:not(:hover):not(:active):not(:focus) {
 				--button-background: transparent;
 				--button-border-color: transparent;
@@ -51,7 +51,7 @@
 			&:hover,
 			&:active,
 			&:focus {
-				opacity: 1;
+				opacity: 100%;
 			}
 		}
 	}
