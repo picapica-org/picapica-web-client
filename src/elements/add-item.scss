@@ -5,8 +5,8 @@
 	white-space: nowrap;
 
 	& > .big-plus {
-		border-radius: 100%;
 		--button-border-color: #{$white} !important;
+		border-radius: 100%;
 
 		margin-right: -1em;
 		width: 1.5em;
@@ -50,7 +50,6 @@
 
 		button {
 			padding: 0.75em 1em;
-			border: none;
 			cursor: pointer;
 			background: none;
 			border: 1px solid transparent;
