@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidV4 } from "uuid";
 import { ItemMeta, ItemProto } from "./session/create-item";
 import { getSessionClient } from "./session/client";
 
@@ -52,7 +52,7 @@ export function useUpload(
 
 			const newUploads = items.map(proto => {
 				const uploading: UploadingItem = {
-					uploadId: uuidv4(),
+					uploadId: uuidV4(),
 					item: proto.getMeta(),
 				};
 
