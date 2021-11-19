@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { v4 as uuidV4 } from "uuid";
 import { getSessionClient } from "../lib/session/client";
 import {
 	CreateSessionRequest,
@@ -39,10 +40,7 @@ export function visitState<S extends State, R>(state: S, visitor: StateVisitor<S
 	return fn(state);
 }
 
-interface TempState {
-	readonly forState: State;
-	readonly temp: Ready;
-}
+export type SessionMutator = (session: DeepReadonly<Session.AsObject>) => DeepReadonly<Session.AsObject>;
 
 export type UseSessionArray<S extends State = State> = [
 	state: S,
@@ -59,10 +57,7 @@ export type UseSessionArray<S extends State = State> = [
 	 * This method is intended to be called synchronously. Calling this method asynchronously will result in undefined
 	 * behavior.
 	 */
-	update: (
-		action: Promise<void>,
-		mutate: (session: DeepReadonly<Session.AsObject>) => DeepReadonly<Session.AsObject>
-	) => void
+	update: (action: Promise<void>, mutate: SessionMutator) => void
 ];
 
 export function useCreateSession(): UseSessionArray<CreateState> {
@@ -74,9 +69,47 @@ export function useLoadSession(): UseSessionArray<LoadState> {
 	return [toLoadState(state), update];
 }
 
+/**
+ * This is the implementation of the public `use*Session` variants above.
+ *
+ * ## Mutations
+ *
+ * Regarding mutations, this implements a type of write-ahead log. All mutations are done via the returned `update`
+ * function and have to provide a mutator. This mutator is used to "write ahead" on our current view of the session
+ * object. We will synchronize with the server after all concurrent mutations have been applied.
+ *
+ * ### Assumptions
+ *
+ * This write-ahead approach means that we do not have to wait for the server to respond until the effects of mutations
+ * are show to the user. However, it also means that we make additional assumptions:
+ *
+ * 1. We assume that the current user has exclusive write access to the session. (This is typically the case.)
+ *
+ *    If the assumption is not met, then the lack of synchronization while mutations are execution means that we might
+ *    be mutating an outdated version of the session.
+ *
+ * 2. We assume that mutations of the server are applied in the same order as in our write-ahead log.
+ *
+ *    If the assumption is not met, then mutations will fail in the best case (we can detect and handle this) or
+ *    succeed and produce different results on the server compared to our write-ahead log in the worst case.
+ *
+ *    The impact of not meeting this assumption very much depends on how long a mutation takes to execute on the server
+ *    from the client's perspective (network latency + actual processing time) and how many mutation the client sends.
+ *    If there are no *concurrent* mutations, then they can't be out of order.
+ *
+ * 3. We assume that the mutators have the same effect as the mutations done by the server.
+ *
+ *    This is a rather obvious assumption. The write-ahead log will only work if we write ahead the right thing.
+ *
+ *    This means in practice, that the server and the mutators have to have a common understanding of how operations
+ *    are implemented.
+ *
+ * @param create
+ * @returns
+ */
 function useSession(create: boolean): UseSessionArray<InternalState> {
 	const [state, setState] = useState<InternalState>(getDefaultState());
-	console.log(state);
+	const [concurrentMutations, setConcurrentMutations] = useState(0);
 
 	// update the session id on URL changes
 	useEffect(
@@ -122,6 +155,11 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 					return getSessionClient().createSession(new CreateSessionRequest(), null);
 				}
 				case "Loading": {
+					if (concurrentMutations > 0) {
+						// reloading while mutating doesn't make much sense right now.
+						return;
+					}
+
 					await delay(getRetryDelay(state.retries));
 					token.checkCanceled();
 
@@ -164,10 +202,9 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 					console.warn("Reached unreachable part");
 			}
 		},
-		[state, setState, create]
+		[concurrentMutations, state, setState, create]
 	);
 
-	// memoize a few functions
 	const reload = useCallback(
 		() =>
 			setState(prev => {
@@ -201,62 +238,47 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 	// the last ready state while internally working on uploading the session.
 	const stableState = getStableState(state, lastReady);
 
-	// Temporary state is a trick to apply updates to a session immediately without waiting for a reload.
-	//
-	// Basically, we want to be able to say: "Here is a Promise of some update action I did and a session object that
-	// you will get from the server after my action succeeds. Display display this session object until you reload
-	// again."
-	//
-	// Conceptually, temporary state is dependent on stable state. Once the stable state changes, the temporary state
-	// is no longer valid.
-	const [tempState, setTempState] = useState<TempState>();
-	useEffect(() => {
-		if (tempState && tempState.forState !== stableState) {
-			setTempState(undefined);
-		}
-	}, [tempState, setTempState, stableState]);
+	// The write-ahead log is implemented as a starting state and a list of mutations applied to the session.
+	const [log, setLog] = useState<WriteAheadLog>();
 
-	const [concurrentUpdates, setConcurrentUpdates] = useState(0);
+	// reset the log after each refresh
+	useEffect(() => {
+		if (log && log.forState !== stableState) {
+			setLog(undefined);
+		}
+	}, [log, setLog, stableState]);
 
 	const update: UseSessionArray[1] = useCallback(
-		(action, mutate) => {
-			setConcurrentUpdates(prev => prev + 1);
+		(action, mutator) => {
+			setConcurrentMutations(prev => prev + 1);
 
-			// Setting a temporary session state only makes sense when 1) we are not currently doing an update and
-			// 2) we are not currently reloading the session.
-			if (state.type === "Ready" && concurrentUpdates === 0) {
-				setTempState({ forState: state, temp: { type: "Ready", session: mutate(state.session) } });
+			const item = new MutatorItem(mutator);
 
-				action.then(
-					() => {
-						setConcurrentUpdates(prev => prev - 1);
-						reload();
-					},
-					() => {
-						setConcurrentUpdates(prev => prev - 1);
-						setTempState(undefined);
-						reload();
-					}
-				);
-			} else {
-				action.then(
-					() => {
-						setConcurrentUpdates(prev => prev - 1);
-						reload();
-					},
-					() => {
-						setConcurrentUpdates(prev => prev - 1);
-						reload();
-					}
-				);
-			}
+			setLog(prev => {
+				const log = prev ?? (stableState.type === "Ready" ? WriteAheadLog.empty(stableState) : undefined);
+				return log?.withMutation(item);
+			});
+
+			action.then(
+				() => {
+					setConcurrentMutations(prev => prev - 1);
+					reload();
+				},
+				() => {
+					setConcurrentMutations(prev => prev - 1);
+					// An error occurred, so we want to roll back the mutation in our write-ahead log.
+					// This is done by simply removing the mutator.
+					setLog(prev => prev?.withoutMutation(item.id));
+					reload();
+				}
+			);
 		},
-		[state, setTempState, concurrentUpdates, setConcurrentUpdates, reload]
+		[stableState, setLog, setConcurrentMutations, reload]
 	);
 
-	const displayState = tempState?.forState === stableState ? tempState.temp : stableState;
+	console.log(state);
 
-	return [displayState, update];
+	return [log?.current ?? stableState, update];
 }
 
 function getDefaultState(): InternalState {
@@ -281,9 +303,7 @@ function getSessionId(state: State): string | null {
 }
 
 function getRetryDelay(retries: number): number {
-	if (retries === 0) {
-		return 0;
-	} else if (retries <= 3) {
+	if (retries < 3) {
 		// the first 3 retires should be fast
 		return 1_000;
 	} else if (retries <= 10) {
@@ -310,4 +330,47 @@ function getStableState(state: InternalState, lastReady: Ready | undefined): Int
 		return lastReady;
 	}
 	return state;
+}
+
+class WriteAheadLog {
+	readonly forState: Ready;
+	readonly mutations: readonly MutatorItem[];
+	readonly current: Ready;
+
+	private constructor(forState: Ready, mutations: readonly MutatorItem[], current: Ready) {
+		this.forState = forState;
+		this.mutations = mutations;
+		this.current = current;
+	}
+
+	static empty(forState: Ready): WriteAheadLog {
+		return new WriteAheadLog(forState, [], forState);
+	}
+
+	withMutation(mutator: MutatorItem): WriteAheadLog {
+		return new WriteAheadLog(this.forState, [...this.mutations, mutator], {
+			type: "Ready",
+			session: mutator.mutator(this.current.session),
+		});
+	}
+
+	withoutMutation(id: string): WriteAheadLog {
+		const mutations = this.mutations.filter(m => m.id !== id);
+		return new WriteAheadLog(this.forState, mutations, {
+			type: "Ready",
+			session: mutations.reduce((session, item) => {
+				return item.mutator(session);
+			}, this.forState.session),
+		});
+	}
+}
+
+class MutatorItem {
+	readonly id: string;
+	readonly mutator: SessionMutator;
+
+	constructor(mutator: SessionMutator) {
+		this.id = uuidV4();
+		this.mutator = mutator;
+	}
 }

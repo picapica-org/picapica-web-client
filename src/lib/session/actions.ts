@@ -1,13 +1,13 @@
 import { SessionConfig } from "../generated/v1/configs_pb";
 import { DeleteItemRequest, Session, UpdateConfigRequest, UpdateItemRequest } from "../generated/v1/services_pb";
 import { Item } from "../generated/v1/types_pb";
-import { UseSessionArray } from "../use-session";
+import { SessionMutator } from "../use-session";
 import { DeepReadonly } from "../util";
 import { AnalysisConfig } from "./analysis-config";
 import { cloneSession } from "./util";
 
 export interface ActionResult<Req> {
-	mutate: Parameters<UseSessionArray[1]>[1];
+	mutate: SessionMutator;
 	request: Req;
 }
 
