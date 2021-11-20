@@ -1,4 +1,4 @@
-import React, { useEffect, DependencyList, useRef, useCallback } from "react";
+import React, { DependencyList, useCallback, useEffect, useRef } from "react";
 import { CancellationController, CancellationToken } from "./cancellation";
 
 export function dynamic(supplier: () => JSX.Element): JSX.Element {

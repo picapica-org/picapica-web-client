@@ -1,5 +1,5 @@
 import React from "react";
-import { fromDiff, filterUnchanged, iteratePairs, EditPair } from "../lib/edit";
+import { EditPair, filterUnchanged, fromDiff, iteratePairs } from "../lib/edit";
 import { CategoryGroup, debugAssert, groupByCategory } from "../lib/util";
 import "./alignment-view.scss";
 

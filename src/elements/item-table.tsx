@@ -1,10 +1,10 @@
 import React, { useCallback } from "react";
-import { PicaIcon, ItemTypeIcon } from "../elements/icon";
+import { ItemTypeIcon, PicaIcon } from "../elements/icon";
 import { UseSessionArray } from "../lib/use-session";
 import { getSessionClient } from "../lib/session/client";
 import { Session } from "../lib/generated/v1/services_pb";
 import { Item } from "../lib/generated/v1/types_pb";
-import { LocalizableProps, Locales, SimpleString, getLocalization, getIntlLocales } from "../lib/localization";
+import { getIntlLocales, getLocalization, Locales, LocalizableProps, SimpleString } from "../lib/localization";
 import { DeepReadonly, noop } from "../lib/util";
 import { Buttons } from "../elements/buttons";
 import { EditInput } from "../elements/edit-input";

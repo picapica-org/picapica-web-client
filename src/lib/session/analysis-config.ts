@@ -1,6 +1,6 @@
 import { ResourcePair } from "../generated/v1/types_pb";
 import { EMPTY_MAP, EMPTY_SET } from "../util";
-import { PicapicaUrn, NONE_URN } from "./urn";
+import { NONE_URN, PicapicaUrn } from "./urn";
 
 export type ItemUrn = string & { readonly __itemUrn?: never };
 export type CollectionUrn = string & { readonly __itemUrn?: never };

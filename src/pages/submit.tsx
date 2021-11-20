@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Page } from "../elements/page";
 import { SharedHead } from "../elements/shared-header";
-import { getCurrentLang, LocalizableProps, Locales, SimpleString, getLocalization } from "../lib/localization";
+import { getCurrentLang, getLocalization, Locales, LocalizableProps, SimpleString } from "../lib/localization";
 import { dynamic } from "../lib/react-util";
 import { getLinkToStep, StepSelectorGroup } from "../elements/step-selector";
 import { AddItem } from "../elements/add-item";

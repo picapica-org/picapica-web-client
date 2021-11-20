@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet";
 import { Page } from "../elements/page";
 import { NewAnalysis } from "../elements/new-analysis";
 import { SharedHead } from "../elements/shared-header";
-import { getCurrentLang, Locales, LocalizableProps, getLocalization } from "../lib/localization";
+import { getCurrentLang, getLocalization, Locales, LocalizableProps } from "../lib/localization";
 import { dynamic } from "../lib/react-util";
 import "./index.scss";
 

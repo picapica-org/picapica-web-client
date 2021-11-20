@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "gatsby";
-import { LocalizableProps, Locales, getLocalization } from "../lib/localization";
+import { getLocalization, Locales, LocalizableProps } from "../lib/localization";
 import { PicaIcon } from "./icon";
 import { Buttons } from "./buttons";
 
