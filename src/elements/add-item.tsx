@@ -92,7 +92,8 @@ export function AddItem(props: AddItemProps): JSX.Element {
 										className={`tab${currentTab === kind ? " active" : ""}`}
 										onClick={() => setCurrentTab(kind)}>
 										<PicaIcon kind={kind} />
-										{l[`modal-tab-${kind}`]}
+										<span className="long">{l[`modal-tab-${kind}-long`]}</span>
+										<span className="short">{l[`modal-tab-${kind}-short`]}</span>
 									</button>
 								);
 							})}
@@ -248,7 +249,8 @@ function ModalFooter(props: { add?: () => void } & ClosableProps & LocalizablePr
 const locales: Locales<
 	Record<
 		| ItemType
-		| `modal-tab-${ItemType}`
+		| `modal-tab-${ItemType}-long`
+		| `modal-tab-${ItemType}-short`
 		| "cancel"
 		| "add"
 		| "chooseFiles"
@@ -264,9 +266,12 @@ const locales: Locales<
 		"url": "URL",
 		"text": "Text",
 
-		"modal-tab-file": "Upload files",
-		"modal-tab-url": "Submit URL",
-		"modal-tab-text": "Paste text",
+		"modal-tab-file-long": "Upload files",
+		"modal-tab-url-long": "Submit URL",
+		"modal-tab-text-long": "Paste text",
+		"modal-tab-file-short": "Files",
+		"modal-tab-url-short": "URL",
+		"modal-tab-text-short": "Text",
 
 		"cancel": "Cancel",
 		"add": "Add",
@@ -282,9 +287,12 @@ const locales: Locales<
 		"url": "URL",
 		"text": "Text",
 
-		"modal-tab-file": "Dateien hochladen",
-		"modal-tab-url": "URL eingeben",
-		"modal-tab-text": "Text einfügen",
+		"modal-tab-file-long": "Dateien hochladen",
+		"modal-tab-url-long": "URL eingeben",
+		"modal-tab-text-long": "Text einfügen",
+		"modal-tab-file-short": "Dateien",
+		"modal-tab-url-short": "URL",
+		"modal-tab-text-short": "Text",
 
 		"cancel": "Abbrechen",
 		"add": "Hinzufügen",

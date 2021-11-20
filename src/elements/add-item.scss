@@ -43,6 +43,16 @@
 	margin-top: 2em !important;
 
 	width: calc(min(600px, 100% - 4em));
+	max-height: calc(100% - 4em);
+	overflow: auto;
+
+	@media screen and (max-width: 500px), screen and (max-height: 400px) {
+		& {
+			margin-top: 1em !important;
+			width: calc(min(600px, 100% - 2em));
+			max-height: calc(100% - 2em);
+		}
+	}
 
 	div.tabs {
 		padding: 2em 0 0 1em;
@@ -78,6 +88,9 @@
 				.Icon {
 					margin-right: 0.3em;
 				}
+				.short {
+					display: none;
+				}
 			}
 
 			&.close {
@@ -93,11 +106,58 @@
 				}
 			}
 		}
+
+		@media screen and (max-width: 600px) {
+			& {
+				button.tab:not(.active) {
+					.long {
+						display: none;
+					}
+					.short {
+						display: inline;
+					}
+				}
+			}
+		}
+
+		@media screen and (max-width: 500px) {
+			& {
+				padding-top: 3em;
+
+				button.close {
+					position: absolute;
+					top: 0;
+					right: 0;
+					bottom: auto;
+					border: none;
+					border-radius: 0 0.5em 0 0 !important;
+				}
+			}
+		}
+
+		@media screen and (max-width: 400px) {
+			& {
+				button.tab.active {
+					.long {
+						display: none;
+					}
+					.short {
+						display: inline;
+					}
+				}
+			}
+		}
 	}
 
 	.modal-content {
 		padding: 1em;
 		min-height: 10em;
+
+		@media screen and (max-height: 400px) {
+			& {
+				min-height: auto;
+			}
+		}
 
 		& > label {
 			display: block;
@@ -121,7 +181,7 @@
 			}
 		}
 		textarea {
-			height: 7.75em;
+			min-height: 7.75em;
 			resize: vertical;
 		}
 
