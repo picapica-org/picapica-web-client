@@ -137,6 +137,10 @@ class MockClient extends SessionServiceClient {
 		const sessionRef = await this._getSessionRef(req.getSessionId());
 
 		const raw = req.getRaw_asU8();
+
+		// delay to simulate the upload (100 kB/s)
+		await delay(raw.byteLength / 100);
+
 		let content: string;
 		switch (req.getType()) {
 			case Item.Resource.Type.TYPE_UNSPECIFIED:
