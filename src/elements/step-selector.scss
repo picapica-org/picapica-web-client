@@ -19,16 +19,11 @@
 	margin: 1em 2em 2em 2em;
 
 	& > .Group > * > .heading-wrapper {
+		width: 100%;
 		text-align: center;
-		height: var(--group-heading-height);
 		position: relative;
 
 		& > .StepSelector {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-
 			@media screen and (max-width: 600px) {
 				& {
 					.Icon {

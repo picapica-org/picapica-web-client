@@ -13,6 +13,10 @@
 
 		height: var(--group-heading-height);
 		margin-bottom: calc(var(--group-heading-height) / -2);
+
+		display: flex;
+		flex-direction: row;
+		align-items: center;
 	}
 	& > .group-container {
 		box-sizing: border-box;
