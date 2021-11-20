@@ -223,7 +223,9 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 	);
 
 	// update the last ready state
-	const [lastReady, setLastReady] = useState<Ready | undefined>();
+	const [lastReady, setLastReady] = useState<Ready | undefined>(
+		state.type === "Loading" ? getLastDisplayState(state.sessionId) : undefined
+	);
 	useEffect(() => {
 		if (state.type === "Ready") {
 			setLastReady(state);
@@ -278,7 +280,10 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 
 	console.log(state);
 
-	return [log?.current ?? stableState, update];
+	const displayState = log?.current ?? stableState;
+	useEffect(() => setLastDisplayState(displayState), [displayState]);
+
+	return [displayState, update];
 }
 
 function getDefaultState(): InternalState {
@@ -288,6 +293,27 @@ function getDefaultState(): InternalState {
 		return { type: "Loading", sessionId, retries: 0 };
 	} else {
 		return { type: "Creating", retries: 0 };
+	}
+}
+
+function getLastDisplayStateKey(sessionId: string): string {
+	return "last-display:" + sessionId;
+}
+function getLastDisplayState(sessionId: string): Ready | undefined {
+	const value = sessionStorage.getItem(getLastDisplayStateKey(sessionId));
+	if (value) {
+		return JSON.parse(value);
+	} else {
+		return undefined;
+	}
+}
+function setLastDisplayState(displayState: InternalState): void {
+	if (displayState.type === "Creating") {
+		// nothing to do
+	} else if (displayState.type === "Loading") {
+		sessionStorage.removeItem(getLastDisplayStateKey(displayState.sessionId));
+	} else {
+		sessionStorage.setItem(getLastDisplayStateKey(displayState.session.id), JSON.stringify(displayState));
 	}
 }
 
