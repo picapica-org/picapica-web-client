@@ -115,26 +115,24 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 	const [concurrentMutations, setConcurrentMutations] = useState(0);
 
 	// update the session id on URL changes
-	useEffect(
-		() =>
-			addLocationChangeListener(() => {
-				const id = getURLSearchParams().get("id");
-				setState(prev => {
-					const sessionId = getSessionId(prev);
+	useEffect(() => {
+		return addLocationChangeListener(() => {
+			const id = getURLSearchParams().get("id");
+			setState(prev => {
+				const sessionId = getSessionId(prev);
 
-					if (id !== sessionId) {
-						if (id) {
-							return { type: "Loading", sessionId: id, retries: 0 };
-						} else {
-							return { type: "Creating", retries: 0 };
-						}
+				if (id !== sessionId) {
+					if (id) {
+						return { type: "Loading", sessionId: id, retries: 0 };
 					} else {
-						return prev;
+						return { type: "Creating", retries: 0 };
 					}
-				});
-			}),
-		[setState]
-	);
+				} else {
+					return prev;
+				}
+			});
+		});
+	}, [setState]);
 
 	// set the current URL params based on the current session
 	useEffect(() => {
@@ -208,22 +206,20 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 		[concurrentMutations, state, setState, create]
 	);
 
-	const reload = useCallback(
-		() =>
-			setState(prev => {
-				switch (prev.type) {
-					case "Creating":
-						return prev;
-					case "Loading":
-						return { ...prev, retries: 0 };
-					case "Ready":
-						return { type: "Loading", retries: 0, sessionId: prev.session.id };
-					default:
-						assertNever(prev);
-				}
-			}),
-		[setState]
-	);
+	const reload = useCallback(() => {
+		setState(prev => {
+			switch (prev.type) {
+				case "Creating":
+					return prev;
+				case "Loading":
+					return { ...prev, retries: 0 };
+				case "Ready":
+					return { type: "Loading", retries: 0, sessionId: prev.session.id };
+				default:
+					assertNever(prev);
+			}
+		});
+	}, [setState]);
 
 	// update the last ready state
 	const [lastReady, setLastReady] = useState<Ready | undefined>(
