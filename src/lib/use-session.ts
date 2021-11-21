@@ -74,35 +74,38 @@ export function useLoadSession(): UseSessionArray<LoadState> {
  *
  * ## Mutations
  *
- * Regarding mutations, this implements a type of write-ahead log. All mutations are done via the returned `update`
- * function and have to provide a mutator. This mutator is used to "write ahead" on our current view of the session
- * object. We will synchronize with the server after all concurrent mutations have been applied.
+ * Regarding mutations, this implements a journal. All mutations are done via the returned `update` function and have
+ * to provide a mutator. This mutator is used to create a history of all mutations applied to our current view of the
+ * session, the journal. This allows us to displays the effects of mutations immediately without having to synchronize
+ * with the backend server. This significantly improves the user experience.
+ *
+ * We will synchronize with the backend server after all concurrent mutation requests completed.
  *
  * ### Assumptions
  *
- * This write-ahead approach means that we do not have to wait for the server to respond until the effects of mutations
- * are show to the user. However, it also means that we make additional assumptions:
+ * This journal approach means that we do not have to wait for the backend server to respond until the effects of
+ * mutations are shown to the user. However, it also means that we need to make additional assumptions:
  *
  * 1. We assume that the current user has exclusive write access to the session. (This is typically the case.)
  *
- *    If the assumption is not met, then the lack of synchronization while mutations are execution means that we might
+ *    If this assumption is not met, then the lack of synchronization while mutations are executing means that we might
  *    be mutating an outdated version of the session.
  *
- * 2. We assume that mutations of the server are applied in the same order as in our write-ahead log.
+ * 2. We assume that mutations of the backend server are applied in the same order as in our journal.
  *
- *    If the assumption is not met, then mutations will fail in the best case (we can detect and handle this) or
- *    succeed and produce different results on the server compared to our write-ahead log in the worst case.
+ *    If this assumption is not met, then mutations will fail in the best case (we can detect and handle this) or
+ *    succeed and produce different results on the backend server compared to our client-side view in the worst case.
  *
- *    The impact of not meeting this assumption very much depends on how long a mutation takes to execute on the server
- *    from the client's perspective (network latency + actual processing time) and how many mutation the client sends.
- *    If there are no *concurrent* mutations, then they can't be out of order.
+ *    The impact of not meeting this assumption very much depends on how long a mutation takes to execute on the
+ *    backend server from the client's perspective (this includes network latency) and how many mutation requests the
+ *    client sends. If there are no *concurrent* mutations, then they can't be out of order.
  *
  * 3. We assume that the mutators have the same effect as the mutations done by the server.
  *
- *    This is a rather obvious assumption. The write-ahead log will only work if we write ahead the right thing.
+ *    This is a rather obvious assumption. The journal will only work if we do the right thing as the backend server.
  *
- *    This means in practice, that the server and the mutators have to have a common understanding of how operations
- *    are implemented.
+ *    This means in practice, that the backend server and the mutators have to have a common understanding of how
+ *    operations are implemented.
  *
  * @param create
  * @returns
@@ -240,24 +243,23 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 	// the last ready state while internally working on uploading the session.
 	const stableState = getStableState(state, lastReady);
 
-	// The write-ahead log is implemented as a starting state and a list of mutations applied to the session.
-	const [log, setLog] = useState<WriteAheadLog>();
+	const [journal, setJournal] = useState<Journal>();
 
 	// reset the log after each refresh
 	useEffect(() => {
-		if (log && log.forState !== stableState) {
-			setLog(undefined);
+		if (journal && journal.forState !== stableState) {
+			setJournal(undefined);
 		}
-	}, [log, setLog, stableState]);
+	}, [journal, setJournal, stableState]);
 
 	const update: UseSessionArray[1] = useCallback(
 		(action, mutator) => {
 			setConcurrentMutations(prev => prev + 1);
 
-			const item = new MutatorItem(mutator);
+			const item = new JournalItem(mutator);
 
-			setLog(prev => {
-				const log = prev ?? (stableState.type === "Ready" ? WriteAheadLog.empty(stableState) : undefined);
+			setJournal(prev => {
+				const log = prev ?? (stableState.type === "Ready" ? Journal.empty(stableState) : undefined);
 				return log?.withMutation(item);
 			});
 
@@ -268,19 +270,19 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 				},
 				() => {
 					setConcurrentMutations(prev => prev - 1);
-					// An error occurred, so we want to roll back the mutation in our write-ahead log.
+					// An error occurred, so we want to roll back the mutation in our journal.
 					// This is done by simply removing the mutator.
-					setLog(prev => prev?.withoutMutation(item.id));
+					setJournal(prev => prev?.withoutMutation(item.id));
 					reload();
 				}
 			);
 		},
-		[stableState, setLog, setConcurrentMutations, reload]
+		[stableState, setJournal, setConcurrentMutations, reload]
 	);
 
 	console.log(state);
 
-	const displayState = log?.current ?? stableState;
+	const displayState = journal?.current ?? stableState;
 	useEffect(() => setLastDisplayState(displayState), [displayState]);
 
 	return [displayState, update];
@@ -360,31 +362,31 @@ function getStableState(state: InternalState, lastReady: Ready | undefined): Int
 	return state;
 }
 
-class WriteAheadLog {
+class Journal {
 	readonly forState: Ready;
-	readonly mutations: readonly MutatorItem[];
+	readonly mutations: readonly JournalItem[];
 	readonly current: Ready;
 
-	private constructor(forState: Ready, mutations: readonly MutatorItem[], current: Ready) {
+	private constructor(forState: Ready, mutations: readonly JournalItem[], current: Ready) {
 		this.forState = forState;
 		this.mutations = mutations;
 		this.current = current;
 	}
 
-	static empty(forState: Ready): WriteAheadLog {
-		return new WriteAheadLog(forState, [], forState);
+	static empty(forState: Ready): Journal {
+		return new Journal(forState, [], forState);
 	}
 
-	withMutation(mutator: MutatorItem): WriteAheadLog {
-		return new WriteAheadLog(this.forState, [...this.mutations, mutator], {
+	withMutation(mutator: JournalItem): Journal {
+		return new Journal(this.forState, [...this.mutations, mutator], {
 			type: "Ready",
 			session: mutator.mutator(this.current.session),
 		});
 	}
 
-	withoutMutation(id: string): WriteAheadLog {
+	withoutMutation(id: string): Journal {
 		const mutations = this.mutations.filter(m => m.id !== id);
-		return new WriteAheadLog(this.forState, mutations, {
+		return new Journal(this.forState, mutations, {
 			type: "Ready",
 			session: mutations.reduce((session, item) => {
 				return item.mutator(session);
@@ -393,7 +395,7 @@ class WriteAheadLog {
 	}
 }
 
-class MutatorItem {
+class JournalItem {
 	readonly id: string;
 	readonly mutator: SessionMutator;
 
