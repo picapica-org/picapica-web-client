@@ -11,11 +11,12 @@ import { StepActionBar } from "../elements/step-action-bar";
 import { NextButton } from "../elements/step-buttons";
 import { SessionCreating, SessionLoading } from "../elements/session-creating-loading";
 import { ItemProto, toItemResourceType } from "../lib/session/create-item";
-import { CreateState, useCreateSession, visitState } from "../lib/use-session";
-import "./submit.scss";
+import { CreateState, getSessionId, useCreateSession, visitState } from "../lib/use-session";
 import { FailedItem, UploadedItem, UploadingItem, useUpload } from "../lib/use-upload";
 import { Icon, ItemTypeIcon } from "../elements/icon";
 import { cloneSession } from "../lib/session/util";
+import { useDropzone } from "react-dropzone";
+import "./submit.scss";
 
 export default function SubmitPage(): JSX.Element {
 	return (
@@ -74,6 +75,25 @@ function Submit(props: LocalizableProps): JSX.Element {
 		}
 	}, [emptySession, setBlank]);
 
+	// file drop
+	const sessionId = getSessionId(state);
+	const dropFiles = useCallback(
+		(files: readonly File[]) => {
+			if (sessionId) {
+				upload(files.map(ItemProto.fromFile), sessionId);
+			}
+		},
+		[sessionId, upload]
+	);
+
+	const dropState = useDropzone({
+		multiple: true,
+		disabled: state.type !== "Ready",
+		onDrop: dropFiles,
+		noClick: true,
+	});
+
+	// visible state
 	const content = visitState<CreateState, JSX.Element>(state, {
 		Creating(state) {
 			return (
@@ -127,7 +147,7 @@ function Submit(props: LocalizableProps): JSX.Element {
 	});
 
 	return (
-		<Page {...props} className="Submit" header="small">
+		<Page {...props} className="Submit" header="small" dropState={dropState}>
 			{content}
 		</Page>
 	);

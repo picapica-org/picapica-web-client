@@ -104,6 +104,10 @@ export function noop(): void {
 	// noop
 }
 
+export function identity<T>(value: T): T {
+	return value;
+}
+
 export function isValidUrl(url: string): boolean {
 	try {
 		new URL(url);

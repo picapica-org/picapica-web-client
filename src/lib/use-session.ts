@@ -315,7 +315,7 @@ function setLastDisplayState(displayState: InternalState): void {
 	}
 }
 
-function getSessionId(state: State): string | null {
+export function getSessionId(state: State): string | null {
 	switch (state.type) {
 		case "Loading":
 			return state.sessionId;
