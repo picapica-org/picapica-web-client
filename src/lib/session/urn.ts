@@ -1,13 +1,15 @@
 import { parse as parseURI, URIComponents } from "uri-js";
 
-export const NONE_URN = "urn:none:";
+export const NONE_URN = "urn:picapica:none";
 
 export type PicapicaUrn =
 	| PicapicaCollectionUrn
 	| PicapicaDocumentUrn
 	| PicapicaSessionUrn
 	| PicapicaItemUrn
-	| PicapicaResultUrn;
+	| PicapicaResultUrn
+	| PicapicaNoneUrn;
+
 export interface PicapicaCollectionUrn {
 	type: "collection";
 	collectionId: string;
@@ -30,6 +32,9 @@ export interface PicapicaResultUrn {
 	type: "result";
 	sessionId: string;
 	resultId: string;
+}
+export interface PicapicaNoneUrn {
+	type: "none";
 }
 
 // eslint-disable-next-line @typescript-eslint/no-namespace, @typescript-eslint/no-redeclare
@@ -75,6 +80,12 @@ export namespace PicapicaUrn {
 				}
 				throw new SyntaxError(`Invalid Picapica ${type} URN: ${urn}`);
 
+			case "none":
+				if (args.length === 0) {
+					return { type };
+				}
+				throw new SyntaxError(`Invalid Picapica ${type} URN: ${urn}`);
+
 			default:
 				throw new SyntaxError(`Invalid Picapica URN: ${urn}`);
 		}
@@ -95,6 +106,8 @@ export namespace PicapicaUrn {
 				return `:${urn.sessionId}:${urn.itemId}`;
 			case "result":
 				return `:${urn.sessionId}:${urn.resultId}`;
+			case "none":
+				return "";
 		}
 	}
 }

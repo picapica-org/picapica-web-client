@@ -52,3 +52,9 @@ Object {
   "type": "result",
 }
 `;
+
+exports[`parse 11`] = `
+Object {
+  "type": "none",
+}
+`;

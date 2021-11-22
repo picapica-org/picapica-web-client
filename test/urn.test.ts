@@ -26,6 +26,7 @@ test("parse", () => {
 		"urn:picapica:session:f2270a54-88d6-4572-9b9c-9b60bfb43de3",
 		"urn:picapica:item:f2270a54-88d6-4572-9b9c-9b60bfb43de3:a1244e8526a71095fe21825f073afe2a34f997e53874cd6986bdc049e218aced",
 		"urn:picapica:result:f2270a54-88d6-4572-9b9c-9b60bfb43de3:a1244e8526a71095fe21825f073afe2a34f997e53874cd6986bdc049e218aced",
+		"urn:picapica:none",
 	];
 
 	for (const urn of urns) {
