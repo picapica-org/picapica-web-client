@@ -10,7 +10,7 @@ import {
 } from "../lib/generated/v1/services_pb";
 import { addLocationChangeListener, useAsyncEffect } from "../lib/react-util";
 import { changeURLSearchParams, getURLSearchParams } from "../lib/url-params";
-import { assertNever, DeepReadonly, delay } from "../lib/util";
+import { assertNever, DeepReadonly, delay, noop } from "../lib/util";
 
 export interface Creating {
 	readonly type: "Creating";
@@ -70,6 +70,11 @@ export function useLoadSession(): UseSessionArray<LoadState> {
 }
 
 /**
+ * The maximum amount of time after which a session object has to be refreshed.
+ */
+const AUTO_REFRESH_INTERVAL = 30_000;
+
+/**
  * This is the implementation of the public `use*Session` variants above.
  *
  * ## Mutations
@@ -111,7 +116,9 @@ export function useLoadSession(): UseSessionArray<LoadState> {
  * @returns
  */
 function useSession(create: boolean): UseSessionArray<InternalState> {
-	const [state, setState] = useState<InternalState>(getDefaultState());
+	const [state, setState] = useState<InternalState>(getDefaultState);
+	const reload = useCallback(() => setState(getReloadState), [setState]);
+
 	const [concurrentMutations, setConcurrentMutations] = useState(0);
 
 	// update the session id on URL changes
@@ -206,20 +213,19 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 		[concurrentMutations, state, setState, create]
 	);
 
-	const reload = useCallback(() => {
-		setState(prev => {
-			switch (prev.type) {
-				case "Creating":
-					return prev;
-				case "Loading":
-					return { ...prev, retries: 0 };
-				case "Ready":
-					return { type: "Loading", retries: 0, sessionId: prev.session.id };
-				default:
-					assertNever(prev);
+	// auto reload
+	useAsyncEffect(
+		async () => {
+			if (state.type === "Ready") {
+				await delay(AUTO_REFRESH_INTERVAL);
+			} else {
+				throw new Error("Not ready");
 			}
-		});
-	}, [setState]);
+		},
+		reload,
+		noop,
+		[state, reload]
+	);
 
 	// update the last ready state
 	const [lastReady, setLastReady] = useState<Ready | undefined>(
@@ -294,16 +300,22 @@ function getDefaultState(): InternalState {
 	}
 }
 
+interface LastDisplayStateEntry {
+	readonly timestamp: number;
+	readonly state: Ready;
+}
 function getLastDisplayStateKey(sessionId: string): string {
 	return "last-display:" + sessionId;
 }
 function getLastDisplayState(sessionId: string): Ready | undefined {
 	const value = sessionStorage.getItem(getLastDisplayStateKey(sessionId));
 	if (value) {
-		return JSON.parse(value);
-	} else {
-		return undefined;
+		const entry: LastDisplayStateEntry = JSON.parse(value);
+		if (Date.now() - entry.timestamp < AUTO_REFRESH_INTERVAL * 2) {
+			return entry.state;
+		}
 	}
+	return undefined;
 }
 function setLastDisplayState(displayState: InternalState): void {
 	if (displayState.type === "Creating") {
@@ -311,7 +323,24 @@ function setLastDisplayState(displayState: InternalState): void {
 	} else if (displayState.type === "Loading") {
 		sessionStorage.removeItem(getLastDisplayStateKey(displayState.sessionId));
 	} else {
-		sessionStorage.setItem(getLastDisplayStateKey(displayState.session.id), JSON.stringify(displayState));
+		const entry: LastDisplayStateEntry = {
+			timestamp: Date.now(),
+			state: displayState,
+		};
+		sessionStorage.setItem(getLastDisplayStateKey(displayState.session.id), JSON.stringify(entry));
+	}
+}
+
+function getReloadState(state: InternalState): InternalState {
+	switch (state.type) {
+		case "Creating":
+			return state;
+		case "Loading":
+			return { ...state, retries: 0 };
+		case "Ready":
+			return { type: "Loading", retries: 0, sessionId: state.session.id };
+		default:
+			assertNever(state);
 	}
 }
 
