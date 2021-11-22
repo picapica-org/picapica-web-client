@@ -11,6 +11,7 @@ import "./add-item.scss";
 
 export interface AddItemProps extends LocalizableProps {
 	onAdd: (items: ItemProto[]) => void;
+	accept?: string;
 }
 
 const INPUT_KINDS = ["file", "url", "text"] as const;
@@ -43,7 +44,7 @@ export function AddItem(props: AddItemProps): JSX.Element {
 		[submit, closeModal]
 	);
 
-	const [openFiles, input] = useOpenFileDialog(onSelect, { multiple: true });
+	const [openFiles, input] = useOpenFileDialog(onSelect, { multiple: true, accept: props.accept });
 
 	const modalContent: Record<ItemType, (close: () => void) => JSX.Element> = {
 		file(close) {

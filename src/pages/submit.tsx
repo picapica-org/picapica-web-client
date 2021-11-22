@@ -11,11 +11,12 @@ import { StepActionBar } from "../elements/step-action-bar";
 import { NextButton } from "../elements/step-buttons";
 import { SessionCreating, SessionLoading } from "../elements/session-creating-loading";
 import { ItemProto, toItemResourceType } from "../lib/session/create-item";
-import { CreateState, useCreateSession, visitState } from "../lib/use-session";
-import "./submit.scss";
+import { CreateState, getSessionId, useCreateSession, visitState } from "../lib/use-session";
 import { FailedItem, UploadedItem, UploadingItem, useUpload } from "../lib/use-upload";
 import { Icon, ItemTypeIcon } from "../elements/icon";
 import { cloneSession } from "../lib/session/util";
+import { useDropzone } from "react-dropzone";
+import "./submit.scss";
 
 export default function SubmitPage(): JSX.Element {
 	return (
@@ -30,6 +31,17 @@ export default function SubmitPage(): JSX.Element {
 		</>
 	);
 }
+
+const ACCEPT = [
+	// PDF
+	".pdf",
+	"application/pdf",
+	// Word doc
+	".doc",
+	".docx",
+	"application/msword",
+	"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+].join(",");
 
 function Submit(props: LocalizableProps): JSX.Element {
 	const l = getLocalization(props, locales);
@@ -74,6 +86,27 @@ function Submit(props: LocalizableProps): JSX.Element {
 		}
 	}, [emptySession, setBlank]);
 
+	// file drop
+	const sessionId = getSessionId(state);
+	const dropFiles = useCallback(
+		(files: readonly File[]) => {
+			// TODO: Handle rejected files
+			if (sessionId) {
+				upload(files.map(ItemProto.fromFile), sessionId);
+			}
+		},
+		[sessionId, upload]
+	);
+
+	const dropState = useDropzone({
+		accept: ACCEPT,
+		multiple: true,
+		disabled: state.type !== "Ready",
+		onDrop: dropFiles,
+		noClick: true,
+	});
+
+	// visible state
 	const content = visitState<CreateState, JSX.Element>(state, {
 		Creating(state) {
 			return (
@@ -90,7 +123,7 @@ function Submit(props: LocalizableProps): JSX.Element {
 			);
 		},
 		Ready({ session }) {
-			const addItem = <AddItem {...props} onAdd={items => upload(items, session.id)} />;
+			const addItem = <AddItem {...props} onAdd={items => upload(items, session.id)} accept={ACCEPT} />;
 
 			return (
 				<StepSelectorGroup lang={props.lang} sessionId={session.id} current="submit">
@@ -127,7 +160,7 @@ function Submit(props: LocalizableProps): JSX.Element {
 	});
 
 	return (
-		<Page {...props} className="Submit" header="small">
+		<Page {...props} className="Submit" header="small" dropState={dropState}>
 			{content}
 		</Page>
 	);

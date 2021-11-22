@@ -35,6 +35,7 @@
     "node-sass": "^6.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-dropzone": "^11.4.2",
     "react-helmet": "^6.1.0",
     "reactjs-popup": "^2.0.5",
     "remixicon": "^2.5.0",
