@@ -90,6 +90,7 @@ function Submit(props: LocalizableProps): JSX.Element {
 	const sessionId = getSessionId(state);
 	const dropFiles = useCallback(
 		(files: readonly File[]) => {
+			// TODO: Handle rejected files
 			if (sessionId) {
 				upload(files.map(ItemProto.fromFile), sessionId);
 			}
