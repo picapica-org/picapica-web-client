@@ -32,6 +32,17 @@ export default function SubmitPage(): JSX.Element {
 	);
 }
 
+const ACCEPT = [
+	// PDF
+	".pdf",
+	"application/pdf",
+	// Word doc
+	".doc",
+	".docx",
+	"application/msword",
+	"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+].join(",");
+
 function Submit(props: LocalizableProps): JSX.Element {
 	const l = getLocalization(props, locales);
 
@@ -87,6 +98,7 @@ function Submit(props: LocalizableProps): JSX.Element {
 	);
 
 	const dropState = useDropzone({
+		accept: ACCEPT,
 		multiple: true,
 		disabled: state.type !== "Ready",
 		onDrop: dropFiles,
@@ -110,7 +122,7 @@ function Submit(props: LocalizableProps): JSX.Element {
 			);
 		},
 		Ready({ session }) {
-			const addItem = <AddItem {...props} onAdd={items => upload(items, session.id)} />;
+			const addItem = <AddItem {...props} onAdd={items => upload(items, session.id)} accept={ACCEPT} />;
 
 			return (
 				<StepSelectorGroup lang={props.lang} sessionId={session.id} current="submit">
