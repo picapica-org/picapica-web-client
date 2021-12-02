@@ -168,13 +168,114 @@ export class RetrievalServiceClient {
 
   retrieve(
     request: v1_services_pb.RetrieveRequest,
-    metadata?: grpcWeb.Metadata) {
-    return this.client_.serverStreaming(
-      this.hostname_ +
-        '/v1.RetrievalService/Retrieve',
-      request,
-      metadata || {},
-      this.methodInfoRetrieve);
+    metadata: grpcWeb.Metadata | null): Promise<v1_services_pb.RetrieveResponse>;
+
+  retrieve(
+    request: v1_services_pb.RetrieveRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.Error,
+               response: v1_services_pb.RetrieveResponse) => void): grpcWeb.ClientReadableStream<v1_services_pb.RetrieveResponse>;
+
+  retrieve(
+    request: v1_services_pb.RetrieveRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.Error,
+               response: v1_services_pb.RetrieveResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/v1.RetrievalService/Retrieve',
+        request,
+        metadata || {},
+        this.methodInfoRetrieve,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/v1.RetrievalService/Retrieve',
+    request,
+    metadata || {},
+    this.methodInfoRetrieve);
+  }
+
+  methodInfoGetText = new grpcWeb.AbstractClientBase.MethodInfo(
+    v1_services_pb.GetTextResponse,
+    (request: v1_services_pb.GetTextRequest) => {
+      return request.serializeBinary();
+    },
+    v1_services_pb.GetTextResponse.deserializeBinary
+  );
+
+  getText(
+    request: v1_services_pb.GetTextRequest,
+    metadata: grpcWeb.Metadata | null): Promise<v1_services_pb.GetTextResponse>;
+
+  getText(
+    request: v1_services_pb.GetTextRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.Error,
+               response: v1_services_pb.GetTextResponse) => void): grpcWeb.ClientReadableStream<v1_services_pb.GetTextResponse>;
+
+  getText(
+    request: v1_services_pb.GetTextRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.Error,
+               response: v1_services_pb.GetTextResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/v1.RetrievalService/GetText',
+        request,
+        metadata || {},
+        this.methodInfoGetText,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/v1.RetrievalService/GetText',
+    request,
+    metadata || {},
+    this.methodInfoGetText);
+  }
+
+  methodInfoGetCollections = new grpcWeb.AbstractClientBase.MethodInfo(
+    v1_services_pb.GetCollectionsResponse,
+    (request: v1_services_pb.GetCollectionsRequest) => {
+      return request.serializeBinary();
+    },
+    v1_services_pb.GetCollectionsResponse.deserializeBinary
+  );
+
+  getCollections(
+    request: v1_services_pb.GetCollectionsRequest,
+    metadata: grpcWeb.Metadata | null): Promise<v1_services_pb.GetCollectionsResponse>;
+
+  getCollections(
+    request: v1_services_pb.GetCollectionsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.Error,
+               response: v1_services_pb.GetCollectionsResponse) => void): grpcWeb.ClientReadableStream<v1_services_pb.GetCollectionsResponse>;
+
+  getCollections(
+    request: v1_services_pb.GetCollectionsRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.Error,
+               response: v1_services_pb.GetCollectionsResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/v1.RetrievalService/GetCollections',
+        request,
+        metadata || {},
+        this.methodInfoGetCollections,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/v1.RetrievalService/GetCollections',
+    request,
+    metadata || {},
+    this.methodInfoGetCollections);
   }
 
 }
@@ -897,6 +998,126 @@ export class ApiServiceClient {
     request,
     metadata || {},
     this.methodInfoAlignPair);
+  }
+
+  methodInfoAlignWithCollection = new grpcWeb.AbstractClientBase.MethodInfo(
+    v1_services_pb.AlignWithCollectionResponse,
+    (request: v1_services_pb.AlignWithCollectionRequest) => {
+      return request.serializeBinary();
+    },
+    v1_services_pb.AlignWithCollectionResponse.deserializeBinary
+  );
+
+  alignWithCollection(
+    request: v1_services_pb.AlignWithCollectionRequest,
+    metadata: grpcWeb.Metadata | null): Promise<v1_services_pb.AlignWithCollectionResponse>;
+
+  alignWithCollection(
+    request: v1_services_pb.AlignWithCollectionRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.Error,
+               response: v1_services_pb.AlignWithCollectionResponse) => void): grpcWeb.ClientReadableStream<v1_services_pb.AlignWithCollectionResponse>;
+
+  alignWithCollection(
+    request: v1_services_pb.AlignWithCollectionRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.Error,
+               response: v1_services_pb.AlignWithCollectionResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/v1.ApiService/AlignWithCollection',
+        request,
+        metadata || {},
+        this.methodInfoAlignWithCollection,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/v1.ApiService/AlignWithCollection',
+    request,
+    metadata || {},
+    this.methodInfoAlignWithCollection);
+  }
+
+  methodInfoGetDefaultConfig = new grpcWeb.AbstractClientBase.MethodInfo(
+    v1_services_pb.GetDefaultConfigResponse,
+    (request: v1_services_pb.GetDefaultConfigRequest) => {
+      return request.serializeBinary();
+    },
+    v1_services_pb.GetDefaultConfigResponse.deserializeBinary
+  );
+
+  getDefaultConfig(
+    request: v1_services_pb.GetDefaultConfigRequest,
+    metadata: grpcWeb.Metadata | null): Promise<v1_services_pb.GetDefaultConfigResponse>;
+
+  getDefaultConfig(
+    request: v1_services_pb.GetDefaultConfigRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.Error,
+               response: v1_services_pb.GetDefaultConfigResponse) => void): grpcWeb.ClientReadableStream<v1_services_pb.GetDefaultConfigResponse>;
+
+  getDefaultConfig(
+    request: v1_services_pb.GetDefaultConfigRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.Error,
+               response: v1_services_pb.GetDefaultConfigResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/v1.ApiService/GetDefaultConfig',
+        request,
+        metadata || {},
+        this.methodInfoGetDefaultConfig,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/v1.ApiService/GetDefaultConfig',
+    request,
+    metadata || {},
+    this.methodInfoGetDefaultConfig);
+  }
+
+  methodInfoGetText = new grpcWeb.AbstractClientBase.MethodInfo(
+    v1_services_pb.GetTextResponse,
+    (request: v1_services_pb.GetTextRequest) => {
+      return request.serializeBinary();
+    },
+    v1_services_pb.GetTextResponse.deserializeBinary
+  );
+
+  getText(
+    request: v1_services_pb.GetTextRequest,
+    metadata: grpcWeb.Metadata | null): Promise<v1_services_pb.GetTextResponse>;
+
+  getText(
+    request: v1_services_pb.GetTextRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.Error,
+               response: v1_services_pb.GetTextResponse) => void): grpcWeb.ClientReadableStream<v1_services_pb.GetTextResponse>;
+
+  getText(
+    request: v1_services_pb.GetTextRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.Error,
+               response: v1_services_pb.GetTextResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/v1.ApiService/GetText',
+        request,
+        metadata || {},
+        this.methodInfoGetText,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/v1.ApiService/GetText',
+    request,
+    metadata || {},
+    this.methodInfoGetText);
   }
 
 }

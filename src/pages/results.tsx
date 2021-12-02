@@ -33,16 +33,16 @@ function Results(props: LocalizableProps): JSX.Element {
 	const content = visitState<LoadState, JSX.Element>(state, {
 		Loading(state) {
 			return (
-				<StepSelectorGroup lang={props.lang} sessionId={state.sessionId} current="results">
+				<StepSelectorGroup lang={props.lang} sessionUrn={state.sessionUrn} current="results">
 					<SessionLoading {...props} state={state} />
 				</StepSelectorGroup>
 			);
 		},
 		Ready({ session }) {
 			return (
-				<StepSelectorGroup lang={props.lang} sessionId={session.id} current="results">
+				<StepSelectorGroup lang={props.lang} sessionUrn={session.urn} current="results">
 					<StepActionBar
-						left={<BackButton {...props} to={getLinkToStep("analysis", session.id)} />}
+						left={<BackButton {...props} to={getLinkToStep("analysis", session.urn)} />}
 						right={<span className="next-spacer" />}
 						instruction={l.instruction}
 					/>
@@ -50,7 +50,7 @@ function Results(props: LocalizableProps): JSX.Element {
 					{"TODO"}
 
 					<StepActionBar
-						left={<BackButton {...props} to={getLinkToStep("analysis", session.id)} />}
+						left={<BackButton {...props} to={getLinkToStep("analysis", session.urn)} />}
 						right={<span className="next-spacer" />}
 						instruction={""}
 					/>

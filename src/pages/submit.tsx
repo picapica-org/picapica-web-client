@@ -11,7 +11,7 @@ import { StepActionBar } from "../elements/step-action-bar";
 import { NextButton } from "../elements/step-buttons";
 import { SessionCreating, SessionLoading } from "../elements/session-creating-loading";
 import { ItemProto, toItemResourceType } from "../lib/session/create-item";
-import { CreateState, getSessionId, useCreateSession, visitState } from "../lib/use-session";
+import { CreateState, getSessionUrn, useCreateSession, visitState } from "../lib/use-session";
 import { FailedItem, UploadedItem, UploadingItem, useUpload } from "../lib/use-upload";
 import { Icon, ItemTypeIcon } from "../elements/icon";
 import { cloneSession } from "../lib/session/util";
@@ -59,9 +59,9 @@ function Submit(props: LocalizableProps): JSX.Element {
 					urn: itemUrn,
 					meta: { name: item.name },
 					resource: {
-						id: "",
+						urn: itemUrn,
 						type: toItemResourceType(item.type),
-						properties: { contentMd5: "fake", length: 0, rawMd5: "fake", size: item.size },
+						properties: { contentChecksum: "fake", length: 0, rawChecksum: "fake", size: item.size },
 					},
 				});
 				return session;
@@ -87,15 +87,15 @@ function Submit(props: LocalizableProps): JSX.Element {
 	}, [emptySession, setBlank]);
 
 	// file drop
-	const sessionId = getSessionId(state);
+	const sessionUrn = getSessionUrn(state);
 	const dropFiles = useCallback(
 		(files: readonly File[]) => {
 			// TODO: Handle rejected files
-			if (sessionId) {
-				upload(files.map(ItemProto.fromFile), sessionId);
+			if (sessionUrn) {
+				upload(files.map(ItemProto.fromFile), sessionUrn);
 			}
 		},
-		[sessionId, upload]
+		[sessionUrn, upload]
 	);
 
 	const dropState = useDropzone({
@@ -110,25 +110,25 @@ function Submit(props: LocalizableProps): JSX.Element {
 	const content = visitState<CreateState, JSX.Element>(state, {
 		Creating(state) {
 			return (
-				<StepSelectorGroup lang={props.lang} sessionId={""} current="submit">
+				<StepSelectorGroup lang={props.lang} sessionUrn={""} current="submit">
 					<SessionCreating {...props} state={state} />
 				</StepSelectorGroup>
 			);
 		},
 		Loading(state) {
 			return (
-				<StepSelectorGroup lang={props.lang} sessionId={state.sessionId} current="submit">
+				<StepSelectorGroup lang={props.lang} sessionUrn={state.sessionUrn} current="submit">
 					<SessionLoading {...props} state={state} />
 				</StepSelectorGroup>
 			);
 		},
 		Ready({ session }) {
-			const addItem = <AddItem {...props} onAdd={items => upload(items, session.id)} accept={ACCEPT} />;
+			const addItem = <AddItem {...props} onAdd={items => upload(items, session.urn)} accept={ACCEPT} />;
 
 			return (
-				<StepSelectorGroup lang={props.lang} sessionId={session.id} current="submit">
+				<StepSelectorGroup lang={props.lang} sessionUrn={session.urn} current="submit">
 					<button
-						onClick={() => upload([ItemProto.fromText(randomText())], session.id)}
+						onClick={() => upload([ItemProto.fromText(randomText())], session.urn)}
 						style={{ position: "absolute", opacity: ".3", zIndex: 1000 }}>
 						Random Text
 					</button>
@@ -145,7 +145,7 @@ function Submit(props: LocalizableProps): JSX.Element {
 						<>
 							<StepActionBar
 								left={addItem}
-								right={<NextButton {...props} to={getLinkToStep("analysis", session.id)} />}
+								right={<NextButton {...props} to={getLinkToStep("analysis", session.urn)} />}
 								instruction={l.instruction}
 							/>
 

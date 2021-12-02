@@ -6,23 +6,21 @@ import * as v1_configs_pb from '../v1/configs_pb';
 
 
 export class AlignRequest extends jspb.Message {
-  getUuid(): string;
-  setUuid(value: string): AlignRequest;
+  getSourceText(): string;
+  setSourceText(value: string): AlignRequest;
 
-  getSourceElementsList(): Array<v1_types_pb.Element>;
-  setSourceElementsList(value: Array<v1_types_pb.Element>): AlignRequest;
-  clearSourceElementsList(): AlignRequest;
-  addSourceElements(value?: v1_types_pb.Element, index?: number): v1_types_pb.Element;
+  getTargetText(): string;
+  setTargetText(value: string): AlignRequest;
 
-  getTargetElementsList(): Array<v1_types_pb.Element>;
-  setTargetElementsList(value: Array<v1_types_pb.Element>): AlignRequest;
-  clearTargetElementsList(): AlignRequest;
-  addTargetElements(value?: v1_types_pb.Element, index?: number): v1_types_pb.Element;
+  getAlignmentConfig(): v1_configs_pb.AlignmentConfig | undefined;
+  setAlignmentConfig(value?: v1_configs_pb.AlignmentConfig): AlignRequest;
+  hasAlignmentConfig(): boolean;
+  clearAlignmentConfig(): AlignRequest;
 
-  getConfig(): v1_configs_pb.AlignmentConfig | undefined;
-  setConfig(value?: v1_configs_pb.AlignmentConfig): AlignRequest;
-  hasConfig(): boolean;
-  clearConfig(): AlignRequest;
+  getDecompositionConfig(): v1_configs_pb.DecompositionConfig | undefined;
+  setDecompositionConfig(value?: v1_configs_pb.DecompositionConfig): AlignRequest;
+  hasDecompositionConfig(): boolean;
+  clearDecompositionConfig(): AlignRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): AlignRequest.AsObject;
@@ -34,17 +32,14 @@ export class AlignRequest extends jspb.Message {
 
 export namespace AlignRequest {
   export type AsObject = {
-    uuid: string,
-    sourceElementsList: Array<v1_types_pb.Element.AsObject>,
-    targetElementsList: Array<v1_types_pb.Element.AsObject>,
-    config?: v1_configs_pb.AlignmentConfig.AsObject,
+    sourceText: string,
+    targetText: string,
+    alignmentConfig?: v1_configs_pb.AlignmentConfig.AsObject,
+    decompositionConfig?: v1_configs_pb.DecompositionConfig.AsObject,
   }
 }
 
 export class AlignResponse extends jspb.Message {
-  getUuid(): string;
-  setUuid(value: string): AlignResponse;
-
   getSeedsList(): Array<v1_types_pb.Seed>;
   setSeedsList(value: Array<v1_types_pb.Seed>): AlignResponse;
   clearSeedsList(): AlignResponse;
@@ -60,15 +55,11 @@ export class AlignResponse extends jspb.Message {
 
 export namespace AlignResponse {
   export type AsObject = {
-    uuid: string,
     seedsList: Array<v1_types_pb.Seed.AsObject>,
   }
 }
 
 export class DecomposeRequest extends jspb.Message {
-  getUuid(): string;
-  setUuid(value: string): DecomposeRequest;
-
   getText(): string;
   setText(value: string): DecomposeRequest;
 
@@ -87,16 +78,12 @@ export class DecomposeRequest extends jspb.Message {
 
 export namespace DecomposeRequest {
   export type AsObject = {
-    uuid: string,
     text: string,
     config?: v1_configs_pb.DecompositionConfig.AsObject,
   }
 }
 
 export class DecomposeResponse extends jspb.Message {
-  getUuid(): string;
-  setUuid(value: string): DecomposeResponse;
-
   getElementsList(): Array<v1_types_pb.Element>;
   setElementsList(value: Array<v1_types_pb.Element>): DecomposeResponse;
   clearElementsList(): DecomposeResponse;
@@ -112,20 +99,21 @@ export class DecomposeResponse extends jspb.Message {
 
 export namespace DecomposeResponse {
   export type AsObject = {
-    uuid: string,
     elementsList: Array<v1_types_pb.Element.AsObject>,
   }
 }
 
 export class RetrieveRequest extends jspb.Message {
-  getUuid(): string;
-  setUuid(value: string): RetrieveRequest;
-
-  getUrn(): string;
-  setUrn(value: string): RetrieveRequest;
+  getCollectionUrn(): string;
+  setCollectionUrn(value: string): RetrieveRequest;
 
   getText(): string;
   setText(value: string): RetrieveRequest;
+
+  getConfig(): v1_configs_pb.RetrievalConfig | undefined;
+  setConfig(value?: v1_configs_pb.RetrievalConfig): RetrieveRequest;
+  hasConfig(): boolean;
+  clearConfig(): RetrieveRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): RetrieveRequest.AsObject;
@@ -137,21 +125,17 @@ export class RetrieveRequest extends jspb.Message {
 
 export namespace RetrieveRequest {
   export type AsObject = {
-    uuid: string,
-    urn: string,
+    collectionUrn: string,
     text: string,
+    config?: v1_configs_pb.RetrievalConfig.AsObject,
   }
 }
 
 export class RetrieveResponse extends jspb.Message {
-  getUuid(): string;
-  setUuid(value: string): RetrieveResponse;
-
-  getUrn(): string;
-  setUrn(value: string): RetrieveResponse;
-
-  getText(): string;
-  setText(value: string): RetrieveResponse;
+  getHitsList(): Array<RetrieveResponse.Document>;
+  setHitsList(value: Array<RetrieveResponse.Document>): RetrieveResponse;
+  clearHitsList(): RetrieveResponse;
+  addHits(value?: RetrieveResponse.Document, index?: number): RetrieveResponse.Document;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): RetrieveResponse.AsObject;
@@ -163,15 +147,36 @@ export class RetrieveResponse extends jspb.Message {
 
 export namespace RetrieveResponse {
   export type AsObject = {
-    uuid: string,
-    urn: string,
-    text: string,
+    hitsList: Array<RetrieveResponse.Document.AsObject>,
   }
+
+  export class Document extends jspb.Message {
+    getDocumentUrn(): string;
+    setDocumentUrn(value: string): Document;
+
+    getText(): string;
+    setText(value: string): Document;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): Document.AsObject;
+    static toObject(includeInstance: boolean, msg: Document): Document.AsObject;
+    static serializeBinaryToWriter(message: Document, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): Document;
+    static deserializeBinaryFromReader(message: Document, reader: jspb.BinaryReader): Document;
+  }
+
+  export namespace Document {
+    export type AsObject = {
+      documentUrn: string,
+      text: string,
+    }
+  }
+
 }
 
 export class Session extends jspb.Message {
-  getId(): string;
-  setId(value: string): Session;
+  getUrn(): string;
+  setUrn(value: string): Session;
 
   getConfig(): v1_configs_pb.SessionConfig | undefined;
   setConfig(value?: v1_configs_pb.SessionConfig): Session;
@@ -198,7 +203,7 @@ export class Session extends jspb.Message {
 
 export namespace Session {
   export type AsObject = {
-    id: string,
+    urn: string,
     config?: v1_configs_pb.SessionConfig.AsObject,
     itemsList: Array<v1_types_pb.Item.AsObject>,
     resultsList: Array<v1_types_pb.Result.AsObject>,
@@ -220,8 +225,8 @@ export namespace CreateSessionRequest {
 }
 
 export class CreateSessionResponse extends jspb.Message {
-  getSessionId(): string;
-  setSessionId(value: string): CreateSessionResponse;
+  getSessionUrn(): string;
+  setSessionUrn(value: string): CreateSessionResponse;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): CreateSessionResponse.AsObject;
@@ -233,13 +238,13 @@ export class CreateSessionResponse extends jspb.Message {
 
 export namespace CreateSessionResponse {
   export type AsObject = {
-    sessionId: string,
+    sessionUrn: string,
   }
 }
 
 export class GetSessionRequest extends jspb.Message {
-  getSessionId(): string;
-  setSessionId(value: string): GetSessionRequest;
+  getSessionUrn(): string;
+  setSessionUrn(value: string): GetSessionRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetSessionRequest.AsObject;
@@ -251,7 +256,7 @@ export class GetSessionRequest extends jspb.Message {
 
 export namespace GetSessionRequest {
   export type AsObject = {
-    sessionId: string,
+    sessionUrn: string,
   }
 }
 
@@ -276,8 +281,8 @@ export namespace GetSessionResponse {
 }
 
 export class DeleteSessionRequest extends jspb.Message {
-  getSessionId(): string;
-  setSessionId(value: string): DeleteSessionRequest;
+  getSessionUrn(): string;
+  setSessionUrn(value: string): DeleteSessionRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): DeleteSessionRequest.AsObject;
@@ -289,14 +294,11 @@ export class DeleteSessionRequest extends jspb.Message {
 
 export namespace DeleteSessionRequest {
   export type AsObject = {
-    sessionId: string,
+    sessionUrn: string,
   }
 }
 
 export class DeleteSessionResponse extends jspb.Message {
-  getSuccess(): boolean;
-  setSuccess(value: boolean): DeleteSessionResponse;
-
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): DeleteSessionResponse.AsObject;
   static toObject(includeInstance: boolean, msg: DeleteSessionResponse): DeleteSessionResponse.AsObject;
@@ -307,11 +309,13 @@ export class DeleteSessionResponse extends jspb.Message {
 
 export namespace DeleteSessionResponse {
   export type AsObject = {
-    success: boolean,
   }
 }
 
 export class GetCollectionsRequest extends jspb.Message {
+  getSessionUrn(): string;
+  setSessionUrn(value: string): GetCollectionsRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetCollectionsRequest.AsObject;
   static toObject(includeInstance: boolean, msg: GetCollectionsRequest): GetCollectionsRequest.AsObject;
@@ -322,6 +326,7 @@ export class GetCollectionsRequest extends jspb.Message {
 
 export namespace GetCollectionsRequest {
   export type AsObject = {
+    sessionUrn: string,
   }
 }
 
@@ -346,8 +351,8 @@ export namespace GetCollectionsResponse {
 }
 
 export class GetConfigRequest extends jspb.Message {
-  getSessionId(): string;
-  setSessionId(value: string): GetConfigRequest;
+  getSessionUrn(): string;
+  setSessionUrn(value: string): GetConfigRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetConfigRequest.AsObject;
@@ -359,7 +364,7 @@ export class GetConfigRequest extends jspb.Message {
 
 export namespace GetConfigRequest {
   export type AsObject = {
-    sessionId: string,
+    sessionUrn: string,
   }
 }
 
@@ -384,8 +389,8 @@ export namespace GetConfigResponse {
 }
 
 export class UpdateConfigRequest extends jspb.Message {
-  getSessionId(): string;
-  setSessionId(value: string): UpdateConfigRequest;
+  getSessionUrn(): string;
+  setSessionUrn(value: string): UpdateConfigRequest;
 
   getConfig(): v1_configs_pb.SessionConfig | undefined;
   setConfig(value?: v1_configs_pb.SessionConfig): UpdateConfigRequest;
@@ -402,15 +407,12 @@ export class UpdateConfigRequest extends jspb.Message {
 
 export namespace UpdateConfigRequest {
   export type AsObject = {
-    sessionId: string,
+    sessionUrn: string,
     config?: v1_configs_pb.SessionConfig.AsObject,
   }
 }
 
 export class UpdateConfigResponse extends jspb.Message {
-  getSuccess(): boolean;
-  setSuccess(value: boolean): UpdateConfigResponse;
-
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): UpdateConfigResponse.AsObject;
   static toObject(includeInstance: boolean, msg: UpdateConfigResponse): UpdateConfigResponse.AsObject;
@@ -421,13 +423,12 @@ export class UpdateConfigResponse extends jspb.Message {
 
 export namespace UpdateConfigResponse {
   export type AsObject = {
-    success: boolean,
   }
 }
 
 export class DeleteConfigRequest extends jspb.Message {
-  getSessionId(): string;
-  setSessionId(value: string): DeleteConfigRequest;
+  getSessionUrn(): string;
+  setSessionUrn(value: string): DeleteConfigRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): DeleteConfigRequest.AsObject;
@@ -439,14 +440,11 @@ export class DeleteConfigRequest extends jspb.Message {
 
 export namespace DeleteConfigRequest {
   export type AsObject = {
-    sessionId: string,
+    sessionUrn: string,
   }
 }
 
 export class DeleteConfigResponse extends jspb.Message {
-  getSuccess(): boolean;
-  setSuccess(value: boolean): DeleteConfigResponse;
-
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): DeleteConfigResponse.AsObject;
   static toObject(includeInstance: boolean, msg: DeleteConfigResponse): DeleteConfigResponse.AsObject;
@@ -457,13 +455,12 @@ export class DeleteConfigResponse extends jspb.Message {
 
 export namespace DeleteConfigResponse {
   export type AsObject = {
-    success: boolean,
   }
 }
 
 export class CreateItemRequest extends jspb.Message {
-  getSessionId(): string;
-  setSessionId(value: string): CreateItemRequest;
+  getSessionUrn(): string;
+  setSessionUrn(value: string): CreateItemRequest;
 
   getMeta(): v1_types_pb.Item.Metadata | undefined;
   setMeta(value?: v1_types_pb.Item.Metadata): CreateItemRequest;
@@ -488,7 +485,7 @@ export class CreateItemRequest extends jspb.Message {
 
 export namespace CreateItemRequest {
   export type AsObject = {
-    sessionId: string,
+    sessionUrn: string,
     meta?: v1_types_pb.Item.Metadata.AsObject,
     type: v1_types_pb.Item.Resource.Type,
     raw: Uint8Array | string,
@@ -496,8 +493,8 @@ export namespace CreateItemRequest {
 }
 
 export class CreateItemResponse extends jspb.Message {
-  getId(): string;
-  setId(value: string): CreateItemResponse;
+  getItemUrn(): string;
+  setItemUrn(value: string): CreateItemResponse;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): CreateItemResponse.AsObject;
@@ -509,16 +506,16 @@ export class CreateItemResponse extends jspb.Message {
 
 export namespace CreateItemResponse {
   export type AsObject = {
-    id: string,
+    itemUrn: string,
   }
 }
 
 export class UpdateItemRequest extends jspb.Message {
-  getSessionId(): string;
-  setSessionId(value: string): UpdateItemRequest;
+  getSessionUrn(): string;
+  setSessionUrn(value: string): UpdateItemRequest;
 
-  getItemId(): string;
-  setItemId(value: string): UpdateItemRequest;
+  getItemUrn(): string;
+  setItemUrn(value: string): UpdateItemRequest;
 
   getMeta(): v1_types_pb.Item.Metadata | undefined;
   setMeta(value?: v1_types_pb.Item.Metadata): UpdateItemRequest;
@@ -535,16 +532,13 @@ export class UpdateItemRequest extends jspb.Message {
 
 export namespace UpdateItemRequest {
   export type AsObject = {
-    sessionId: string,
-    itemId: string,
+    sessionUrn: string,
+    itemUrn: string,
     meta?: v1_types_pb.Item.Metadata.AsObject,
   }
 }
 
 export class UpdateItemResponse extends jspb.Message {
-  getSuccess(): boolean;
-  setSuccess(value: boolean): UpdateItemResponse;
-
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): UpdateItemResponse.AsObject;
   static toObject(includeInstance: boolean, msg: UpdateItemResponse): UpdateItemResponse.AsObject;
@@ -555,18 +549,17 @@ export class UpdateItemResponse extends jspb.Message {
 
 export namespace UpdateItemResponse {
   export type AsObject = {
-    success: boolean,
   }
 }
 
 export class GetItemRequest extends jspb.Message {
-  getSessionId(): string;
-  setSessionId(value: string): GetItemRequest;
+  getSessionUrn(): string;
+  setSessionUrn(value: string): GetItemRequest;
 
-  getItemIdsList(): Array<string>;
-  setItemIdsList(value: Array<string>): GetItemRequest;
-  clearItemIdsList(): GetItemRequest;
-  addItemIds(value: string, index?: number): GetItemRequest;
+  getItemUrnList(): Array<string>;
+  setItemUrnList(value: Array<string>): GetItemRequest;
+  clearItemUrnList(): GetItemRequest;
+  addItemUrn(value: string, index?: number): GetItemRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetItemRequest.AsObject;
@@ -578,8 +571,8 @@ export class GetItemRequest extends jspb.Message {
 
 export namespace GetItemRequest {
   export type AsObject = {
-    sessionId: string,
-    itemIdsList: Array<string>,
+    sessionUrn: string,
+    itemUrnList: Array<string>,
   }
 }
 
@@ -604,11 +597,11 @@ export namespace GetItemResponse {
 }
 
 export class DeleteItemRequest extends jspb.Message {
-  getSessionId(): string;
-  setSessionId(value: string): DeleteItemRequest;
+  getSessionUrn(): string;
+  setSessionUrn(value: string): DeleteItemRequest;
 
-  getItemId(): string;
-  setItemId(value: string): DeleteItemRequest;
+  getItemUrn(): string;
+  setItemUrn(value: string): DeleteItemRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): DeleteItemRequest.AsObject;
@@ -620,15 +613,12 @@ export class DeleteItemRequest extends jspb.Message {
 
 export namespace DeleteItemRequest {
   export type AsObject = {
-    sessionId: string,
-    itemId: string,
+    sessionUrn: string,
+    itemUrn: string,
   }
 }
 
 export class DeleteItemResponse extends jspb.Message {
-  getSuccess(): boolean;
-  setSuccess(value: boolean): DeleteItemResponse;
-
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): DeleteItemResponse.AsObject;
   static toObject(includeInstance: boolean, msg: DeleteItemResponse): DeleteItemResponse.AsObject;
@@ -639,13 +629,12 @@ export class DeleteItemResponse extends jspb.Message {
 
 export namespace DeleteItemResponse {
   export type AsObject = {
-    success: boolean,
   }
 }
 
 export class ComputeResultsRequest extends jspb.Message {
-  getSessionId(): string;
-  setSessionId(value: string): ComputeResultsRequest;
+  getSessionUrn(): string;
+  setSessionUrn(value: string): ComputeResultsRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ComputeResultsRequest.AsObject;
@@ -657,14 +646,11 @@ export class ComputeResultsRequest extends jspb.Message {
 
 export namespace ComputeResultsRequest {
   export type AsObject = {
-    sessionId: string,
+    sessionUrn: string,
   }
 }
 
 export class ComputeResultsResponse extends jspb.Message {
-  getStatus(): boolean;
-  setStatus(value: boolean): ComputeResultsResponse;
-
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ComputeResultsResponse.AsObject;
   static toObject(includeInstance: boolean, msg: ComputeResultsResponse): ComputeResultsResponse.AsObject;
@@ -675,13 +661,12 @@ export class ComputeResultsResponse extends jspb.Message {
 
 export namespace ComputeResultsResponse {
   export type AsObject = {
-    status: boolean,
   }
 }
 
 export class GetResultsRequest extends jspb.Message {
-  getSessionId(): string;
-  setSessionId(value: string): GetResultsRequest;
+  getSessionUrn(): string;
+  setSessionUrn(value: string): GetResultsRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetResultsRequest.AsObject;
@@ -693,7 +678,7 @@ export class GetResultsRequest extends jspb.Message {
 
 export namespace GetResultsRequest {
   export type AsObject = {
-    sessionId: string,
+    sessionUrn: string,
   }
 }
 
@@ -718,11 +703,11 @@ export namespace GetResultsResponse {
 }
 
 export class GetResultRequest extends jspb.Message {
-  getSessionId(): string;
-  setSessionId(value: string): GetResultRequest;
+  getSessionUrn(): string;
+  setSessionUrn(value: string): GetResultRequest;
 
-  getResultId(): string;
-  setResultId(value: string): GetResultRequest;
+  getResultUrn(): string;
+  setResultUrn(value: string): GetResultRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetResultRequest.AsObject;
@@ -734,8 +719,8 @@ export class GetResultRequest extends jspb.Message {
 
 export namespace GetResultRequest {
   export type AsObject = {
-    sessionId: string,
-    resultId: string,
+    sessionUrn: string,
+    resultUrn: string,
   }
 }
 
@@ -760,11 +745,11 @@ export namespace GetResultResponse {
 }
 
 export class GetTextRequest extends jspb.Message {
-  getSessionId(): string;
-  setSessionId(value: string): GetTextRequest;
+  getSessionUrn(): string;
+  setSessionUrn(value: string): GetTextRequest;
 
-  getItemId(): string;
-  setItemId(value: string): GetTextRequest;
+  getItemUrn(): string;
+  setItemUrn(value: string): GetTextRequest;
 
   getSpan(): v1_types_pb.Span | undefined;
   setSpan(value?: v1_types_pb.Span): GetTextRequest;
@@ -781,17 +766,22 @@ export class GetTextRequest extends jspb.Message {
 
 export namespace GetTextRequest {
   export type AsObject = {
-    sessionId: string,
-    itemId: string,
+    sessionUrn: string,
+    itemUrn: string,
     span?: v1_types_pb.Span.AsObject,
   }
 }
 
 export class GetTextResponse extends jspb.Message {
-  getTextSpansList(): Array<GetTextResponse.TextSpan>;
-  setTextSpansList(value: Array<GetTextResponse.TextSpan>): GetTextResponse;
-  clearTextSpansList(): GetTextResponse;
-  addTextSpans(value?: GetTextResponse.TextSpan, index?: number): GetTextResponse.TextSpan;
+  getTextSpan(): GetTextResponse.TextSpan | undefined;
+  setTextSpan(value?: GetTextResponse.TextSpan): GetTextResponse;
+  hasTextSpan(): boolean;
+  clearTextSpan(): GetTextResponse;
+
+  getMetadata(): GetTextResponse.Metadata | undefined;
+  setMetadata(value?: GetTextResponse.Metadata): GetTextResponse;
+  hasMetadata(): boolean;
+  clearMetadata(): GetTextResponse;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetTextResponse.AsObject;
@@ -803,7 +793,8 @@ export class GetTextResponse extends jspb.Message {
 
 export namespace GetTextResponse {
   export type AsObject = {
-    textSpansList: Array<GetTextResponse.TextSpan.AsObject>,
+    textSpan?: GetTextResponse.TextSpan.AsObject,
+    metadata?: GetTextResponse.Metadata.AsObject,
   }
 
   export class TextSpan extends jspb.Message {
@@ -827,6 +818,29 @@ export namespace GetTextResponse {
     export type AsObject = {
       span?: v1_types_pb.Span.AsObject,
       text: string,
+    }
+  }
+
+
+  export class Metadata extends jspb.Message {
+    getTitle(): string;
+    setTitle(value: string): Metadata;
+
+    getSource(): string;
+    setSource(value: string): Metadata;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): Metadata.AsObject;
+    static toObject(includeInstance: boolean, msg: Metadata): Metadata.AsObject;
+    static serializeBinaryToWriter(message: Metadata, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): Metadata;
+    static deserializeBinaryFromReader(message: Metadata, reader: jspb.BinaryReader): Metadata;
+  }
+
+  export namespace Metadata {
+    export type AsObject = {
+      title: string,
+      source: string,
     }
   }
 
@@ -861,9 +875,6 @@ export namespace AlignPairRequest {
 }
 
 export class AlignPairResponse extends jspb.Message {
-  getUuid(): string;
-  setUuid(value: string): AlignPairResponse;
-
   getSeedsList(): Array<v1_types_pb.Seed>;
   setSeedsList(value: Array<v1_types_pb.Seed>): AlignPairResponse;
   clearSeedsList(): AlignPairResponse;
@@ -879,9 +890,81 @@ export class AlignPairResponse extends jspb.Message {
 
 export namespace AlignPairResponse {
   export type AsObject = {
-    uuid: string,
     seedsList: Array<v1_types_pb.Seed.AsObject>,
   }
+}
+
+export class AlignWithCollectionRequest extends jspb.Message {
+  getSource(): string;
+  setSource(value: string): AlignWithCollectionRequest;
+
+  getCollectionUrn(): string;
+  setCollectionUrn(value: string): AlignWithCollectionRequest;
+
+  getConfig(): v1_configs_pb.ApiConfig | undefined;
+  setConfig(value?: v1_configs_pb.ApiConfig): AlignWithCollectionRequest;
+  hasConfig(): boolean;
+  clearConfig(): AlignWithCollectionRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): AlignWithCollectionRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: AlignWithCollectionRequest): AlignWithCollectionRequest.AsObject;
+  static serializeBinaryToWriter(message: AlignWithCollectionRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): AlignWithCollectionRequest;
+  static deserializeBinaryFromReader(message: AlignWithCollectionRequest, reader: jspb.BinaryReader): AlignWithCollectionRequest;
+}
+
+export namespace AlignWithCollectionRequest {
+  export type AsObject = {
+    source: string,
+    collectionUrn: string,
+    config?: v1_configs_pb.ApiConfig.AsObject,
+  }
+}
+
+export class AlignWithCollectionResponse extends jspb.Message {
+  getResultsList(): Array<AlignWithCollectionResponse.AlignmentResult>;
+  setResultsList(value: Array<AlignWithCollectionResponse.AlignmentResult>): AlignWithCollectionResponse;
+  clearResultsList(): AlignWithCollectionResponse;
+  addResults(value?: AlignWithCollectionResponse.AlignmentResult, index?: number): AlignWithCollectionResponse.AlignmentResult;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): AlignWithCollectionResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: AlignWithCollectionResponse): AlignWithCollectionResponse.AsObject;
+  static serializeBinaryToWriter(message: AlignWithCollectionResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): AlignWithCollectionResponse;
+  static deserializeBinaryFromReader(message: AlignWithCollectionResponse, reader: jspb.BinaryReader): AlignWithCollectionResponse;
+}
+
+export namespace AlignWithCollectionResponse {
+  export type AsObject = {
+    resultsList: Array<AlignWithCollectionResponse.AlignmentResult.AsObject>,
+  }
+
+  export class AlignmentResult extends jspb.Message {
+    getDocumenturn(): string;
+    setDocumenturn(value: string): AlignmentResult;
+
+    getSeedsList(): Array<v1_types_pb.Seed>;
+    setSeedsList(value: Array<v1_types_pb.Seed>): AlignmentResult;
+    clearSeedsList(): AlignmentResult;
+    addSeeds(value?: v1_types_pb.Seed, index?: number): v1_types_pb.Seed;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): AlignmentResult.AsObject;
+    static toObject(includeInstance: boolean, msg: AlignmentResult): AlignmentResult.AsObject;
+    static serializeBinaryToWriter(message: AlignmentResult, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): AlignmentResult;
+    static deserializeBinaryFromReader(message: AlignmentResult, reader: jspb.BinaryReader): AlignmentResult;
+  }
+
+  export namespace AlignmentResult {
+    export type AsObject = {
+      documenturn: string,
+      seedsList: Array<v1_types_pb.Seed.AsObject>,
+    }
+  }
+
 }
 
 export class InfoResponse extends jspb.Message {
@@ -903,6 +986,40 @@ export namespace InfoResponse {
   export type AsObject = {
     message: string,
     version: string,
+  }
+}
+
+export class GetDefaultConfigRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetDefaultConfigRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetDefaultConfigRequest): GetDefaultConfigRequest.AsObject;
+  static serializeBinaryToWriter(message: GetDefaultConfigRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetDefaultConfigRequest;
+  static deserializeBinaryFromReader(message: GetDefaultConfigRequest, reader: jspb.BinaryReader): GetDefaultConfigRequest;
+}
+
+export namespace GetDefaultConfigRequest {
+  export type AsObject = {
+  }
+}
+
+export class GetDefaultConfigResponse extends jspb.Message {
+  getConfig(): v1_configs_pb.ApiConfig | undefined;
+  setConfig(value?: v1_configs_pb.ApiConfig): GetDefaultConfigResponse;
+  hasConfig(): boolean;
+  clearConfig(): GetDefaultConfigResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetDefaultConfigResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetDefaultConfigResponse): GetDefaultConfigResponse.AsObject;
+  static serializeBinaryToWriter(message: GetDefaultConfigResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetDefaultConfigResponse;
+  static deserializeBinaryFromReader(message: GetDefaultConfigResponse, reader: jspb.BinaryReader): GetDefaultConfigResponse;
+}
+
+export namespace GetDefaultConfigResponse {
+  export type AsObject = {
+    config?: v1_configs_pb.ApiConfig.AsObject,
   }
 }
 

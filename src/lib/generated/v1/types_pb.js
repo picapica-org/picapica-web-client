@@ -1083,7 +1083,7 @@ proto.v1.Result.prototype.toObject = function(opt_includeInstance) {
  */
 proto.v1.Result.toObject = function(includeInstance, msg) {
   var f, obj = {
-    id: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    urn: jspb.Message.getFieldWithDefault(msg, 1, ""),
     resources: (f = msg.getResources()) && proto.v1.ResourcePair.toObject(includeInstance, f),
     completed: jspb.Message.getBooleanFieldWithDefault(msg, 3, false),
     seedsList: jspb.Message.toObjectList(msg.getSeedsList(),
@@ -1126,7 +1126,7 @@ proto.v1.Result.deserializeBinaryFromReader = function(msg, reader) {
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setId(value);
+      msg.setUrn(value);
       break;
     case 2:
       var value = new proto.v1.ResourcePair;
@@ -1171,7 +1171,7 @@ proto.v1.Result.prototype.serializeBinary = function() {
  */
 proto.v1.Result.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getId();
+  f = message.getUrn();
   if (f.length > 0) {
     writer.writeString(
       1,
@@ -1205,10 +1205,10 @@ proto.v1.Result.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional string id = 1;
+ * optional string urn = 1;
  * @return {string}
  */
-proto.v1.Result.prototype.getId = function() {
+proto.v1.Result.prototype.getUrn = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
@@ -1217,7 +1217,7 @@ proto.v1.Result.prototype.getId = function() {
  * @param {string} value
  * @return {!proto.v1.Result} returns this
  */
-proto.v1.Result.prototype.setId = function(value) {
+proto.v1.Result.prototype.setUrn = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
 };
 
@@ -1476,7 +1476,8 @@ proto.v1.Collection.Properties.toObject = function(includeInstance, msg) {
     name: jspb.Message.getFieldWithDefault(msg, 1, ""),
     sourceUrl: jspb.Message.getFieldWithDefault(msg, 2, ""),
     logoUrl: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    description: jspb.Message.getFieldWithDefault(msg, 4, "")
+    description: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    language: jspb.Message.getFieldWithDefault(msg, 5, "")
   };
 
   if (includeInstance) {
@@ -1528,6 +1529,10 @@ proto.v1.Collection.Properties.deserializeBinaryFromReader = function(msg, reade
     case 4:
       var value = /** @type {string} */ (reader.readString());
       msg.setDescription(value);
+      break;
+    case 5:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setLanguage(value);
       break;
     default:
       reader.skipField();
@@ -1583,6 +1588,13 @@ proto.v1.Collection.Properties.serializeBinaryToWriter = function(message, write
   if (f.length > 0) {
     writer.writeString(
       4,
+      f
+    );
+  }
+  f = message.getLanguage();
+  if (f.length > 0) {
+    writer.writeString(
+      5,
       f
     );
   }
@@ -1658,6 +1670,24 @@ proto.v1.Collection.Properties.prototype.getDescription = function() {
  */
 proto.v1.Collection.Properties.prototype.setDescription = function(value) {
   return jspb.Message.setProto3StringField(this, 4, value);
+};
+
+
+/**
+ * optional string language = 5;
+ * @return {string}
+ */
+proto.v1.Collection.Properties.prototype.getLanguage = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.v1.Collection.Properties} returns this
+ */
+proto.v1.Collection.Properties.prototype.setLanguage = function(value) {
+  return jspb.Message.setProto3StringField(this, 5, value);
 };
 
 
@@ -2018,7 +2048,7 @@ proto.v1.Item.Resource.prototype.toObject = function(opt_includeInstance) {
  */
 proto.v1.Item.Resource.toObject = function(includeInstance, msg) {
   var f, obj = {
-    id: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    urn: jspb.Message.getFieldWithDefault(msg, 1, ""),
     type: jspb.Message.getFieldWithDefault(msg, 2, 0),
     properties: (f = msg.getProperties()) && proto.v1.Item.Resource.Properties.toObject(includeInstance, f)
   };
@@ -2059,7 +2089,7 @@ proto.v1.Item.Resource.deserializeBinaryFromReader = function(msg, reader) {
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setId(value);
+      msg.setUrn(value);
       break;
     case 2:
       var value = /** @type {!proto.v1.Item.Resource.Type} */ (reader.readEnum());
@@ -2099,7 +2129,7 @@ proto.v1.Item.Resource.prototype.serializeBinary = function() {
  */
 proto.v1.Item.Resource.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getId();
+  f = message.getUrn();
   if (f.length > 0) {
     writer.writeString(
       1,
@@ -2166,8 +2196,8 @@ proto.v1.Item.Resource.Properties.prototype.toObject = function(opt_includeInsta
  */
 proto.v1.Item.Resource.Properties.toObject = function(includeInstance, msg) {
   var f, obj = {
-    rawMd5: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    contentMd5: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    rawChecksum: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    contentChecksum: jspb.Message.getFieldWithDefault(msg, 2, ""),
     size: jspb.Message.getFieldWithDefault(msg, 3, 0),
     length: jspb.Message.getFieldWithDefault(msg, 4, 0)
   };
@@ -2208,11 +2238,11 @@ proto.v1.Item.Resource.Properties.deserializeBinaryFromReader = function(msg, re
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setRawMd5(value);
+      msg.setRawChecksum(value);
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
-      msg.setContentMd5(value);
+      msg.setContentChecksum(value);
       break;
     case 3:
       var value = /** @type {number} */ (reader.readUint32());
@@ -2251,14 +2281,14 @@ proto.v1.Item.Resource.Properties.prototype.serializeBinary = function() {
  */
 proto.v1.Item.Resource.Properties.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getRawMd5();
+  f = message.getRawChecksum();
   if (f.length > 0) {
     writer.writeString(
       1,
       f
     );
   }
-  f = message.getContentMd5();
+  f = message.getContentChecksum();
   if (f.length > 0) {
     writer.writeString(
       2,
@@ -2283,10 +2313,10 @@ proto.v1.Item.Resource.Properties.serializeBinaryToWriter = function(message, wr
 
 
 /**
- * optional string raw_md5 = 1;
+ * optional string raw_checksum = 1;
  * @return {string}
  */
-proto.v1.Item.Resource.Properties.prototype.getRawMd5 = function() {
+proto.v1.Item.Resource.Properties.prototype.getRawChecksum = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
@@ -2295,16 +2325,16 @@ proto.v1.Item.Resource.Properties.prototype.getRawMd5 = function() {
  * @param {string} value
  * @return {!proto.v1.Item.Resource.Properties} returns this
  */
-proto.v1.Item.Resource.Properties.prototype.setRawMd5 = function(value) {
+proto.v1.Item.Resource.Properties.prototype.setRawChecksum = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
 /**
- * optional string content_md5 = 2;
+ * optional string content_checksum = 2;
  * @return {string}
  */
-proto.v1.Item.Resource.Properties.prototype.getContentMd5 = function() {
+proto.v1.Item.Resource.Properties.prototype.getContentChecksum = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
@@ -2313,7 +2343,7 @@ proto.v1.Item.Resource.Properties.prototype.getContentMd5 = function() {
  * @param {string} value
  * @return {!proto.v1.Item.Resource.Properties} returns this
  */
-proto.v1.Item.Resource.Properties.prototype.setContentMd5 = function(value) {
+proto.v1.Item.Resource.Properties.prototype.setContentChecksum = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
 };
 
@@ -2355,10 +2385,10 @@ proto.v1.Item.Resource.Properties.prototype.setLength = function(value) {
 
 
 /**
- * optional string id = 1;
+ * optional string urn = 1;
  * @return {string}
  */
-proto.v1.Item.Resource.prototype.getId = function() {
+proto.v1.Item.Resource.prototype.getUrn = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
@@ -2367,7 +2397,7 @@ proto.v1.Item.Resource.prototype.getId = function() {
  * @param {string} value
  * @return {!proto.v1.Item.Resource} returns this
  */
-proto.v1.Item.Resource.prototype.setId = function(value) {
+proto.v1.Item.Resource.prototype.setUrn = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
 };
 

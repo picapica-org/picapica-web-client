@@ -16,8 +16,8 @@ export function deleteItemAction(
 	itemUrn: string
 ): ActionResult<DeleteItemRequest> {
 	const request = new DeleteItemRequest();
-	request.setSessionId(session.id);
-	request.setItemId(itemUrn);
+	request.setSessionUrn(session.urn);
+	request.setItemUrn(itemUrn);
 
 	return {
 		request,
@@ -37,8 +37,8 @@ export function updateItemAction(
 	const metaObject = meta.toObject();
 
 	const request = new UpdateItemRequest();
-	request.setSessionId(session.id);
-	request.setItemId(itemUrn);
+	request.setSessionUrn(session.urn);
+	request.setItemUrn(itemUrn);
 	request.setMeta(meta);
 
 	return {
@@ -65,7 +65,7 @@ export function updateConfigAction(
 	sessionConfig.setPairingsList(pairs);
 
 	const request = new UpdateConfigRequest();
-	request.setSessionId(session.id);
+	request.setSessionUrn(session.urn);
 	request.setConfig(sessionConfig);
 
 	return {

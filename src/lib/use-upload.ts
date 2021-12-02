@@ -27,7 +27,7 @@ interface Done {
 
 export type UseUploadArray = [
 	uploading: readonly UploadingItem[],
-	upload: (items: readonly ItemProto[], sessionId: string) => void
+	upload: (items: readonly ItemProto[], sessionUrn: string) => void
 ];
 export function useUpload(
 	successfulUpload: (item: UploadedItem) => void,
@@ -45,7 +45,7 @@ export function useUpload(
 	);
 
 	const upload: UseUploadArray[1] = useCallback(
-		(items, sessionId) => {
+		(items, sessionUrn) => {
 			if (items.length === 0) {
 				return;
 			}
@@ -59,9 +59,9 @@ export function useUpload(
 				proto
 					.read()
 					.then(async item => {
-						const request = item.getRequest(sessionId);
+						const request = item.getRequest(sessionUrn);
 						const response = await getSessionClient().createItem(request, null);
-						return response.getId();
+						return response.getItemUrn();
 					})
 					.then(
 						value => addDone({ item: uploading, result: { type: "Ok", value } }),

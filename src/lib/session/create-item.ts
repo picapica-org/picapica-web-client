@@ -69,10 +69,10 @@ export class ItemRawProto {
 		};
 	}
 
-	getRequest(sessionId: string): CreateItemRequest {
+	getRequest(sessionUrn: string): CreateItemRequest {
 		const req = new CreateItemRequest();
 
-		req.setSessionId(sessionId);
+		req.setSessionUrn(sessionUrn);
 		req.setMeta(new Item.Metadata().setName(this.name));
 		req.setType(toItemResourceType(this.type));
 		req.setRaw(this.raw);

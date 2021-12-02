@@ -4,7 +4,7 @@ import { Item } from "../generated/v1/types_pb";
 import type * as grpcWeb from "grpc-web";
 import { v4 as uuidv4 } from "uuid";
 import { delay, lazy } from "../util";
-import { PicapicaUrn } from "./urn";
+import { PicapicaSessionUrn, PicapicaUrn } from "./urn";
 
 const CLIENT: SessionServiceClient = new SessionServiceClient("api.picapica.org");
 const mock = true;
@@ -62,15 +62,15 @@ class MockClient extends SessionServiceClient {
 		}
 	}
 
-	private async _getSessionRef(id: string): Promise<v1_services_pb.Session> {
-		const session = this._sessions.get(id);
+	private async _getSessionRef(urn: string): Promise<v1_services_pb.Session> {
+		const session = this._sessions.get(urn);
 		if (session === undefined) {
 			return Promise.reject("Invalid session id");
 		}
 		return Promise.resolve(session);
 	}
-	private async _getItemRef(sessionId: string, itemId: string): Promise<Item> {
-		const sessionRef = await this._getSessionRef(sessionId);
+	private async _getItemRef(sessionUrn: string, itemId: string): Promise<Item> {
+		const sessionRef = await this._getSessionRef(sessionUrn);
 
 		const item = sessionRef.getItemsList().find(i => i.getUrn() === itemId);
 		if (item === undefined) {
@@ -82,24 +82,27 @@ class MockClient extends SessionServiceClient {
 	createSession = mockUnary<v1_services_pb.CreateSessionRequest, v1_services_pb.CreateSessionResponse>(async req => {
 		await this.simulateNetwork();
 
-		const id = uuidv4();
+		const urn = PicapicaUrn.stringify({ type: "session", sessionId: uuidv4() });
 		const session = new v1_services_pb.Session();
-		session.setId(id);
-		this._sessions.set(id, session);
+		session.setUrn(urn);
+		this._sessions.set(urn, session);
 
-		return new v1_services_pb.CreateSessionResponse().setSessionId(id);
+		return new v1_services_pb.CreateSessionResponse().setSessionUrn(urn);
 	});
 	getSession = mockUnary<v1_services_pb.GetSessionRequest, v1_services_pb.GetSessionResponse>(async req => {
 		await this.simulateNetwork();
 
-		const sessionRef = await this._getSessionRef(req.getSessionId());
+		const sessionRef = await this._getSessionRef(req.getSessionUrn());
 		return new v1_services_pb.GetSessionResponse().setSession(sessionRef.clone());
 	});
 	deleteSession = mockUnary<v1_services_pb.DeleteSessionRequest, v1_services_pb.DeleteSessionResponse>(async req => {
 		await this.simulateNetwork();
 
-		const success = this._sessions.delete(req.getSessionId());
-		return new v1_services_pb.DeleteSessionResponse().setSuccess(success);
+		const success = this._sessions.delete(req.getSessionUrn());
+		if (!success) {
+			return Promise.reject("Invalid session id");
+		}
+		return new v1_services_pb.DeleteSessionResponse();
 	});
 
 	getCollections = mockUnary<v1_services_pb.GetCollectionsRequest, v1_services_pb.GetCollectionsResponse>(
@@ -113,28 +116,28 @@ class MockClient extends SessionServiceClient {
 	getConfig = mockUnary<v1_services_pb.GetConfigRequest, v1_services_pb.GetConfigResponse>(async req => {
 		await this.simulateNetwork();
 
-		const sessionRef = await this._getSessionRef(req.getSessionId());
+		const sessionRef = await this._getSessionRef(req.getSessionUrn());
 		return new v1_services_pb.GetConfigResponse().setConfig(sessionRef.getConfig()?.clone());
 	});
 	updateConfig = mockUnary<v1_services_pb.UpdateConfigRequest, v1_services_pb.UpdateConfigResponse>(async req => {
 		await this.simulateNetwork();
 
-		const sessionRef = await this._getSessionRef(req.getSessionId());
+		const sessionRef = await this._getSessionRef(req.getSessionUrn());
 		sessionRef.setConfig(req.getConfig()?.clone());
-		return new v1_services_pb.UpdateConfigResponse().setSuccess(true);
+		return new v1_services_pb.UpdateConfigResponse();
 	});
 	deleteConfig = mockUnary<v1_services_pb.DeleteConfigRequest, v1_services_pb.DeleteConfigResponse>(async req => {
 		await this.simulateNetwork();
 
-		const sessionRef = await this._getSessionRef(req.getSessionId());
+		const sessionRef = await this._getSessionRef(req.getSessionUrn());
 		sessionRef.setConfig(undefined);
-		return new v1_services_pb.DeleteConfigResponse().setSuccess(true);
+		return new v1_services_pb.DeleteConfigResponse();
 	});
 
 	createItem = mockUnary<v1_services_pb.CreateItemRequest, v1_services_pb.CreateItemResponse>(async req => {
 		await this.simulateNetwork();
 
-		const sessionRef = await this._getSessionRef(req.getSessionId());
+		const sessionRef = await this._getSessionRef(req.getSessionUrn());
 
 		const raw = req.getRaw_asU8();
 
@@ -158,40 +161,46 @@ class MockClient extends SessionServiceClient {
 				throw new Error("Invalid resource type");
 		}
 
+		const itemUrn = PicapicaUrn.stringify({
+			type: "item",
+			sessionId: (PicapicaUrn.parse(sessionRef.getUrn()) as PicapicaSessionUrn).sessionId,
+			itemId: randomHex(64),
+		});
+
 		const props = new Item.Resource.Properties();
 		props.setSize(raw.length);
 		props.setLength([...content].length);
-		props.setRawMd5(randomHex(32));
-		props.setContentMd5(randomHex(32));
+		props.setRawChecksum(randomHex(32));
+		props.setContentChecksum(randomHex(32));
 
 		const resource = new Item.Resource();
-		resource.setId(uuidv4());
+		resource.setUrn(itemUrn);
 		resource.setType(req.getType());
 		resource.setProperties(props);
 
 		const item = new Item();
-		item.setUrn(PicapicaUrn.stringify({ type: "item", sessionId: sessionRef.getId(), itemId: randomHex(64) }));
+		item.setUrn(itemUrn);
 		item.setMeta(req.getMeta()?.clone());
 		item.setResource(resource);
 
 		sessionRef.addItems(item);
 		this._content.set(resource, content);
 
-		return new v1_services_pb.CreateItemResponse().setId(item.getUrn());
+		return new v1_services_pb.CreateItemResponse().setItemUrn(item.getUrn());
 	});
 	updateItem = mockUnary<v1_services_pb.UpdateItemRequest, v1_services_pb.UpdateItemResponse>(async req => {
 		await this.simulateNetwork();
 
-		const itemRef = await this._getItemRef(req.getSessionId(), req.getItemId());
+		const itemRef = await this._getItemRef(req.getSessionUrn(), req.getItemUrn());
 		itemRef.setMeta(req.getMeta()?.clone());
-		return new v1_services_pb.UpdateItemResponse().setSuccess(true);
+		return new v1_services_pb.UpdateItemResponse();
 	});
 	getItem = mockUnary<v1_services_pb.GetItemRequest, v1_services_pb.GetItemResponse>(async req => {
 		await this.simulateNetwork();
 
 		const res = new v1_services_pb.GetItemResponse();
-		for (const urn of req.getItemIdsList()) {
-			const itemRef = await this._getItemRef(req.getSessionId(), urn);
+		for (const urn of req.getItemUrnList()) {
+			const itemRef = await this._getItemRef(req.getSessionUrn(), urn);
 			res.addItems(itemRef.clone());
 		}
 
@@ -200,11 +209,11 @@ class MockClient extends SessionServiceClient {
 	deleteItem = mockUnary<v1_services_pb.DeleteItemRequest, v1_services_pb.DeleteItemResponse>(async req => {
 		await this.simulateNetwork();
 
-		const sessionRef = await this._getSessionRef(req.getSessionId());
-		const itemRef = await this._getItemRef(req.getSessionId(), req.getItemId());
+		const sessionRef = await this._getSessionRef(req.getSessionUrn());
+		const itemRef = await this._getItemRef(req.getSessionUrn(), req.getItemUrn());
 		sessionRef.setItemsList(sessionRef.getItemsList().filter(i => i !== itemRef));
 
-		return new v1_services_pb.DeleteItemResponse().setSuccess(true);
+		return new v1_services_pb.DeleteItemResponse();
 	});
 }
 

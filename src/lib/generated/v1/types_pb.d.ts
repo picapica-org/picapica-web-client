@@ -107,8 +107,8 @@ export namespace ResourcePair {
 }
 
 export class Result extends jspb.Message {
-  getId(): string;
-  setId(value: string): Result;
+  getUrn(): string;
+  setUrn(value: string): Result;
 
   getResources(): ResourcePair | undefined;
   setResources(value?: ResourcePair): Result;
@@ -133,7 +133,7 @@ export class Result extends jspb.Message {
 
 export namespace Result {
   export type AsObject = {
-    id: string,
+    urn: string,
     resources?: ResourcePair.AsObject,
     completed: boolean,
     seedsList: Array<Seed.AsObject>,
@@ -176,6 +176,9 @@ export namespace Collection {
     getDescription(): string;
     setDescription(value: string): Properties;
 
+    getLanguage(): string;
+    setLanguage(value: string): Properties;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): Properties.AsObject;
     static toObject(includeInstance: boolean, msg: Properties): Properties.AsObject;
@@ -190,6 +193,7 @@ export namespace Collection {
       sourceUrl: string,
       logoUrl: string,
       description: string,
+      language: string,
     }
   }
 
@@ -244,8 +248,8 @@ export namespace Item {
 
 
   export class Resource extends jspb.Message {
-    getId(): string;
-    setId(value: string): Resource;
+    getUrn(): string;
+    setUrn(value: string): Resource;
 
     getType(): Item.Resource.Type;
     setType(value: Item.Resource.Type): Resource;
@@ -265,17 +269,17 @@ export namespace Item {
 
   export namespace Resource {
     export type AsObject = {
-      id: string,
+      urn: string,
       type: Item.Resource.Type,
       properties?: Item.Resource.Properties.AsObject,
     }
 
     export class Properties extends jspb.Message {
-      getRawMd5(): string;
-      setRawMd5(value: string): Properties;
+      getRawChecksum(): string;
+      setRawChecksum(value: string): Properties;
 
-      getContentMd5(): string;
-      setContentMd5(value: string): Properties;
+      getContentChecksum(): string;
+      setContentChecksum(value: string): Properties;
 
       getSize(): number;
       setSize(value: number): Properties;
@@ -293,8 +297,8 @@ export namespace Item {
 
     export namespace Properties {
       export type AsObject = {
-        rawMd5: string,
-        contentMd5: string,
+        rawChecksum: string,
+        contentChecksum: string,
         size: number,
         length: number,
       }

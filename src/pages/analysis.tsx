@@ -60,17 +60,17 @@ function Analysis(props: LocalizableProps): JSX.Element {
 	const content = visitState<LoadState, JSX.Element>(state, {
 		Loading(state) {
 			return (
-				<StepSelectorGroup lang={props.lang} sessionId={state.sessionId} current="analysis">
+				<StepSelectorGroup lang={props.lang} sessionUrn={state.sessionUrn} current="analysis">
 					<SessionLoading {...props} state={state} />
 				</StepSelectorGroup>
 			);
 		},
 		Ready({ session }) {
 			return (
-				<StepSelectorGroup lang={props.lang} sessionId={session.id} current="analysis">
+				<StepSelectorGroup lang={props.lang} sessionUrn={session.urn} current="analysis">
 					<StepActionBar
-						left={<BackButton {...props} to={getLinkToStep("submit", session.id)} />}
-						right={<StartButton {...props} to={getLinkToStep("results", session.id)} />}
+						left={<BackButton {...props} to={getLinkToStep("submit", session.urn)} />}
+						right={<StartButton {...props} to={getLinkToStep("results", session.urn)} />}
 						instruction={l.instruction}
 					/>
 
@@ -86,8 +86,8 @@ function Analysis(props: LocalizableProps): JSX.Element {
 					/>
 
 					<StepActionBar
-						left={<BackButton {...props} to={getLinkToStep("submit", session.id)} />}
-						right={<StartButton {...props} to={getLinkToStep("results", session.id)} />}
+						left={<BackButton {...props} to={getLinkToStep("submit", session.urn)} />}
+						right={<StartButton {...props} to={getLinkToStep("results", session.urn)} />}
 						instruction={""}
 					/>
 				</StepSelectorGroup>

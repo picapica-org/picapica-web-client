@@ -18,7 +18,7 @@ export interface Creating {
 }
 export interface Loading {
 	readonly type: "Loading";
-	readonly sessionId: string;
+	readonly sessionUrn: string;
 	readonly retries: number;
 }
 export interface Ready {
@@ -121,16 +121,16 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 
 	const [concurrentMutations, setConcurrentMutations] = useState(0);
 
-	// update the session id on URL changes
+	// update the session URN on URL changes
 	useEffect(() => {
 		return addLocationChangeListener(() => {
-			const id = getURLSearchParams().get("id");
+			const urn = getLocationSessionUrn();
 			setState(prev => {
-				const sessionId = getSessionId(prev);
+				const sessionUrn = getSessionUrn(prev);
 
-				if (id !== sessionId) {
-					if (id) {
-						return { type: "Loading", sessionId: id, retries: 0 };
+				if (urn !== sessionUrn) {
+					if (urn) {
+						return { type: "Loading", sessionUrn: urn, retries: 0 };
 					} else {
 						return { type: "Creating", retries: 0 };
 					}
@@ -143,9 +143,9 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 
 	// set the current URL params based on the current session
 	useEffect(() => {
-		const sessionId = getSessionId(state);
-		if (sessionId) {
-			changeURLSearchParams("replace", { id: sessionId });
+		const sessionUrn = getSessionUrn(state);
+		if (sessionUrn) {
+			setLocationSessionUrn(sessionUrn);
 		}
 	}, [state]);
 
@@ -172,7 +172,7 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 					token.checkCanceled();
 
 					const req = new GetSessionRequest();
-					req.setSessionId(state.sessionId);
+					req.setSessionUrn(state.sessionUrn);
 					return getSessionClient().getSession(req, null);
 				}
 			}
@@ -186,7 +186,7 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 			switch (state.type) {
 				case "Creating": {
 					const resp = result as CreateSessionResponse;
-					setState({ type: "Loading", retries: 0, sessionId: resp.getSessionId() });
+					setState({ type: "Loading", retries: 0, sessionUrn: resp.getSessionUrn() });
 					break;
 				}
 				case "Loading": {
@@ -229,7 +229,7 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 
 	// update the last ready state
 	const [lastReady, setLastReady] = useState<Ready | undefined>(
-		state.type === "Loading" ? getLastDisplayState(state.sessionId) : undefined
+		state.type === "Loading" ? getLastDisplayState(state.sessionUrn) : undefined
 	);
 	useEffect(() => {
 		if (state.type === "Ready") {
@@ -290,11 +290,23 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 	return [displayState, update];
 }
 
-function getDefaultState(): InternalState {
-	const sessionId = getURLSearchParams().get("id");
+function getLocationSessionUrn(): string | null {
+	const sessionUrn = getURLSearchParams().get("urn");
+	if (sessionUrn) {
+		return sessionUrn;
+	} else {
+		return null;
+	}
+}
+function setLocationSessionUrn(sessionUrn: string): void {
+	changeURLSearchParams("replace", { urn: sessionUrn });
+}
 
-	if (sessionId) {
-		return { type: "Loading", sessionId, retries: 0 };
+function getDefaultState(): InternalState {
+	const sessionUrn = getLocationSessionUrn();
+
+	if (sessionUrn) {
+		return { type: "Loading", sessionUrn, retries: 0 };
 	} else {
 		return { type: "Creating", retries: 0 };
 	}
@@ -304,11 +316,11 @@ interface LastDisplayStateEntry {
 	readonly timestamp: number;
 	readonly state: Ready;
 }
-function getLastDisplayStateKey(sessionId: string): string {
-	return "last-display:" + sessionId;
+function getLastDisplayStateKey(sessionUrn: string): string {
+	return "last-display:" + sessionUrn;
 }
-function getLastDisplayState(sessionId: string): Ready | undefined {
-	const value = sessionStorage.getItem(getLastDisplayStateKey(sessionId));
+function getLastDisplayState(sessionUrn: string): Ready | undefined {
+	const value = sessionStorage.getItem(getLastDisplayStateKey(sessionUrn));
 	if (value) {
 		const entry: LastDisplayStateEntry = JSON.parse(value);
 		if (Date.now() - entry.timestamp < AUTO_REFRESH_INTERVAL * 2) {
@@ -321,13 +333,13 @@ function setLastDisplayState(displayState: InternalState): void {
 	if (displayState.type === "Creating") {
 		// nothing to do
 	} else if (displayState.type === "Loading") {
-		sessionStorage.removeItem(getLastDisplayStateKey(displayState.sessionId));
+		sessionStorage.removeItem(getLastDisplayStateKey(displayState.sessionUrn));
 	} else {
 		const entry: LastDisplayStateEntry = {
 			timestamp: Date.now(),
 			state: displayState,
 		};
-		sessionStorage.setItem(getLastDisplayStateKey(displayState.session.id), JSON.stringify(entry));
+		sessionStorage.setItem(getLastDisplayStateKey(displayState.session.urn), JSON.stringify(entry));
 	}
 }
 
@@ -338,18 +350,18 @@ function getReloadState(state: InternalState): InternalState {
 		case "Loading":
 			return { ...state, retries: 0 };
 		case "Ready":
-			return { type: "Loading", retries: 0, sessionId: state.session.id };
+			return { type: "Loading", retries: 0, sessionUrn: state.session.urn };
 		default:
 			assertNever(state);
 	}
 }
 
-export function getSessionId(state: State): string | null {
+export function getSessionUrn(state: State): string | null {
 	switch (state.type) {
 		case "Loading":
-			return state.sessionId;
+			return state.sessionUrn;
 		case "Ready":
-			return state.session.id;
+			return state.session.urn;
 		default:
 			return null;
 	}
@@ -370,7 +382,7 @@ function getRetryDelay(retries: number): number {
 	}
 }
 
-const NO_SESSION_PARAM: Loading = { type: "Loading", sessionId: "", retries: Infinity };
+const NO_SESSION_PARAM: Loading = { type: "Loading", sessionUrn: "", retries: Infinity };
 
 function toLoadState(state: InternalState): LoadState {
 	if (state.type === "Creating") {
@@ -381,7 +393,7 @@ function toLoadState(state: InternalState): LoadState {
 }
 
 function getStableState(state: InternalState, lastReady: Ready | undefined): InternalState {
-	if (state.type === "Loading" && state.retries < 3 && lastReady && lastReady.session.id === state.sessionId) {
+	if (state.type === "Loading" && state.retries < 3 && lastReady && lastReady.session.urn === state.sessionUrn) {
 		return lastReady;
 	}
 	return state;
