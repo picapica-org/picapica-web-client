@@ -15,11 +15,11 @@ export function SessionCreating(props: SessionCreatingProps): JSX.Element {
 		<div className="SessionCreating">
 			{props.state.retries < 3 ? (
 				<div className="first">
-					<p>{l.loadingSession}</p>
+					<p>{l.creatingSession}</p>
 				</div>
 			) : (
 				<div className="failed">
-					<p>{l.failedLoadingSession}</p>
+					<p>{l.failedCreatingSession}</p>
 				</div>
 			)}
 		</div>
