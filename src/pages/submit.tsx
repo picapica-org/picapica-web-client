@@ -9,9 +9,9 @@ import { AddItem } from "../elements/add-item";
 import { ItemTable } from "../elements/item-table";
 import { StepActionBar } from "../elements/step-action-bar";
 import { NextButton } from "../elements/step-buttons";
-import { SessionCreating, SessionLoading } from "../elements/session-creating-loading";
+import { SessionState } from "../elements/session-creating-loading";
 import { ItemProto, toItemResourceType } from "../lib/session/create-item";
-import { CreateState, getSessionUrn, useCreateSession, visitState } from "../lib/use-session";
+import { getSessionUrn, Ready, useCreateSession } from "../lib/use-session";
 import { FailedItem, UploadedItem, UploadingItem, useUpload } from "../lib/use-upload";
 import { Icon, ItemTypeIcon } from "../elements/icon";
 import { cloneSession } from "../lib/session/util";
@@ -106,62 +106,47 @@ function Submit(props: LocalizableProps): JSX.Element {
 		noClick: true,
 	});
 
-	// visible state
-	const content = visitState<CreateState, JSX.Element>(state, {
-		Creating(state) {
-			return (
-				<StepSelectorGroup lang={props.lang} sessionUrn={""} current="submit">
-					<SessionCreating {...props} state={state} />
-				</StepSelectorGroup>
-			);
-		},
-		Loading(state) {
-			return (
-				<StepSelectorGroup lang={props.lang} sessionUrn={state.sessionUrn} current="submit">
-					<SessionLoading {...props} state={state} />
-				</StepSelectorGroup>
-			);
-		},
-		Ready({ session }) {
-			const addItem = <AddItem {...props} onAdd={items => upload(items, session.urn)} accept={ACCEPT} />;
+	const onReady = ({ session }: Ready): JSX.Element => {
+		const addItem = <AddItem {...props} onAdd={items => upload(items, session.urn)} accept={ACCEPT} />;
 
-			return (
-				<StepSelectorGroup lang={props.lang} sessionUrn={session.urn} current="submit">
-					<button
-						onClick={() => upload([ItemProto.fromText(randomText())], session.urn)}
-						style={{ position: "absolute", opacity: ".3", zIndex: 1000 }}>
-						Random Text
-					</button>
+		return (
+			<>
+				<button
+					onClick={() => upload([ItemProto.fromText(randomText())], session.urn)}
+					style={{ position: "absolute", opacity: ".3", zIndex: 1000 }}>
+					Random Text
+				</button>
 
-					{emptySession() && blank ? (
-						<>
-							<div className="blank-session">
-								{addItem}
-								<div className="spacer"></div>
-								<span className="pseudo-tooltip">{l.addItemHint}</span>
-							</div>
-						</>
-					) : (
-						<>
-							<StepActionBar
-								left={addItem}
-								right={<NextButton {...props} to={getLinkToStep("analysis", session.urn)} />}
-								instruction={l.instruction}
-							/>
+				{emptySession() && blank ? (
+					<>
+						<div className="blank-session">
+							{addItem}
+							<div className="spacer"></div>
+							<span className="pseudo-tooltip">{l.addItemHint}</span>
+						</div>
+					</>
+				) : (
+					<>
+						<StepActionBar
+							left={addItem}
+							right={<NextButton {...props} to={getLinkToStep("analysis", session.urn)} />}
+							instruction={l.instruction}
+						/>
 
-							<UploadingList uploading={uploading} />
+						<UploadingList uploading={uploading} />
 
-							<ItemTable {...props} session={session} update={update} />
-						</>
-					)}
-				</StepSelectorGroup>
-			);
-		},
-	});
+						<ItemTable {...props} session={session} update={update} />
+					</>
+				)}
+			</>
+		);
+	};
 
 	return (
 		<Page {...props} className="Submit" header="small" dropState={dropState}>
-			{content}
+			<StepSelectorGroup {...props} sessionUrn={getSessionUrn(state) ?? ""} current="submit">
+				<SessionState {...props} state={state} onReady={onReady} />
+			</StepSelectorGroup>
 		</Page>
 	);
 }

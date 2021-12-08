@@ -356,6 +356,8 @@ function getReloadState(state: InternalState): InternalState {
 	}
 }
 
+type SessionUrn<S extends State> = S extends Loading ? string : S extends Ready ? string : null;
+export function getSessionUrn<S extends State>(state: S): SessionUrn<S>;
 export function getSessionUrn(state: State): string | null {
 	switch (state.type) {
 		case "Loading":

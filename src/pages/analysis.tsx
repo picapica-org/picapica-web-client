@@ -7,8 +7,8 @@ import { dynamic } from "../lib/react-util";
 import { getLinkToStep, StepSelectorGroup } from "../elements/step-selector";
 import { StepActionBar } from "../elements/step-action-bar";
 import { BackButton, StartButton } from "../elements/step-buttons";
-import { SessionLoading } from "../elements/session-creating-loading";
-import { LoadState, useLoadSession, visitState } from "../lib/use-session";
+import { SessionState } from "../elements/session-creating-loading";
+import { getSessionUrn, Ready, useLoadSession } from "../lib/use-session";
 import { Icon, ItemTypeIcon, PicaIcon } from "../elements/icon";
 import { updateConfigAction } from "../lib/session/actions";
 import { Session } from "../lib/generated/v1/services_pb";
@@ -57,47 +57,38 @@ function Analysis(props: LocalizableProps): JSX.Element {
 		}
 	}, [state]);
 
-	const content = visitState<LoadState, JSX.Element>(state, {
-		Loading(state) {
-			return (
-				<StepSelectorGroup lang={props.lang} sessionUrn={state.sessionUrn} current="analysis">
-					<SessionLoading {...props} state={state} />
-				</StepSelectorGroup>
-			);
-		},
-		Ready({ session }) {
-			return (
-				<StepSelectorGroup lang={props.lang} sessionUrn={session.urn} current="analysis">
-					<StepActionBar
-						left={<BackButton {...props} to={getLinkToStep("submit", session.urn)} />}
-						right={<StartButton {...props} to={getLinkToStep("results", session.urn)} />}
-						instruction={l.instruction}
-					/>
+	const onReady = ({ session }: Ready): JSX.Element => (
+		<>
+			<StepActionBar
+				left={<BackButton {...props} to={getLinkToStep("submit", session.urn)} />}
+				right={<StartButton {...props} to={getLinkToStep("results", session.urn)} />}
+				instruction={l.instruction}
+			/>
 
-					<ItemConfig {...props} session={session} config={config} update={updateConfig} />
-					<CollectionConfig
-						{...props}
-						session={session}
-						config={config}
-						update={updateConfig}
-						collection="urn:picapica:collection:wikipedia"
-						title={l.wikipediaTitle}
-						instruction={l.wikipediaInstruction}
-					/>
+			<ItemConfig {...props} session={session} config={config} update={updateConfig} />
+			<CollectionConfig
+				{...props}
+				session={session}
+				config={config}
+				update={updateConfig}
+				collection="urn:picapica:collection:wikipedia"
+				title={l.wikipediaTitle}
+				instruction={l.wikipediaInstruction}
+			/>
 
-					<StepActionBar
-						left={<BackButton {...props} to={getLinkToStep("submit", session.urn)} />}
-						right={<StartButton {...props} to={getLinkToStep("results", session.urn)} />}
-						instruction={""}
-					/>
-				</StepSelectorGroup>
-			);
-		},
-	});
+			<StepActionBar
+				left={<BackButton {...props} to={getLinkToStep("submit", session.urn)} />}
+				right={<StartButton {...props} to={getLinkToStep("results", session.urn)} />}
+				instruction={""}
+			/>
+		</>
+	);
 
 	return (
 		<Page {...props} className="Analysis" header="small">
-			{content}
+			<StepSelectorGroup {...props} sessionUrn={getSessionUrn(state)} current="analysis">
+				<SessionState {...props} state={state} onReady={onReady} />
+			</StepSelectorGroup>
 		</Page>
 	);
 }

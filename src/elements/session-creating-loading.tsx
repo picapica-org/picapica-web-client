@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "gatsby";
 import { getLocalization, Locales, LocalizableProps, SimpleString } from "../lib/localization";
-import { Creating, Loading } from "../lib/use-session";
+import { Creating, Loading, Ready, State, visitState } from "../lib/use-session";
 import "./session-creating-loading.scss";
 
 export interface SessionCreatingProps extends LocalizableProps {
@@ -47,6 +47,25 @@ export function SessionLoading(props: SessionLoadingProps): JSX.Element {
 			)}
 		</div>
 	);
+}
+
+export interface SessionStateProps extends LocalizableProps {
+	readonly state: State;
+	readonly onReady: (state: Ready) => JSX.Element;
+}
+
+export function SessionState(props: SessionStateProps): JSX.Element {
+	return visitState(props.state, {
+		Creating(state) {
+			return <SessionCreating lang={props.lang} state={state} />;
+		},
+		Loading(state) {
+			return <SessionLoading lang={props.lang} state={state} />;
+		},
+		Ready(state) {
+			return props.onReady(state);
+		},
+	});
 }
 
 const locales: Locales<

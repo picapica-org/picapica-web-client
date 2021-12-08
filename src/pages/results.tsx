@@ -7,8 +7,8 @@ import { dynamic } from "../lib/react-util";
 import { getLinkToStep, StepSelectorGroup } from "../elements/step-selector";
 import { StepActionBar } from "../elements/step-action-bar";
 import { BackButton } from "../elements/step-buttons";
-import { SessionLoading } from "../elements/session-creating-loading";
-import { LoadState, useLoadSession, visitState } from "../lib/use-session";
+import { SessionState } from "../elements/session-creating-loading";
+import { getSessionUrn, Ready, useLoadSession } from "../lib/use-session";
 import "./results.scss";
 
 export default function ResultsPage(): JSX.Element {
@@ -30,38 +30,27 @@ function Results(props: LocalizableProps): JSX.Element {
 
 	const [state] = useLoadSession();
 
-	const content = visitState<LoadState, JSX.Element>(state, {
-		Loading(state) {
-			return (
-				<StepSelectorGroup lang={props.lang} sessionUrn={state.sessionUrn} current="results">
-					<SessionLoading {...props} state={state} />
-				</StepSelectorGroup>
-			);
-		},
-		Ready({ session }) {
-			return (
-				<StepSelectorGroup lang={props.lang} sessionUrn={session.urn} current="results">
-					<StepActionBar
-						left={<BackButton {...props} to={getLinkToStep("analysis", session.urn)} />}
-						right={<span className="next-spacer" />}
-						instruction={l.instruction}
-					/>
+	const onReady = ({ session }: Ready): JSX.Element => (
+		<>
+			<StepActionBar
+				left={<BackButton {...props} to={getLinkToStep("analysis", session.urn)} />}
+				right={<span className="next-spacer" />}
+				instruction={l.instruction}
+			/>
 
-					{"TODO"}
-
-					<StepActionBar
-						left={<BackButton {...props} to={getLinkToStep("analysis", session.urn)} />}
-						right={<span className="next-spacer" />}
-						instruction={""}
-					/>
-				</StepSelectorGroup>
-			);
-		},
-	});
+			<StepActionBar
+				left={<BackButton {...props} to={getLinkToStep("analysis", session.urn)} />}
+				right={<span className="next-spacer" />}
+				instruction={""}
+			/>
+		</>
+	);
 
 	return (
 		<Page {...props} className="Results" header="small">
-			{content}
+			<StepSelectorGroup {...props} sessionUrn={getSessionUrn(state)} current="results">
+				<SessionState {...props} state={state} onReady={onReady} />
+			</StepSelectorGroup>
 		</Page>
 	);
 }
