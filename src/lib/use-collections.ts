@@ -29,7 +29,7 @@ function setCachedCollections(sessionUrn: string, collections: DeepReadonly<Coll
 }
 
 export function useCollections(sessionUrn: string): [collections: DeepReadonly<Collection.AsObject[]> | undefined] {
-	const [collections, setCollections] = useState<DeepReadonly<Collection.AsObject[]> | undefined>();
+	const [collections, setCollections] = useState(() => getCachedCollections(sessionUrn));
 
 	useAsyncEffect(
 		async token => {
@@ -58,5 +58,5 @@ export function useCollections(sessionUrn: string): [collections: DeepReadonly<C
 		[sessionUrn, setCollections]
 	);
 
-	return [collections ?? getCachedCollections(sessionUrn)];
+	return [collections];
 }
