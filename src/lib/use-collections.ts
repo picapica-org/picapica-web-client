@@ -5,18 +5,26 @@ import { useAsyncEffect } from "./react-util";
 import { getSessionClient } from "./session/client";
 import { DeepReadonly, delay, noop } from "./util";
 
+const cache = new Map<string, DeepReadonly<Collection.AsObject[]>>();
+
 function getCacheKey(sessionUrn: string): string {
 	return `collections-cache/${sessionUrn}`;
 }
 function getCachedCollections(sessionUrn: string): DeepReadonly<Collection.AsObject[]> | undefined {
-	const value = sessionStorage.getItem(getCacheKey(sessionUrn));
-	if (value) {
-		return JSON.parse(value);
-	} else {
-		return undefined;
+	let cachedCollection = cache.get(sessionUrn);
+
+	if (cachedCollection === undefined) {
+		const value = sessionStorage.getItem(getCacheKey(sessionUrn));
+		if (value) {
+			cachedCollection = JSON.parse(value) as DeepReadonly<Collection.AsObject[]>;
+			cache.set(sessionUrn, cachedCollection);
+		}
 	}
+
+	return cachedCollection;
 }
 function setCachedCollections(sessionUrn: string, collections: DeepReadonly<Collection.AsObject[]>): void {
+	cache.set(sessionUrn, collections);
 	sessionStorage.setItem(getCacheKey(sessionUrn), JSON.stringify(collections));
 }
 
