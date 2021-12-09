@@ -11,6 +11,7 @@ import {
 import { addLocationChangeListener, useAsyncEffect } from "../lib/react-util";
 import { changeURLSearchParams, getURLSearchParams } from "../lib/url-params";
 import { assertNever, DeepReadonly, delay, noop } from "../lib/util";
+import { SessionMutator } from "./session/mutator";
 
 export interface Creating {
 	readonly type: "Creating";
@@ -39,8 +40,6 @@ export function visitState<S extends State, R>(state: S, visitor: StateVisitor<S
 	const fn = visitor[state.type as never] as (state: S) => R;
 	return fn(state);
 }
-
-export type SessionMutator = (session: DeepReadonly<Session.AsObject>) => DeepReadonly<Session.AsObject>;
 
 export type UseSessionArray<S extends State = State> = [
 	state: S,

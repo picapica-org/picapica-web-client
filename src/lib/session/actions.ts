@@ -1,9 +1,9 @@
 import { SessionConfig } from "../generated/v1/configs_pb";
 import { DeleteItemRequest, Session, UpdateConfigRequest, UpdateItemRequest } from "../generated/v1/services_pb";
 import { Item } from "../generated/v1/types_pb";
-import { SessionMutator } from "../use-session";
 import { DeepReadonly } from "../util";
 import { AnalysisConfig } from "./analysis-config";
+import { SessionMutator } from "./mutator";
 import { cloneSession } from "./util";
 
 export interface ActionResult<Req> {
