@@ -1,0 +1,18 @@
+@import "../colors.scss";
+
+.Badge {
+	white-space: nowrap;
+	font-weight: bold;
+	border-radius: 1em;
+	padding: .1em .5em;
+	font-size: 90%;
+
+	&.Dark {
+		background-color: $grey8;
+		color: $white;
+	}
+	&.Light {
+		background-color: $grey6;
+		color: $white;
+	}
+}
