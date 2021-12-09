@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { getLocalization, Locales, LocalizableProps } from "../lib/localization";
 import { Buttons } from "./buttons";
 import { Icon, PicaIcon } from "./icon";
@@ -10,8 +10,8 @@ import { ItemProto, ItemType } from "../lib/session/create-item";
 import "./add-item.scss";
 
 export interface AddItemProps extends LocalizableProps {
-	onAdd: (items: ItemProto[]) => void;
-	accept?: string;
+	readonly onAdd: (items: ItemProto[]) => void;
+	readonly accept?: string;
 }
 
 const INPUT_KINDS = ["file", "url", "text"] as const;
@@ -22,10 +22,13 @@ export function AddItem(props: AddItemProps): JSX.Element {
 	const [currentTab, setCurrentTab] = useState<ItemType>("file");
 
 	const ref = useRef<PopupActions>(null);
-	const openModal = (tab: ItemType): void => {
-		setCurrentTab(tab);
-		ref.current?.open();
-	};
+	const openModal = useCallback(
+		(tab: ItemType): void => {
+			setCurrentTab(tab);
+			ref.current?.open();
+		},
+		[ref, setCurrentTab]
+	);
 	const closeModal = useCallback((): void => ref.current?.close(), [ref]);
 
 	const submit = useCallback(
@@ -44,6 +47,13 @@ export function AddItem(props: AddItemProps): JSX.Element {
 		[submit, closeModal]
 	);
 
+	useEffect(() => {
+		const initial = consumeInitialAddItemState();
+		if (initial) {
+			openModal(initial);
+		}
+	}, [openModal]);
+
 	const [openFiles, input] = useOpenFileDialog(onSelect, { multiple: true, accept: props.accept });
 
 	const modalContent: Record<ItemType, (close: () => void) => JSX.Element> = {
@@ -60,7 +70,7 @@ export function AddItem(props: AddItemProps): JSX.Element {
 
 	return (
 		<span className="AddItem">
-			<button className={`${Buttons.BUTTON} green big-plus`} onClick={() => openModal("file")}>
+			<button className={`${Buttons.BUTTON} green big-plus`} onClick={() => openModal(currentTab)}>
 				<Icon kind="add-line" />
 			</button>
 			<span className="group">
@@ -109,6 +119,27 @@ export function AddItem(props: AddItemProps): JSX.Element {
 			</Popup>
 		</span>
 	);
+}
+
+function consumeInitialAddItemState(): ItemType | undefined {
+	const type = getInitialAddItemState();
+	if (type) {
+		location.hash = "";
+	}
+	return type;
+}
+function getInitialAddItemState(): ItemType | undefined {
+	const hash = location.hash;
+	switch (hash) {
+		case "#file":
+			return "file";
+		case "#url":
+			return "url";
+		case "#text":
+			return "text";
+		default:
+			return undefined;
+	}
 }
 
 interface ClosableProps {
