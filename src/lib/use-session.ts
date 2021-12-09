@@ -12,6 +12,7 @@ import { addLocationChangeListener, useAsyncEffect } from "../lib/react-util";
 import { changeURLSearchParams, getURLSearchParams } from "../lib/url-params";
 import { assertNever, DeepReadonly, delay, noop } from "../lib/util";
 import { SessionMutator } from "./session/mutator";
+import { StorageCache } from "./storage-cache";
 
 export interface Creating {
 	readonly type: "Creating";
@@ -228,7 +229,7 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 
 	// update the last ready state
 	const [lastReady, setLastReady] = useState<Ready | undefined>(
-		state.type === "Loading" ? getLastDisplayState(state.sessionUrn) : undefined
+		state.type === "Loading" ? displayCache.get(state.sessionUrn) : undefined
 	);
 	useEffect(() => {
 		if (state.type === "Ready") {
@@ -284,7 +285,13 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 	console.log(state);
 
 	const displayState = journal?.current ?? stableState;
-	useEffect(() => setLastDisplayState(displayState), [displayState]);
+	useEffect(() => {
+		if (displayState.type === "Ready") {
+			displayCache.set(displayState.session.urn, displayState, AUTO_REFRESH_INTERVAL * 2);
+		} else if (displayState.type === "Loading") {
+			displayCache.delete(displayState.sessionUrn);
+		}
+	}, [displayState]);
 
 	return [displayState, update];
 }
@@ -311,36 +318,7 @@ function getDefaultState(): InternalState {
 	}
 }
 
-interface LastDisplayStateEntry {
-	readonly timestamp: number;
-	readonly state: Ready;
-}
-function getLastDisplayStateKey(sessionUrn: string): string {
-	return "last-display:" + sessionUrn;
-}
-function getLastDisplayState(sessionUrn: string): Ready | undefined {
-	const value = sessionStorage.getItem(getLastDisplayStateKey(sessionUrn));
-	if (value) {
-		const entry: LastDisplayStateEntry = JSON.parse(value);
-		if (Date.now() - entry.timestamp < AUTO_REFRESH_INTERVAL * 2) {
-			return entry.state;
-		}
-	}
-	return undefined;
-}
-function setLastDisplayState(displayState: InternalState): void {
-	if (displayState.type === "Creating") {
-		// nothing to do
-	} else if (displayState.type === "Loading") {
-		sessionStorage.removeItem(getLastDisplayStateKey(displayState.sessionUrn));
-	} else {
-		const entry: LastDisplayStateEntry = {
-			timestamp: Date.now(),
-			state: displayState,
-		};
-		sessionStorage.setItem(getLastDisplayStateKey(displayState.session.urn), JSON.stringify(entry));
-	}
-}
+const displayCache = new StorageCache<string, Ready>("last-display");
 
 function getReloadState(state: InternalState): InternalState {
 	switch (state.type) {
