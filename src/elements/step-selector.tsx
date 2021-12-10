@@ -9,7 +9,7 @@ import "./step-selector.scss";
 export type StepKind = "submit" | "analysis" | "checkout" | "results";
 
 export function getLinkToStep(step: StepKind, sessionUrn: string): string {
-	return `/${step}/?urn=${sessionUrn}`;
+	return `/${step}/?urn=${encodeURIComponent(sessionUrn)}`;
 }
 
 const STEPS = ["submit", "analysis", "checkout", "results"] as const;
