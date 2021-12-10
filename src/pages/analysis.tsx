@@ -9,7 +9,7 @@ import { StepActionBar } from "../elements/step-action-bar";
 import { BackButton, StartButton } from "../elements/step-buttons";
 import { SessionState } from "../elements/session-creating-loading";
 import { getSessionUrn, Ready, useLoadSession } from "../lib/use-session";
-import { Icon, ItemTypeIcon, PicaIcon } from "../elements/icon";
+import { Icon, ItemTypeIcon } from "../elements/icon";
 import { updateConfigAction } from "../lib/session/actions";
 import { Session } from "../lib/generated/v1/services_pb";
 import { AnalysisConfig, CollectionUrn, ItemUrn } from "../lib/session/analysis-config";
@@ -17,6 +17,7 @@ import { DeepReadonly, EMPTY_ARRAY, EMPTY_SET, noop } from "../lib/util";
 import { getSessionClient } from "../lib/session/client";
 import { Buttons } from "../elements/buttons";
 import { Item } from "../lib/generated/v1/types_pb";
+import { CollectionLabel, SubmittedFilesLabel } from "../elements/labels";
 import "./analysis.scss";
 
 export default function AnalysisPage(): JSX.Element {
@@ -72,7 +73,6 @@ function Analysis(props: LocalizableProps): JSX.Element {
 				config={config}
 				update={updateConfig}
 				collection="urn:picapica:collection:wikipedia"
-				title={l.wikipediaTitle}
 				instruction={l.wikipediaInstruction}
 			/>
 
@@ -139,10 +139,7 @@ function ItemConfig(props: ItemConfigProps): JSX.Element {
 		<div className="ItemConfig">
 			<div className="heading">
 				<span className="title">
-					<span>
-						<PicaIcon kind="upload" />
-						{l.itemTitle}
-					</span>
+					<SubmittedFilesLabel lang={props.lang} />
 				</span>
 				<span className="buttons">
 					<span className={Buttons.BUTTON_GROUP}>
@@ -200,7 +197,6 @@ interface CollectionConfigProps extends LocalizableProps {
 	session: DeepReadonly<Session.AsObject>;
 	config: AnalysisConfig;
 	collection: CollectionUrn;
-	title: string;
 	instruction: string;
 	update: (config: AnalysisConfig) => void;
 }
@@ -233,7 +229,7 @@ function CollectionConfig(props: CollectionConfigProps): JSX.Element {
 		<div className="CollectionConfig">
 			<div className="heading">
 				<span className="title">
-					<span>{props.title}</span>
+					<CollectionLabel lang={props.lang} collectionUrn={props.collection} />
 				</span>
 				<span className="buttons">
 					<span className={Buttons.BUTTON_GROUP}>
@@ -297,16 +293,7 @@ function toggleSetValue<T>(set: ReadonlySet<T>, value: T): Set<T> {
 }
 
 const locales: Locales<
-	SimpleString<
-		| "instruction"
-		| "all"
-		| "none"
-		| "file"
-		| "itemTitle"
-		| "itemInstruction"
-		| "wikipediaTitle"
-		| "wikipediaInstruction"
-	>
+	SimpleString<"instruction" | "all" | "none" | "file" | "itemInstruction" | "wikipediaInstruction">
 > = {
 	en: {
 		instruction: "Select analysis options",
@@ -315,9 +302,7 @@ const locales: Locales<
 		none: "None",
 		file: "File",
 
-		itemTitle: "Your submitted files",
 		itemInstruction: "Compare your submitted files among each other. Group A will be compared with Group B.",
-		wikipediaTitle: "Wikipedia - the free encyclopedia",
 		wikipediaInstruction: "Compare your submitted files with all of Wikipedia.",
 	},
 	de: {
@@ -327,10 +312,8 @@ const locales: Locales<
 		none: "Nichts",
 		file: "Datei",
 
-		itemTitle: "Ihre eingereichten Dateien",
 		itemInstruction:
 			"Vergleichen Sie Ihre eingereichten Dateien miteinander. Gruppe A wird mit Gruppe B verglichen.",
-		wikipediaTitle: "Wikipedia - die freie Enzyklopädie",
 		wikipediaInstruction: "Vergleichen Sie Ihre eingereichten Dateien mit der gesamten Wikipedia.",
 	},
 };

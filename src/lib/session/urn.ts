@@ -90,6 +90,13 @@ export namespace PicapicaUrn {
 				throw new SyntaxError(`Invalid Picapica URN: ${urn}`);
 		}
 	}
+	export function tryParse(urn: string): PicapicaUrn | undefined {
+		try {
+			return parse(urn);
+		} catch (error) {
+			return undefined;
+		}
+	}
 
 	export function stringify(urn: PicapicaUrn): string {
 		return `urn:picapica:${urn.type}${stringifyContent(urn)}`;
