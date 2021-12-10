@@ -9,7 +9,7 @@ import {
 	Session,
 } from "../lib/generated/v1/services_pb";
 import { addLocationChangeListener, useAsyncEffect } from "../lib/react-util";
-import { changeURLSearchParams, getURLSearchParams } from "../lib/url-params";
+import { changeLocationSearchParams, getLocationSearchParams } from "../lib/url-params";
 import { assertNever, DeepReadonly, delay, noop } from "../lib/util";
 import { SessionMutator } from "./session/mutator";
 import { StorageCache } from "./storage-cache";
@@ -297,7 +297,7 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 }
 
 function getLocationSessionUrn(): string | null {
-	const sessionUrn = getURLSearchParams().get("urn");
+	const sessionUrn = getLocationSearchParams().get("urn");
 	if (sessionUrn) {
 		return sessionUrn;
 	} else {
@@ -305,7 +305,7 @@ function getLocationSessionUrn(): string | null {
 	}
 }
 function setLocationSessionUrn(sessionUrn: string): void {
-	changeURLSearchParams("replace", { urn: sessionUrn });
+	changeLocationSearchParams("replace", { urn: sessionUrn });
 }
 
 function getDefaultState(): InternalState {

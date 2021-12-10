@@ -32,13 +32,19 @@ export interface ReadonlyURLSearchParams {
 	values(): IterableIterator<string>;
 }
 
-export function getURLSearchParams(): ReadonlyURLSearchParams {
+/**
+ * Returns the search parameters of the current document location.
+ */
+export function getLocationSearchParams(): ReadonlyURLSearchParams {
 	return new URLSearchParams(location.search);
 }
 
-export function changeURLSearchParams(mode: "push" | "replace", changes: Record<string, string | null>): void {
-	const url = new URL(location.href);
+export type SearchParamsChanges = Record<string, string | null>;
 
+/**
+ * Changes the URL search parameters of the given URL and returns whether the given URL was changed.
+ */
+export function changeUrlSearchParams(url: URL, changes: SearchParamsChanges): boolean {
 	let didChange = false;
 
 	for (const name in changes) {
@@ -60,7 +66,25 @@ export function changeURLSearchParams(mode: "push" | "replace", changes: Record<
 		}
 	}
 
-	if (!didChange) {
+	return didChange;
+}
+
+/**
+ * Returns the current URL with the given changes applied to it.
+ */
+export function getChangedLocationSearchParams(changes: SearchParamsChanges): URL {
+	const url = new URL(location.href);
+	changeUrlSearchParams(url, changes);
+	return url;
+}
+
+/**
+ * Changes the search parameters of the current document location.
+ */
+export function changeLocationSearchParams(mode: "push" | "replace", changes: SearchParamsChanges): void {
+	const url = new URL(location.href);
+
+	if (!changeUrlSearchParams(url, changes)) {
 		return;
 	}
 
