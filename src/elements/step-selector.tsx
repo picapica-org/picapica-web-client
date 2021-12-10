@@ -17,6 +17,7 @@ const STEPS = ["submit", "analysis", "checkout", "results"] as const;
 export interface StepSelectorProps extends LocalizableProps {
 	readonly sessionUrn: string;
 	readonly current: StepKind;
+	readonly disableOthers?: boolean;
 }
 
 const ICONS: Readonly<Record<StepKind, PicaIconKind>> = {
@@ -35,6 +36,16 @@ export function StepSelector(props: StepSelectorProps): JSX.Element {
 		<span className={`StepSelector ${Buttons.BUTTON_GROUP}`}>
 			{STEPS.filter(step => ENABLE_CHECKOUT || step !== "checkout").map(step => {
 				const title = l[step];
+
+				const disabled = props.disableOthers && step !== props.current;
+				if (disabled) {
+					return (
+						<span key={step} className={`${Buttons.BUTTON} ${Buttons.DISABLED}`} title={title}>
+							<PicaIcon kind={ICONS[step]} />
+							<span className="text">{title}</span>
+						</span>
+					);
+				}
 
 				return (
 					<Link

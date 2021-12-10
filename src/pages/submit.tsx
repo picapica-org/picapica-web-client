@@ -144,7 +144,11 @@ function Submit(props: LocalizableProps): JSX.Element {
 
 	return (
 		<Page {...props} className="Submit" header="small" dropState={dropState}>
-			<StepSelectorGroup {...props} sessionUrn={getSessionUrn(state) ?? ""} current="submit">
+			<StepSelectorGroup
+				{...props}
+				sessionUrn={getSessionUrn(state) ?? ""}
+				current="submit"
+				disableOthers={state.type !== "Ready" || state.session.itemsList.length === 0}>
 				<SessionState {...props} state={state} onReady={onReady} />
 			</StepSelectorGroup>
 		</Page>

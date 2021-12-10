@@ -23,7 +23,8 @@
 		padding: 0.4em 0.85em;
 	}
 
-	&[disabled] {
+	&[disabled],
+	&.disabled {
 		cursor: not-allowed;
 		pointer-events: none;
 
@@ -33,7 +34,7 @@
 .Button {
 	cursor: pointer;
 
-	&:not([disabled]) {
+	&:not([disabled]):not(.disabled) {
 		&:hover,
 		&:active,
 		&.active {
@@ -52,7 +53,8 @@
 /* stylelint-disable-next-line no-duplicate-selectors */
 .Button,
 .NonButton {
-	&.red {
+	// This specificity hack is necessary to over-rule the above `:not([disabled]):not(.disabled)` rule
+	&.red.red {
 		// TODO: The color contrast is too low
 		--button-background: #{$main-red};
 		--button-color: #{$white};

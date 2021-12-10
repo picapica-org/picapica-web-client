@@ -7,6 +7,7 @@ export const enum Buttons {
 
 	// modifiers
 	ACTIVE = "active",
+	DISABLED = "disabled",
 	SMALL = "small",
 
 	GREEN = "green",
