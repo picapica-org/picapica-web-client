@@ -1,0 +1,34 @@
+.LoaderAnimation {
+	display: inline-block;
+	width: 1em;
+	white-space: pre;
+	position: relative;
+	padding: 0;
+
+	@keyframes loader-animation-rotating {
+		from {
+			transform: translate(-50%, -50%) rotate(0deg);
+		}
+		to {
+			transform: translate(-50%, -50%) rotate(360deg);
+		}
+	}
+
+	.Icon {
+		display: inline-block;
+		font-size: 120%;
+		user-select: none;
+
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+
+		animation: loader-animation-rotating 1s linear infinite;
+	}
+
+	.Icon:not(:first-child) {
+		animation-duration: 0.618s;
+		opacity: 70%;
+	}
+}

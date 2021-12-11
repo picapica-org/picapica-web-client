@@ -104,20 +104,6 @@
 
 			& > .loading {
 				flex-shrink: 0;
-
-				@keyframes rotating {
-					from {
-						transform: rotate(0deg);
-					}
-					to {
-						transform: rotate(360deg);
-					}
-				}
-
-				.Icon {
-					animation: rotating 1s linear infinite;
-					display: inline-block;
-				}
 			}
 			& > .icon {
 				flex-shrink: 0;

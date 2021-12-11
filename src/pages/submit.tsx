@@ -13,9 +13,10 @@ import { SessionState } from "../elements/session-creating-loading";
 import { ItemProto, toItemResourceType } from "../lib/session/create-item";
 import { getSessionUrn, Ready, useCreateSession } from "../lib/use-session";
 import { FailedItem, UploadedItem, UploadingItem, useUpload } from "../lib/use-upload";
-import { Icon, ItemTypeIcon } from "../elements/icon";
+import { ItemTypeIcon } from "../elements/icon";
 import { cloneSession } from "../lib/session/util";
 import { useDropzone } from "react-dropzone";
+import { LoaderAnimation } from "../elements/loader-animation";
 import "./submit.scss";
 
 export default function SubmitPage(): JSX.Element {
@@ -162,7 +163,7 @@ function UploadingList(props: { uploading: readonly UploadingItem[] }): JSX.Elem
 				return (
 					<div key={uploadId} className="uploading-item">
 						<span className="loading">
-							<Icon kind="loader-5-line" />
+							<LoaderAnimation />
 						</span>
 						<span className="icon">
 							<ItemTypeIcon type={item.type} />
