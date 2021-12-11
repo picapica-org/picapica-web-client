@@ -82,7 +82,7 @@ const locales: Locales<
 		failedLoadingSession: "Failed to load session. Trying again...",
 		newSession: () => (
 			<>
-				Do you want to <Link to={toSubmit}>start a new analysis</Link>?
+				Do you want to <Link to={toSubmit()}>start a new analysis</Link>?
 			</>
 		),
 	},
@@ -94,7 +94,7 @@ const locales: Locales<
 		failedLoadingSession: "Sitzung konnte nicht geladen werden. Es wird erneut versucht...",
 		newSession: () => (
 			<>
-				Möchten Sie <Link to={toSubmit}>eine neue Analyse beginnen</Link>?
+				Möchten Sie <Link to={toSubmit()}>eine neue Analyse beginnen</Link>?
 			</>
 		),
 	},

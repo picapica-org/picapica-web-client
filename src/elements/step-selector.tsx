@@ -1,6 +1,8 @@
 import { Link } from "gatsby";
 import React from "react";
 import { getLocalization, Locales, LocalizableProps, SimpleString } from "../lib/localization";
+import { toAnalysis, toResults, toSubmit } from "../lib/page-links";
+import { assertNever } from "../lib/util";
 import { Buttons } from "./buttons";
 import { Group } from "./group";
 import { PicaIcon, PicaIconKind } from "./icon";
@@ -9,7 +11,18 @@ import "./step-selector.scss";
 export type StepKind = "submit" | "analysis" | "checkout" | "results";
 
 export function getLinkToStep(step: StepKind, sessionUrn: string): string {
-	return `/${step}/?urn=${encodeURIComponent(sessionUrn)}`;
+	switch (step) {
+		case "submit":
+			return toSubmit({ urn: sessionUrn });
+		case "analysis":
+			return toAnalysis({ urn: sessionUrn });
+		case "checkout":
+			return "/checkout/";
+		case "results":
+			return toResults({ urn: sessionUrn });
+		default:
+			assertNever(step);
+	}
 }
 
 const STEPS = ["submit", "analysis", "checkout", "results"] as const;

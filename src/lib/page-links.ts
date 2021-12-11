@@ -4,12 +4,24 @@ export const toLegal = "/legal/";
 export const toHelp = "/help/";
 export const toPoster = "/poster/";
 
-export const toSubmit = "/submit/";
-export const toAnalysis = "/analysis/";
-export const toResults = "/results/";
-export const toResult = "/result/";
+export const toSubmit = withParameters<{ urn?: string }>("/submit/");
+export const toAnalysis = withParameters<{ urn: string }>("/analysis/");
+export const toResults = withParameters<{ urn: string; view?: string }>("/results/");
+export const toResult = withParameters<{ urn: string }>("/result/");
 
-export function withQuery(to: string, pairs: Partial<Record<string, string>>): string {
+function withParameters<Parameters extends Partial<Record<string, string>>>(
+	to: string
+): Partial<Parameters> extends Parameters
+	? (pairs?: Readonly<Parameters>) => string
+	: (pairs: Readonly<Parameters>) => string {
+	return (parameters: Readonly<Parameters> | undefined) => withQuery(to, parameters);
+}
+
+function withQuery(to: string, pairs: Partial<Record<string, string>> | undefined): string {
+	if (!pairs) {
+		return to;
+	}
+
 	const params = new URLSearchParams();
 
 	for (const name in pairs) {

@@ -10,16 +10,16 @@ export function NewAnalysis(props: LocalizableProps): JSX.Element {
 
 	return (
 		<span className={"NewAnalysis " + Buttons.BUTTON_GROUP}>
-			<Link to={toSubmit} className={Buttons.BUTTON}>
+			<Link to={toSubmit()} className={Buttons.BUTTON}>
 				{l.newAnalysis}
 			</Link>
-			<Link to={toSubmit + "#file"} className={Buttons.BUTTON} title={l.file}>
+			<Link to={toSubmit() + "#file"} className={Buttons.BUTTON} title={l.file}>
 				<PicaIcon kind="file" />
 			</Link>
-			<Link to={toSubmit + "#url"} className={Buttons.BUTTON} title={l.url}>
+			<Link to={toSubmit() + "#url"} className={Buttons.BUTTON} title={l.url}>
 				<PicaIcon kind="url" />
 			</Link>
-			<Link to={toSubmit + "#text"} className={Buttons.BUTTON} title={l.text}>
+			<Link to={toSubmit() + "#text"} className={Buttons.BUTTON} title={l.text}>
 				<PicaIcon kind="text" />
 			</Link>
 		</span>
