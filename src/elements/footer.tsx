@@ -1,6 +1,7 @@
 import { Link } from "gatsby";
 import React from "react";
 import { getLocalization, Locales, LocalizableProps, setCurrentLang, SupportedLanguage } from "../lib/localization";
+import { toHelp, toLegal, toPoster } from "../lib/page-links";
 import "./footer.scss";
 
 export function Footer(props: LocalizableProps): JSX.Element {
@@ -47,14 +48,14 @@ export function Footer(props: LocalizableProps): JSX.Element {
 						<span></span>
 					</a>*/}
 					<Bullet />
-					<Link to="/legal/" id="impressum-and-privacy">
+					<Link to={toLegal} id="impressum-and-privacy">
 						{l.impressumAndPrivacy}
 					</Link>
 				</div>
 				<div id="netspeak-points">
-					<Link to="/help/">{l.help}</Link>
+					<Link to={toHelp}>{l.help}</Link>
 					<Bullet />
-					<Link to="/poster/">{l.poster}</Link>
+					<Link to={toPoster}>{l.poster}</Link>
 				</div>
 				<div id="language-section">
 					<span className="pipe">|</span>

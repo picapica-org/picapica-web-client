@@ -6,6 +6,7 @@ import { NewAnalysis } from "../elements/new-analysis";
 import { SharedHead } from "../elements/shared-header";
 import { getCurrentLang, getLocalization, Locales, LocalizableProps } from "../lib/localization";
 import { dynamic } from "../lib/react-util";
+import { toPoster } from "../lib/page-links";
 import "./index.scss";
 
 export default function HomePage(): JSX.Element {
@@ -94,7 +95,7 @@ const locales: Locales<
 		featureAlgorithms: () => (
 			<>
 				There's no magic in Picapica, but a number of state-of-the-art algorithms. Don't hesitate to{" "}
-				<Link to="/poster/">take a look</Link> under the hood.
+				<Link to={toPoster}>take a look</Link> under the hood.
 			</>
 		),
 		featureBetaTitle: () => <>Beta</>,
@@ -124,7 +125,7 @@ const locales: Locales<
 		featureAlgorithms: () => (
 			<>
 				Es steckt keine Magie hinter Picapica, aber dafür eine Reihe moderner Algorithmen. Scheuen Sie sich
-				nicht, mal einen Blick <Link to="/poster/">unter die Haube</Link> zu werfen.
+				nicht, mal einen Blick <Link to={toPoster}>unter die Haube</Link> zu werfen.
 			</>
 		),
 		featureBetaTitle: () => <>Beta</>,

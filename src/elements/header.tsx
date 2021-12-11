@@ -4,12 +4,13 @@ import { Link } from "gatsby";
 import { NewAnalysis } from "./new-analysis";
 import logoDark from "../../assets/images/picapica3-logo2-rgb-dark.min.svg";
 import logoWhite from "../../assets/images/picapica3-logo2-rgb-white.min.svg";
+import { toIndex } from "../lib/page-links";
 import "./header.scss";
 
 export function SmallHeader(props: LocalizableProps): JSX.Element {
 	return (
 		<div className="SmallHeader">
-			<Link to="/">
+			<Link to={toIndex}>
 				<img src={logoDark} alt="Picapica Logo" />
 			</Link>
 
@@ -24,7 +25,7 @@ export function BigHeader(props: LocalizableProps): JSX.Element {
 	return (
 		<div className="BigHeader">
 			<div className="logo-row">
-				<Link to="/">
+				<Link to={toIndex}>
 					<img src={logoWhite} alt="Picapica Logo" />
 				</Link>
 			</div>

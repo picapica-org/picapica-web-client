@@ -3,22 +3,23 @@ import { Link } from "gatsby";
 import { getLocalization, Locales, LocalizableProps } from "../lib/localization";
 import { PicaIcon } from "./icon";
 import { Buttons } from "./buttons";
+import { toSubmit } from "../lib/page-links";
 
 export function NewAnalysis(props: LocalizableProps): JSX.Element {
 	const l = getLocalization(props, locales);
 
 	return (
 		<span className={"NewAnalysis " + Buttons.BUTTON_GROUP}>
-			<Link to="/submit/" className={Buttons.BUTTON}>
+			<Link to={toSubmit} className={Buttons.BUTTON}>
 				{l.newAnalysis}
 			</Link>
-			<Link to="/submit/#file" className={Buttons.BUTTON} title={l.file}>
+			<Link to={toSubmit + "#file"} className={Buttons.BUTTON} title={l.file}>
 				<PicaIcon kind="file" />
 			</Link>
-			<Link to="/submit/#url" className={Buttons.BUTTON} title={l.url}>
+			<Link to={toSubmit + "#url"} className={Buttons.BUTTON} title={l.url}>
 				<PicaIcon kind="url" />
 			</Link>
-			<Link to="/submit/#text" className={Buttons.BUTTON} title={l.text}>
+			<Link to={toSubmit + "#text"} className={Buttons.BUTTON} title={l.text}>
 				<PicaIcon kind="text" />
 			</Link>
 		</span>

@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "gatsby";
 import { getLocalization, Locales, LocalizableProps, SimpleString } from "../lib/localization";
 import { Creating, Loading, Ready, State, visitState } from "../lib/use-session";
+import { toSubmit } from "../lib/page-links";
 import "./session-creating-loading.scss";
 
 export interface SessionCreatingProps extends LocalizableProps {
@@ -81,7 +82,7 @@ const locales: Locales<
 		failedLoadingSession: "Failed to load session. Trying again...",
 		newSession: () => (
 			<>
-				Do you want to <Link to="/submit/">start a new analysis</Link>?
+				Do you want to <Link to={toSubmit}>start a new analysis</Link>?
 			</>
 		),
 	},
@@ -93,7 +94,7 @@ const locales: Locales<
 		failedLoadingSession: "Sitzung konnte nicht geladen werden. Es wird erneut versucht...",
 		newSession: () => (
 			<>
-				Möchten Sie <Link to="/submit/">eine neue Analyse beginnen</Link>?
+				Möchten Sie <Link to={toSubmit}>eine neue Analyse beginnen</Link>?
 			</>
 		),
 	},
