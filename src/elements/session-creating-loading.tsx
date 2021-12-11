@@ -89,7 +89,7 @@ const locales: Locales<
 		creatingSession: "Sitzung wird erstellt...",
 		failedCreatingSession: "Sitzung konnte nicht erstellt werden. Es wird erneut versucht...",
 
-		loadingSession: "Sitzung wird geladed...",
+		loadingSession: "Sitzung wird geladen...",
 		failedLoadingSession: "Sitzung konnte nicht geladen werden. Es wird erneut versucht...",
 		newSession: () => (
 			<>
