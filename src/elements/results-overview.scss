@@ -1,0 +1,104 @@
+@import "../colors.scss";
+
+.OverviewContainer {
+	border: 1px solid $grey3;
+	border-radius: 0.3em;
+	overflow: auto;
+
+	& > .head {
+		background-color: $grey1;
+		display: flex;
+		border-bottom: 1px solid $grey3;
+
+		& > a {
+			flex-shrink: 0;
+			border: none;
+			border-right: 1px solid $grey3;
+			border-radius: 0;
+			padding: 0.75em 1em;
+			height: auto;
+			width: 1.5em;
+			position: relative;
+
+			--button-background: transparent;
+
+			.Icon {
+				font-size: 200%;
+				font-weight: bold;
+
+				position: absolute;
+				user-select: none;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+			}
+		}
+		& > div {
+			flex-grow: 1;
+			padding: 0.75em 1em;
+		}
+	}
+}
+
+.CenterAlignTwo {
+	display: flex;
+
+	& > * {
+		display: flex;
+		align-items: center;
+		flex-direction: row;
+	}
+	& > .grow {
+		flex-grow: 1;
+	}
+	& > :not(.grow) {
+		flex-shrink: 0;
+	}
+}
+
+.ResultsOverview,
+.ItemResultsOverview {
+	.Badge {
+		font-size: 85%;
+	}
+
+	.CenterAlignTwo {
+		gap: 0.5em;
+	}
+
+	.title {
+		color: $grey6;
+	}
+
+	.content {
+		& > div:not(:first-child) {
+			border-top: 1px solid $grey3;
+		}
+
+		a {
+			display: block;
+			padding: 0.75em 1em;
+			border: none;
+			border-radius: 0;
+			height: auto;
+			white-space: normal;
+		}
+	}
+}
+
+.ResultsOverview {
+	.content {
+		.Label {
+			font-size: 120%;
+		}
+	}
+}
+
+.ItemResultsOverview,
+.CollectionResultsOverview {
+	.no-results {
+		padding: 0.75em 1em;
+		color: $grey6;
+		font-style: italic;
+	}
+}

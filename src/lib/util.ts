@@ -120,3 +120,12 @@ export function isValidUrl(url: string): boolean {
 export const EMPTY_ARRAY: readonly never[] = [];
 export const EMPTY_SET: ReadonlySet<never> = new Set();
 export const EMPTY_MAP: ReadonlyMap<never, never> = new Map<never, never>();
+
+export type TypeVariant = { readonly type: string };
+export type TypeVisitor<V extends TypeVariant, R> = {
+	[K in V["type"]]: V extends { readonly type: K } ? (value: V) => R : never;
+};
+export function visitType<V extends TypeVariant, R>(value: V, visitor: TypeVisitor<V, R>): R {
+	const fn = visitor[value.type as never] as (value: V) => R;
+	return fn(value);
+}

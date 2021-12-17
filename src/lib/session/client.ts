@@ -6,8 +6,8 @@ import { v4 as uuidv4 } from "uuid";
 import { delay, lazy } from "../util";
 import { PicapicaSessionUrn, PicapicaUrn } from "./urn";
 
-const CLIENT: SessionServiceClient = new SessionServiceClient("api.picapica.org");
-const mock = true;
+const CLIENT: SessionServiceClient = new SessionServiceClient("http://localhost:8080");
+const mock = false;
 
 export const getSessionClient = lazy(() => {
 	if (mock) {

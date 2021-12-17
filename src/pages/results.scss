@@ -1,9 +1,11 @@
 @import "../colors.scss";
 
 .Results {
-	.StepActionBar {
-		.next-spacer {
-			width: 8em;
+	padding: 1em 2em 2em 2em;
+
+	@media screen and (max-width: 600px) {
+		& {
+			padding: 0 1em 2em 1em;
 		}
 	}
 }
