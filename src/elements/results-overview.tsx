@@ -119,6 +119,7 @@ export interface ItemResultsOverviewProps extends LocalizableProps {
 export function ItemResultsOverview(props: ItemResultsOverviewProps): JSX.Element {
 	const l = getLocalization(props, locales);
 
+	const { status } = props.session;
 	const { items } = categorizeResults(props.session.resultsList);
 
 	const title = (
@@ -146,7 +147,7 @@ export function ItemResultsOverview(props: ItemResultsOverviewProps): JSX.Elemen
 											<span className="vs">vs.</span>
 											<span className="right">{rightName}</span>
 										</span>,
-										result.completed ? (
+										status === Session.ComputeStatus.STATUS_COMPLETED ? (
 											<Badge kind="Light">{result.seedsList.length}</Badge>
 										) : (
 											<LoaderAnimation />
@@ -175,6 +176,7 @@ export interface CollectionResultsOverviewProps extends LocalizableProps {
 export function CollectionResultsOverview(props: CollectionResultsOverviewProps): JSX.Element {
 	const l = getLocalization(props, locales);
 
+	const { status } = props.session;
 	const results = categorizeResults(props.session.resultsList).collections.get(props.collectionUrn) ?? [];
 
 	const title = (
@@ -209,7 +211,7 @@ export function CollectionResultsOverview(props: CollectionResultsOverviewProps)
 											<span className="vs">vs.</span>
 											<span className="right">{documentName}</span>
 										</span>,
-										result.completed ? (
+										status === Session.ComputeStatus.STATUS_COMPLETED ? (
 											<Badge kind="Light">{result.seedsList.length}</Badge>
 										) : (
 											<LoaderAnimation />

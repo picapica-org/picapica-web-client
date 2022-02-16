@@ -115,9 +115,6 @@ export class Result extends jspb.Message {
   hasResources(): boolean;
   clearResources(): Result;
 
-  getCompleted(): boolean;
-  setCompleted(value: boolean): Result;
-
   getSeedsList(): Array<Seed>;
   setSeedsList(value: Array<Seed>): Result;
   clearSeedsList(): Result;
@@ -135,7 +132,6 @@ export namespace Result {
   export type AsObject = {
     urn: string,
     resources?: ResourcePair.AsObject,
-    completed: boolean,
     seedsList: Array<Seed.AsObject>,
   }
 }
@@ -248,16 +244,24 @@ export namespace Item {
 
 
   export class Resource extends jspb.Message {
-    getUrn(): string;
-    setUrn(value: string): Resource;
+    getItemUrn(): string;
+    setItemUrn(value: string): Resource;
 
     getType(): Item.Resource.Type;
     setType(value: Item.Resource.Type): Resource;
 
-    getProperties(): Item.Resource.Properties | undefined;
-    setProperties(value?: Item.Resource.Properties): Resource;
-    hasProperties(): boolean;
-    clearProperties(): Resource;
+    getStatus(): Item.Resource.ProcessingStatus;
+    setStatus(value: Item.Resource.ProcessingStatus): Resource;
+
+    getRawProperties(): Item.Resource.RawProperties | undefined;
+    setRawProperties(value?: Item.Resource.RawProperties): Resource;
+    hasRawProperties(): boolean;
+    clearRawProperties(): Resource;
+
+    getProcessedProperties(): Item.Resource.ProcessedProperties | undefined;
+    setProcessedProperties(value?: Item.Resource.ProcessedProperties): Resource;
+    hasProcessedProperties(): boolean;
+    clearProcessedProperties(): Resource;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): Resource.AsObject;
@@ -269,37 +273,54 @@ export namespace Item {
 
   export namespace Resource {
     export type AsObject = {
-      urn: string,
+      itemUrn: string,
       type: Item.Resource.Type,
-      properties?: Item.Resource.Properties.AsObject,
+      status: Item.Resource.ProcessingStatus,
+      rawProperties?: Item.Resource.RawProperties.AsObject,
+      processedProperties?: Item.Resource.ProcessedProperties.AsObject,
     }
 
-    export class Properties extends jspb.Message {
-      getRawChecksum(): string;
-      setRawChecksum(value: string): Properties;
-
-      getContentChecksum(): string;
-      setContentChecksum(value: string): Properties;
+    export class RawProperties extends jspb.Message {
+      getChecksum(): string;
+      setChecksum(value: string): RawProperties;
 
       getSize(): number;
-      setSize(value: number): Properties;
-
-      getLength(): number;
-      setLength(value: number): Properties;
+      setSize(value: number): RawProperties;
 
       serializeBinary(): Uint8Array;
-      toObject(includeInstance?: boolean): Properties.AsObject;
-      static toObject(includeInstance: boolean, msg: Properties): Properties.AsObject;
-      static serializeBinaryToWriter(message: Properties, writer: jspb.BinaryWriter): void;
-      static deserializeBinary(bytes: Uint8Array): Properties;
-      static deserializeBinaryFromReader(message: Properties, reader: jspb.BinaryReader): Properties;
+      toObject(includeInstance?: boolean): RawProperties.AsObject;
+      static toObject(includeInstance: boolean, msg: RawProperties): RawProperties.AsObject;
+      static serializeBinaryToWriter(message: RawProperties, writer: jspb.BinaryWriter): void;
+      static deserializeBinary(bytes: Uint8Array): RawProperties;
+      static deserializeBinaryFromReader(message: RawProperties, reader: jspb.BinaryReader): RawProperties;
     }
 
-    export namespace Properties {
+    export namespace RawProperties {
       export type AsObject = {
-        rawChecksum: string,
-        contentChecksum: string,
+        checksum: string,
         size: number,
+      }
+    }
+
+
+    export class ProcessedProperties extends jspb.Message {
+      getChecksum(): string;
+      setChecksum(value: string): ProcessedProperties;
+
+      getLength(): number;
+      setLength(value: number): ProcessedProperties;
+
+      serializeBinary(): Uint8Array;
+      toObject(includeInstance?: boolean): ProcessedProperties.AsObject;
+      static toObject(includeInstance: boolean, msg: ProcessedProperties): ProcessedProperties.AsObject;
+      static serializeBinaryToWriter(message: ProcessedProperties, writer: jspb.BinaryWriter): void;
+      static deserializeBinary(bytes: Uint8Array): ProcessedProperties;
+      static deserializeBinaryFromReader(message: ProcessedProperties, reader: jspb.BinaryReader): ProcessedProperties;
+    }
+
+    export namespace ProcessedProperties {
+      export type AsObject = {
+        checksum: string,
         length: number,
       }
     }
@@ -310,6 +331,13 @@ export namespace Item {
       TYPE_TEXT = 1,
       TYPE_URL = 2,
       TYPE_FILE = 3,
+    }
+
+    export enum ProcessingStatus { 
+      STATUS_UNDEFINED = 0,
+      STATUS_RUNNING = 1,
+      STATUS_COMPLETED = 2,
+      STATUS_FAILED = 3,
     }
   }
 

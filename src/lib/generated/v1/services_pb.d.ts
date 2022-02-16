@@ -59,6 +59,40 @@ export namespace AlignResponse {
   }
 }
 
+export class GetDefaultAlignmentConfigRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetDefaultAlignmentConfigRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetDefaultAlignmentConfigRequest): GetDefaultAlignmentConfigRequest.AsObject;
+  static serializeBinaryToWriter(message: GetDefaultAlignmentConfigRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetDefaultAlignmentConfigRequest;
+  static deserializeBinaryFromReader(message: GetDefaultAlignmentConfigRequest, reader: jspb.BinaryReader): GetDefaultAlignmentConfigRequest;
+}
+
+export namespace GetDefaultAlignmentConfigRequest {
+  export type AsObject = {
+  }
+}
+
+export class GetDefaultAlignmentConfigResponse extends jspb.Message {
+  getConfig(): v1_configs_pb.AlignmentConfig | undefined;
+  setConfig(value?: v1_configs_pb.AlignmentConfig): GetDefaultAlignmentConfigResponse;
+  hasConfig(): boolean;
+  clearConfig(): GetDefaultAlignmentConfigResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetDefaultAlignmentConfigResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetDefaultAlignmentConfigResponse): GetDefaultAlignmentConfigResponse.AsObject;
+  static serializeBinaryToWriter(message: GetDefaultAlignmentConfigResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetDefaultAlignmentConfigResponse;
+  static deserializeBinaryFromReader(message: GetDefaultAlignmentConfigResponse, reader: jspb.BinaryReader): GetDefaultAlignmentConfigResponse;
+}
+
+export namespace GetDefaultAlignmentConfigResponse {
+  export type AsObject = {
+    config?: v1_configs_pb.AlignmentConfig.AsObject,
+  }
+}
+
 export class DecomposeRequest extends jspb.Message {
   getText(): string;
   setText(value: string): DecomposeRequest;
@@ -100,6 +134,40 @@ export class DecomposeResponse extends jspb.Message {
 export namespace DecomposeResponse {
   export type AsObject = {
     elementsList: Array<v1_types_pb.Element.AsObject>,
+  }
+}
+
+export class GetDefaultDecompositionConfigRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetDefaultDecompositionConfigRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetDefaultDecompositionConfigRequest): GetDefaultDecompositionConfigRequest.AsObject;
+  static serializeBinaryToWriter(message: GetDefaultDecompositionConfigRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetDefaultDecompositionConfigRequest;
+  static deserializeBinaryFromReader(message: GetDefaultDecompositionConfigRequest, reader: jspb.BinaryReader): GetDefaultDecompositionConfigRequest;
+}
+
+export namespace GetDefaultDecompositionConfigRequest {
+  export type AsObject = {
+  }
+}
+
+export class GetDefaultDecompositionConfigResponse extends jspb.Message {
+  getConfig(): v1_configs_pb.DecompositionConfig | undefined;
+  setConfig(value?: v1_configs_pb.DecompositionConfig): GetDefaultDecompositionConfigResponse;
+  hasConfig(): boolean;
+  clearConfig(): GetDefaultDecompositionConfigResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetDefaultDecompositionConfigResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetDefaultDecompositionConfigResponse): GetDefaultDecompositionConfigResponse.AsObject;
+  static serializeBinaryToWriter(message: GetDefaultDecompositionConfigResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetDefaultDecompositionConfigResponse;
+  static deserializeBinaryFromReader(message: GetDefaultDecompositionConfigResponse, reader: jspb.BinaryReader): GetDefaultDecompositionConfigResponse;
+}
+
+export namespace GetDefaultDecompositionConfigResponse {
+  export type AsObject = {
+    config?: v1_configs_pb.DecompositionConfig.AsObject,
   }
 }
 
@@ -174,6 +242,40 @@ export namespace RetrieveResponse {
 
 }
 
+export class GetDefaultRetrievalConfigRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetDefaultRetrievalConfigRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetDefaultRetrievalConfigRequest): GetDefaultRetrievalConfigRequest.AsObject;
+  static serializeBinaryToWriter(message: GetDefaultRetrievalConfigRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetDefaultRetrievalConfigRequest;
+  static deserializeBinaryFromReader(message: GetDefaultRetrievalConfigRequest, reader: jspb.BinaryReader): GetDefaultRetrievalConfigRequest;
+}
+
+export namespace GetDefaultRetrievalConfigRequest {
+  export type AsObject = {
+  }
+}
+
+export class GetDefaultRetrievalConfigResponse extends jspb.Message {
+  getConfig(): v1_configs_pb.RetrievalConfig | undefined;
+  setConfig(value?: v1_configs_pb.RetrievalConfig): GetDefaultRetrievalConfigResponse;
+  hasConfig(): boolean;
+  clearConfig(): GetDefaultRetrievalConfigResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetDefaultRetrievalConfigResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetDefaultRetrievalConfigResponse): GetDefaultRetrievalConfigResponse.AsObject;
+  static serializeBinaryToWriter(message: GetDefaultRetrievalConfigResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetDefaultRetrievalConfigResponse;
+  static deserializeBinaryFromReader(message: GetDefaultRetrievalConfigResponse, reader: jspb.BinaryReader): GetDefaultRetrievalConfigResponse;
+}
+
+export namespace GetDefaultRetrievalConfigResponse {
+  export type AsObject = {
+    config?: v1_configs_pb.RetrievalConfig.AsObject,
+  }
+}
+
 export class Session extends jspb.Message {
   getUrn(): string;
   setUrn(value: string): Session;
@@ -193,6 +295,9 @@ export class Session extends jspb.Message {
   clearResultsList(): Session;
   addResults(value?: v1_types_pb.Result, index?: number): v1_types_pb.Result;
 
+  getStatus(): Session.ComputeStatus;
+  setStatus(value: Session.ComputeStatus): Session;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Session.AsObject;
   static toObject(includeInstance: boolean, msg: Session): Session.AsObject;
@@ -207,6 +312,14 @@ export namespace Session {
     config?: v1_configs_pb.SessionConfig.AsObject,
     itemsList: Array<v1_types_pb.Item.AsObject>,
     resultsList: Array<v1_types_pb.Result.AsObject>,
+    status: Session.ComputeStatus,
+  }
+
+  export enum ComputeStatus { 
+    STATUS_UNDEFINED = 0,
+    STATUS_RUNNING = 1,
+    STATUS_COMPLETED = 2,
+    STATUS_FAILED = 3,
   }
 }
 
@@ -309,6 +422,42 @@ export class DeleteSessionResponse extends jspb.Message {
 
 export namespace DeleteSessionResponse {
   export type AsObject = {
+  }
+}
+
+export class GetComputeStatusRequest extends jspb.Message {
+  getSessionUrn(): string;
+  setSessionUrn(value: string): GetComputeStatusRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetComputeStatusRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetComputeStatusRequest): GetComputeStatusRequest.AsObject;
+  static serializeBinaryToWriter(message: GetComputeStatusRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetComputeStatusRequest;
+  static deserializeBinaryFromReader(message: GetComputeStatusRequest, reader: jspb.BinaryReader): GetComputeStatusRequest;
+}
+
+export namespace GetComputeStatusRequest {
+  export type AsObject = {
+    sessionUrn: string,
+  }
+}
+
+export class GetComputeStatusResponse extends jspb.Message {
+  getStatus(): Session.ComputeStatus;
+  setStatus(value: Session.ComputeStatus): GetComputeStatusResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetComputeStatusResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetComputeStatusResponse): GetComputeStatusResponse.AsObject;
+  static serializeBinaryToWriter(message: GetComputeStatusResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetComputeStatusResponse;
+  static deserializeBinaryFromReader(message: GetComputeStatusResponse, reader: jspb.BinaryReader): GetComputeStatusResponse;
+}
+
+export namespace GetComputeStatusResponse {
+  export type AsObject = {
+    status: Session.ComputeStatus,
   }
 }
 
@@ -475,6 +624,11 @@ export class CreateItemRequest extends jspb.Message {
   getRaw_asB64(): string;
   setRaw(value: Uint8Array | string): CreateItemRequest;
 
+  getComparisonUrnsList(): Array<string>;
+  setComparisonUrnsList(value: Array<string>): CreateItemRequest;
+  clearComparisonUrnsList(): CreateItemRequest;
+  addComparisonUrns(value: string, index?: number): CreateItemRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): CreateItemRequest.AsObject;
   static toObject(includeInstance: boolean, msg: CreateItemRequest): CreateItemRequest.AsObject;
@@ -489,6 +643,7 @@ export namespace CreateItemRequest {
     meta?: v1_types_pb.Item.Metadata.AsObject,
     type: v1_types_pb.Item.Resource.Type,
     raw: Uint8Array | string,
+    comparisonUrnsList: Array<string>,
   }
 }
 
@@ -593,6 +748,46 @@ export class GetItemResponse extends jspb.Message {
 export namespace GetItemResponse {
   export type AsObject = {
     itemsList: Array<v1_types_pb.Item.AsObject>,
+  }
+}
+
+export class GetItemStatusRequest extends jspb.Message {
+  getSessionUrn(): string;
+  setSessionUrn(value: string): GetItemStatusRequest;
+
+  getItemUrn(): string;
+  setItemUrn(value: string): GetItemStatusRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetItemStatusRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetItemStatusRequest): GetItemStatusRequest.AsObject;
+  static serializeBinaryToWriter(message: GetItemStatusRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetItemStatusRequest;
+  static deserializeBinaryFromReader(message: GetItemStatusRequest, reader: jspb.BinaryReader): GetItemStatusRequest;
+}
+
+export namespace GetItemStatusRequest {
+  export type AsObject = {
+    sessionUrn: string,
+    itemUrn: string,
+  }
+}
+
+export class GetItemStatusResponse extends jspb.Message {
+  getStatus(): v1_types_pb.Item.Resource.ProcessingStatus;
+  setStatus(value: v1_types_pb.Item.Resource.ProcessingStatus): GetItemStatusResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetItemStatusResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetItemStatusResponse): GetItemStatusResponse.AsObject;
+  static serializeBinaryToWriter(message: GetItemStatusResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetItemStatusResponse;
+  static deserializeBinaryFromReader(message: GetItemStatusResponse, reader: jspb.BinaryReader): GetItemStatusResponse;
+}
+
+export namespace GetItemStatusResponse {
+  export type AsObject = {
+    status: v1_types_pb.Item.Resource.ProcessingStatus,
   }
 }
 
@@ -989,35 +1184,35 @@ export namespace InfoResponse {
   }
 }
 
-export class GetDefaultConfigRequest extends jspb.Message {
+export class GetDefaultApiConfigRequest extends jspb.Message {
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): GetDefaultConfigRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: GetDefaultConfigRequest): GetDefaultConfigRequest.AsObject;
-  static serializeBinaryToWriter(message: GetDefaultConfigRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): GetDefaultConfigRequest;
-  static deserializeBinaryFromReader(message: GetDefaultConfigRequest, reader: jspb.BinaryReader): GetDefaultConfigRequest;
+  toObject(includeInstance?: boolean): GetDefaultApiConfigRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetDefaultApiConfigRequest): GetDefaultApiConfigRequest.AsObject;
+  static serializeBinaryToWriter(message: GetDefaultApiConfigRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetDefaultApiConfigRequest;
+  static deserializeBinaryFromReader(message: GetDefaultApiConfigRequest, reader: jspb.BinaryReader): GetDefaultApiConfigRequest;
 }
 
-export namespace GetDefaultConfigRequest {
+export namespace GetDefaultApiConfigRequest {
   export type AsObject = {
   }
 }
 
-export class GetDefaultConfigResponse extends jspb.Message {
+export class GetDefaultApiConfigResponse extends jspb.Message {
   getConfig(): v1_configs_pb.ApiConfig | undefined;
-  setConfig(value?: v1_configs_pb.ApiConfig): GetDefaultConfigResponse;
+  setConfig(value?: v1_configs_pb.ApiConfig): GetDefaultApiConfigResponse;
   hasConfig(): boolean;
-  clearConfig(): GetDefaultConfigResponse;
+  clearConfig(): GetDefaultApiConfigResponse;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): GetDefaultConfigResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: GetDefaultConfigResponse): GetDefaultConfigResponse.AsObject;
-  static serializeBinaryToWriter(message: GetDefaultConfigResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): GetDefaultConfigResponse;
-  static deserializeBinaryFromReader(message: GetDefaultConfigResponse, reader: jspb.BinaryReader): GetDefaultConfigResponse;
+  toObject(includeInstance?: boolean): GetDefaultApiConfigResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetDefaultApiConfigResponse): GetDefaultApiConfigResponse.AsObject;
+  static serializeBinaryToWriter(message: GetDefaultApiConfigResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetDefaultApiConfigResponse;
+  static deserializeBinaryFromReader(message: GetDefaultApiConfigResponse, reader: jspb.BinaryReader): GetDefaultApiConfigResponse;
 }
 
-export namespace GetDefaultConfigResponse {
+export namespace GetDefaultApiConfigResponse {
   export type AsObject = {
     config?: v1_configs_pb.ApiConfig.AsObject,
   }
@@ -1048,10 +1243,15 @@ export namespace ExtractRequest {
 }
 
 export class ExtractResponse extends jspb.Message {
-  getProperties(): v1_types_pb.Item.Resource.Properties | undefined;
-  setProperties(value?: v1_types_pb.Item.Resource.Properties): ExtractResponse;
-  hasProperties(): boolean;
-  clearProperties(): ExtractResponse;
+  getRawProperties(): v1_types_pb.Item.Resource.RawProperties | undefined;
+  setRawProperties(value?: v1_types_pb.Item.Resource.RawProperties): ExtractResponse;
+  hasRawProperties(): boolean;
+  clearRawProperties(): ExtractResponse;
+
+  getProcessedProperties(): v1_types_pb.Item.Resource.ProcessedProperties | undefined;
+  setProcessedProperties(value?: v1_types_pb.Item.Resource.ProcessedProperties): ExtractResponse;
+  hasProcessedProperties(): boolean;
+  clearProcessedProperties(): ExtractResponse;
 
   getText(): string;
   setText(value: string): ExtractResponse;
@@ -1066,7 +1266,8 @@ export class ExtractResponse extends jspb.Message {
 
 export namespace ExtractResponse {
   export type AsObject = {
-    properties?: v1_types_pb.Item.Resource.Properties.AsObject,
+    rawProperties?: v1_types_pb.Item.Resource.RawProperties.AsObject,
+    processedProperties?: v1_types_pb.Item.Resource.ProcessedProperties.AsObject,
     text: string,
   }
 }

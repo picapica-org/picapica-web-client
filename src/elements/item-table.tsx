@@ -91,7 +91,9 @@ export function ItemTable(props: ItemTableProps): JSX.Element {
 								/>
 							</td>
 							<td className="size">
-								<span className="size">{formatBytes(item.resource?.properties?.size ?? 0, props)}</span>
+								<span className="size">
+									{formatBytes(item.resource?.rawProperties?.size ?? 0, props)}
+								</span>
 							</td>
 							<td className="action">
 								<button

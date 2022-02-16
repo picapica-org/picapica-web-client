@@ -167,16 +167,19 @@ class MockClient extends SessionServiceClient {
 			itemId: randomHex(64),
 		});
 
-		const props = new Item.Resource.Properties();
-		props.setSize(raw.length);
-		props.setLength([...content].length);
-		props.setRawChecksum(randomHex(32));
-		props.setContentChecksum(randomHex(32));
+		const rawProps = new Item.Resource.RawProperties();
+		rawProps.setSize(raw.length);
+		rawProps.setChecksum(randomHex(32));
+
+		const processedProps = new Item.Resource.ProcessedProperties();
+		processedProps.setLength([...content].length);
+		processedProps.setChecksum(randomHex(32));
 
 		const resource = new Item.Resource();
-		resource.setUrn(itemUrn);
+		resource.setItemUrn(itemUrn);
 		resource.setType(req.getType());
-		resource.setProperties(props);
+		resource.setRawProperties(rawProps);
+		resource.setProcessedProperties(processedProps);
 
 		const item = new Item();
 		item.setUrn(itemUrn);

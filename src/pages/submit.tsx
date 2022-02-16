@@ -17,6 +17,7 @@ import { ItemTypeIcon } from "../elements/icon";
 import { cloneSession } from "../lib/session/util";
 import { useDropzone } from "react-dropzone";
 import { LoaderAnimation } from "../elements/loader-animation";
+import { Item } from "../lib/generated/v1/types_pb";
 import "./submit.scss";
 
 export default function SubmitPage(): JSX.Element {
@@ -60,9 +61,11 @@ function Submit(props: LocalizableProps): JSX.Element {
 					urn: itemUrn,
 					meta: { name: item.name },
 					resource: {
-						urn: itemUrn,
+						itemUrn,
 						type: toItemResourceType(item.type),
-						properties: { contentChecksum: "fake", length: 0, rawChecksum: "fake", size: item.size },
+						status: Item.Resource.ProcessingStatus.STATUS_RUNNING,
+						rawProperties: { checksum: "fake", size: item.size },
+						processedProperties: { checksum: "fake", length: 0 },
 					},
 				});
 				return session;

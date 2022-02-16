@@ -76,6 +76,46 @@ export class AlignmentServiceClient {
     this.methodInfoAlign);
   }
 
+  methodInfoGetDefaultConfig = new grpcWeb.AbstractClientBase.MethodInfo(
+    v1_services_pb.GetDefaultAlignmentConfigResponse,
+    (request: v1_services_pb.GetDefaultAlignmentConfigRequest) => {
+      return request.serializeBinary();
+    },
+    v1_services_pb.GetDefaultAlignmentConfigResponse.deserializeBinary
+  );
+
+  getDefaultConfig(
+    request: v1_services_pb.GetDefaultAlignmentConfigRequest,
+    metadata: grpcWeb.Metadata | null): Promise<v1_services_pb.GetDefaultAlignmentConfigResponse>;
+
+  getDefaultConfig(
+    request: v1_services_pb.GetDefaultAlignmentConfigRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.Error,
+               response: v1_services_pb.GetDefaultAlignmentConfigResponse) => void): grpcWeb.ClientReadableStream<v1_services_pb.GetDefaultAlignmentConfigResponse>;
+
+  getDefaultConfig(
+    request: v1_services_pb.GetDefaultAlignmentConfigRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.Error,
+               response: v1_services_pb.GetDefaultAlignmentConfigResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/v1.AlignmentService/GetDefaultConfig',
+        request,
+        metadata || {},
+        this.methodInfoGetDefaultConfig,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/v1.AlignmentService/GetDefaultConfig',
+    request,
+    metadata || {},
+    this.methodInfoGetDefaultConfig);
+  }
+
 }
 
 export class DecompositionServiceClient {
@@ -135,6 +175,46 @@ export class DecompositionServiceClient {
     request,
     metadata || {},
     this.methodInfoDecompose);
+  }
+
+  methodInfoGetDefaultConfig = new grpcWeb.AbstractClientBase.MethodInfo(
+    v1_services_pb.GetDefaultDecompositionConfigResponse,
+    (request: v1_services_pb.GetDefaultDecompositionConfigRequest) => {
+      return request.serializeBinary();
+    },
+    v1_services_pb.GetDefaultDecompositionConfigResponse.deserializeBinary
+  );
+
+  getDefaultConfig(
+    request: v1_services_pb.GetDefaultDecompositionConfigRequest,
+    metadata: grpcWeb.Metadata | null): Promise<v1_services_pb.GetDefaultDecompositionConfigResponse>;
+
+  getDefaultConfig(
+    request: v1_services_pb.GetDefaultDecompositionConfigRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.Error,
+               response: v1_services_pb.GetDefaultDecompositionConfigResponse) => void): grpcWeb.ClientReadableStream<v1_services_pb.GetDefaultDecompositionConfigResponse>;
+
+  getDefaultConfig(
+    request: v1_services_pb.GetDefaultDecompositionConfigRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.Error,
+               response: v1_services_pb.GetDefaultDecompositionConfigResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/v1.DecompositionService/GetDefaultConfig',
+        request,
+        metadata || {},
+        this.methodInfoGetDefaultConfig,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/v1.DecompositionService/GetDefaultConfig',
+    request,
+    metadata || {},
+    this.methodInfoGetDefaultConfig);
   }
 
 }
@@ -276,6 +356,46 @@ export class RetrievalServiceClient {
     request,
     metadata || {},
     this.methodInfoGetCollections);
+  }
+
+  methodInfoGetDefaultConfig = new grpcWeb.AbstractClientBase.MethodInfo(
+    v1_services_pb.GetDefaultRetrievalConfigResponse,
+    (request: v1_services_pb.GetDefaultRetrievalConfigRequest) => {
+      return request.serializeBinary();
+    },
+    v1_services_pb.GetDefaultRetrievalConfigResponse.deserializeBinary
+  );
+
+  getDefaultConfig(
+    request: v1_services_pb.GetDefaultRetrievalConfigRequest,
+    metadata: grpcWeb.Metadata | null): Promise<v1_services_pb.GetDefaultRetrievalConfigResponse>;
+
+  getDefaultConfig(
+    request: v1_services_pb.GetDefaultRetrievalConfigRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.Error,
+               response: v1_services_pb.GetDefaultRetrievalConfigResponse) => void): grpcWeb.ClientReadableStream<v1_services_pb.GetDefaultRetrievalConfigResponse>;
+
+  getDefaultConfig(
+    request: v1_services_pb.GetDefaultRetrievalConfigRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.Error,
+               response: v1_services_pb.GetDefaultRetrievalConfigResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/v1.RetrievalService/GetDefaultConfig',
+        request,
+        metadata || {},
+        this.methodInfoGetDefaultConfig,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/v1.RetrievalService/GetDefaultConfig',
+    request,
+    metadata || {},
+    this.methodInfoGetDefaultConfig);
   }
 
 }
@@ -699,6 +819,46 @@ export class SessionServiceClient {
     this.methodInfoGetItem);
   }
 
+  methodInfoGetItemStatus = new grpcWeb.AbstractClientBase.MethodInfo(
+    v1_services_pb.GetItemStatusResponse,
+    (request: v1_services_pb.GetItemStatusRequest) => {
+      return request.serializeBinary();
+    },
+    v1_services_pb.GetItemStatusResponse.deserializeBinary
+  );
+
+  getItemStatus(
+    request: v1_services_pb.GetItemStatusRequest,
+    metadata: grpcWeb.Metadata | null): Promise<v1_services_pb.GetItemStatusResponse>;
+
+  getItemStatus(
+    request: v1_services_pb.GetItemStatusRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.Error,
+               response: v1_services_pb.GetItemStatusResponse) => void): grpcWeb.ClientReadableStream<v1_services_pb.GetItemStatusResponse>;
+
+  getItemStatus(
+    request: v1_services_pb.GetItemStatusRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.Error,
+               response: v1_services_pb.GetItemStatusResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/v1.SessionService/GetItemStatus',
+        request,
+        metadata || {},
+        this.methodInfoGetItemStatus,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/v1.SessionService/GetItemStatus',
+    request,
+    metadata || {},
+    this.methodInfoGetItemStatus);
+  }
+
   methodInfoDeleteItem = new grpcWeb.AbstractClientBase.MethodInfo(
     v1_services_pb.DeleteItemResponse,
     (request: v1_services_pb.DeleteItemRequest) => {
@@ -777,6 +937,46 @@ export class SessionServiceClient {
     request,
     metadata || {},
     this.methodInfoComputeResults);
+  }
+
+  methodInfoGetComputeStatus = new grpcWeb.AbstractClientBase.MethodInfo(
+    v1_services_pb.GetComputeStatusResponse,
+    (request: v1_services_pb.GetComputeStatusRequest) => {
+      return request.serializeBinary();
+    },
+    v1_services_pb.GetComputeStatusResponse.deserializeBinary
+  );
+
+  getComputeStatus(
+    request: v1_services_pb.GetComputeStatusRequest,
+    metadata: grpcWeb.Metadata | null): Promise<v1_services_pb.GetComputeStatusResponse>;
+
+  getComputeStatus(
+    request: v1_services_pb.GetComputeStatusRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.Error,
+               response: v1_services_pb.GetComputeStatusResponse) => void): grpcWeb.ClientReadableStream<v1_services_pb.GetComputeStatusResponse>;
+
+  getComputeStatus(
+    request: v1_services_pb.GetComputeStatusRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.Error,
+               response: v1_services_pb.GetComputeStatusResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/v1.SessionService/GetComputeStatus',
+        request,
+        metadata || {},
+        this.methodInfoGetComputeStatus,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/v1.SessionService/GetComputeStatus',
+    request,
+    metadata || {},
+    this.methodInfoGetComputeStatus);
   }
 
   methodInfoGetResults = new grpcWeb.AbstractClientBase.MethodInfo(
@@ -1041,28 +1241,28 @@ export class ApiServiceClient {
   }
 
   methodInfoGetDefaultConfig = new grpcWeb.AbstractClientBase.MethodInfo(
-    v1_services_pb.GetDefaultConfigResponse,
-    (request: v1_services_pb.GetDefaultConfigRequest) => {
+    v1_services_pb.GetDefaultApiConfigResponse,
+    (request: v1_services_pb.GetDefaultApiConfigRequest) => {
       return request.serializeBinary();
     },
-    v1_services_pb.GetDefaultConfigResponse.deserializeBinary
+    v1_services_pb.GetDefaultApiConfigResponse.deserializeBinary
   );
 
   getDefaultConfig(
-    request: v1_services_pb.GetDefaultConfigRequest,
-    metadata: grpcWeb.Metadata | null): Promise<v1_services_pb.GetDefaultConfigResponse>;
+    request: v1_services_pb.GetDefaultApiConfigRequest,
+    metadata: grpcWeb.Metadata | null): Promise<v1_services_pb.GetDefaultApiConfigResponse>;
 
   getDefaultConfig(
-    request: v1_services_pb.GetDefaultConfigRequest,
+    request: v1_services_pb.GetDefaultApiConfigRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.Error,
-               response: v1_services_pb.GetDefaultConfigResponse) => void): grpcWeb.ClientReadableStream<v1_services_pb.GetDefaultConfigResponse>;
+               response: v1_services_pb.GetDefaultApiConfigResponse) => void): grpcWeb.ClientReadableStream<v1_services_pb.GetDefaultApiConfigResponse>;
 
   getDefaultConfig(
-    request: v1_services_pb.GetDefaultConfigRequest,
+    request: v1_services_pb.GetDefaultApiConfigRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.Error,
-               response: v1_services_pb.GetDefaultConfigResponse) => void) {
+               response: v1_services_pb.GetDefaultApiConfigResponse) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +

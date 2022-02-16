@@ -25,14 +25,16 @@ export default function TestPage(): JSX.Element {
 
 function Test(props: LocalizableProps): JSX.Element {
 	const foo: DeepRequired<Item.Resource.AsObject> = {
-		urn: "asdasdasd",
+		itemUrn: "asdasdasd",
 		type: 3,
-		properties: { contentChecksum: "", length: 4, rawChecksum: "d", size: 4 },
+		status: Item.Resource.ProcessingStatus.STATUS_COMPLETED,
+		rawProperties: { checksum: "", size: 4 },
+		processedProperties: { checksum: "", length: 4 },
 	};
 	return (
 		<Page {...props} className="Test" header="small">
 			<AlignmentView left={testA} right={testB} />
-			{foo.urn}
+			{foo.itemUrn}
 		</Page>
 	);
 }
