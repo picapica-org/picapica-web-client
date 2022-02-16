@@ -18,6 +18,7 @@ import { cloneSession } from "../lib/session/util";
 import { useDropzone } from "react-dropzone";
 import { LoaderAnimation } from "../elements/loader-animation";
 import { Item } from "../lib/generated/v1/types_pb";
+import { SessionMutator } from "../lib/session/mutator";
 import "./submit.scss";
 
 export default function SubmitPage(): JSX.Element {
@@ -54,22 +55,8 @@ function Submit(props: LocalizableProps): JSX.Element {
 	const addFailed = useCallback((failed: FailedItem): void => setFailed(prev => [...prev, failed]), [setFailed]);
 
 	const successfulUpload = useCallback(
-		({ item, itemUrn }: UploadedItem): void => {
-			update(Promise.resolve(), oldSession => {
-				const session = cloneSession(oldSession);
-				session.itemsList.push({
-					urn: itemUrn,
-					meta: { name: item.name },
-					resource: {
-						itemUrn,
-						type: toItemResourceType(item.type),
-						status: Item.Resource.ProcessingStatus.STATUS_RUNNING,
-						rawProperties: { checksum: "fake", size: item.size },
-						processedProperties: { checksum: "fake", length: 0 },
-					},
-				});
-				return session;
-			});
+		(uploadedItem: UploadedItem): void => {
+			update(Promise.resolve(), optimisticallyAddItem(uploadedItem));
 		},
 		[update]
 	);
@@ -199,6 +186,24 @@ function randomText(): string {
 	}
 
 	return s;
+}
+
+function optimisticallyAddItem({ item, itemUrn }: UploadedItem): SessionMutator {
+	return oldSession => {
+		const session = cloneSession(oldSession);
+		session.itemsList.push({
+			urn: itemUrn,
+			meta: { name: item.name },
+			resource: {
+				itemUrn,
+				type: toItemResourceType(item.type),
+				status: Item.Resource.ProcessingStatus.STATUS_RUNNING,
+				rawProperties: { checksum: "fake", size: item.size },
+				processedProperties: { checksum: "fake", length: 0 },
+			},
+		});
+		return session;
+	};
 }
 
 const locales: Locales<SimpleString<"instruction" | "addItemHint">> = {
