@@ -51,7 +51,10 @@ export class AnalysisConfig {
 	 *
 	 * @param pairs
 	 */
-	static fromResourcePairs(pairs: Iterable<ResourcePair | ResourcePair.AsObject>): AnalysisConfig {
+	static fromResourcePairs(
+		pairs: Iterable<ResourcePair | ResourcePair.AsObject>,
+		allItems: ReadonlyArray<ItemUrn>
+	): AnalysisConfig {
 		const groupA = new Set<ItemUrn>();
 		const groupB = new Set<ItemUrn>();
 		const collections = new Map<CollectionUrn, Set<ItemUrn>>();
@@ -64,6 +67,17 @@ export class AnalysisConfig {
 			}
 			set.add(item);
 		}
+		function toItemUrns(urn: string): ReadonlyArray<ItemUrn> {
+			const type = getPicapicaUrnType(urn);
+
+			if (type === "item") {
+				return [urn];
+			} else if (type === "session") {
+				return allItems;
+			} else {
+				return [];
+			}
+		}
 
 		for (const pair of pairs) {
 			const [a, b] = pair instanceof ResourcePair ? [pair.getUrnA(), pair.getUrnB()] : [pair.urnA, pair.urnB];
@@ -71,28 +85,17 @@ export class AnalysisConfig {
 			const aType = getPicapicaUrnType(a);
 			const bType = getPicapicaUrnType(b);
 
-			if (aType === "item") {
-				if (bType === "item") {
-					groupA.add(a);
-					groupB.add(b);
-				} else if (bType === "collection") {
-					addCollection(b, a);
-				} else {
-					groupA.add(a);
-					// ignore other types
-				}
-			} else if (aType === "collection") {
-				if (bType === "item") {
-					addCollection(a, b);
-				} else {
-					// ignore other types
-				}
-			} else {
-				if (bType === "item") {
-					groupB.add(b);
-				}
-				// ignore other types
+			if (aType === "collection") {
+				toItemUrns(b).forEach(item => addCollection(a, item));
+				continue;
 			}
+			if (bType === "collection") {
+				toItemUrns(a).forEach(item => addCollection(b, item));
+				continue;
+			}
+
+			toItemUrns(a).forEach(item => groupA.add(item));
+			toItemUrns(b).forEach(item => groupB.add(item));
 		}
 
 		return new AnalysisConfig(groupA, groupB, collections);

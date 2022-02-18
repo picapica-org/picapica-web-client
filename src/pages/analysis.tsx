@@ -52,7 +52,10 @@ function Analysis(props: LocalizableProps): JSX.Element {
 
 	const config = useMemo(() => {
 		if (state.type === "Ready") {
-			return AnalysisConfig.fromResourcePairs(state.session.config?.pairingsList ?? EMPTY_ARRAY);
+			return AnalysisConfig.fromResourcePairs(
+				state.session.config?.pairingsList ?? EMPTY_ARRAY,
+				state.session.itemsList.map(i => i.urn)
+			);
 		} else {
 			return AnalysisConfig.EMPTY;
 		}
