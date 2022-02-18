@@ -18,12 +18,13 @@ goog.exportSymbol('proto.v1.Element', null, global);
 goog.exportSymbol('proto.v1.Item', null, global);
 goog.exportSymbol('proto.v1.Item.Metadata', null, global);
 goog.exportSymbol('proto.v1.Item.Resource', null, global);
-goog.exportSymbol('proto.v1.Item.Resource.ProcessedProperties', null, global);
 goog.exportSymbol('proto.v1.Item.Resource.ProcessingStatus', null, global);
 goog.exportSymbol('proto.v1.Item.Resource.RawProperties', null, global);
+goog.exportSymbol('proto.v1.Item.Resource.TextProperties', null, global);
 goog.exportSymbol('proto.v1.Item.Resource.Type', null, global);
 goog.exportSymbol('proto.v1.ResourcePair', null, global);
 goog.exportSymbol('proto.v1.Result', null, global);
+goog.exportSymbol('proto.v1.Result.ResultStatusCode', null, global);
 goog.exportSymbol('proto.v1.Seed', null, global);
 goog.exportSymbol('proto.v1.Span', null, global);
 /**
@@ -267,16 +268,16 @@ if (goog.DEBUG && !COMPILED) {
  * @extends {jspb.Message}
  * @constructor
  */
-proto.v1.Item.Resource.ProcessedProperties = function(opt_data) {
+proto.v1.Item.Resource.TextProperties = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
-goog.inherits(proto.v1.Item.Resource.ProcessedProperties, jspb.Message);
+goog.inherits(proto.v1.Item.Resource.TextProperties, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
   /**
    * @public
    * @override
    */
-  proto.v1.Item.Resource.ProcessedProperties.displayName = 'proto.v1.Item.Resource.ProcessedProperties';
+  proto.v1.Item.Resource.TextProperties.displayName = 'proto.v1.Item.Resource.TextProperties';
 }
 
 /**
@@ -1109,7 +1110,8 @@ proto.v1.Result.toObject = function(includeInstance, msg) {
     urn: jspb.Message.getFieldWithDefault(msg, 1, ""),
     resources: (f = msg.getResources()) && proto.v1.ResourcePair.toObject(includeInstance, f),
     seedsList: jspb.Message.toObjectList(msg.getSeedsList(),
-    proto.v1.Seed.toObject, includeInstance)
+    proto.v1.Seed.toObject, includeInstance),
+    status: jspb.Message.getFieldWithDefault(msg, 4, 0)
   };
 
   if (includeInstance) {
@@ -1159,6 +1161,10 @@ proto.v1.Result.deserializeBinaryFromReader = function(msg, reader) {
       var value = new proto.v1.Seed;
       reader.readMessage(value,proto.v1.Seed.deserializeBinaryFromReader);
       msg.addSeeds(value);
+      break;
+    case 4:
+      var value = /** @type {!proto.v1.Result.ResultStatusCode} */ (reader.readEnum());
+      msg.setStatus(value);
       break;
     default:
       reader.skipField();
@@ -1212,8 +1218,38 @@ proto.v1.Result.serializeBinaryToWriter = function(message, writer) {
       proto.v1.Seed.serializeBinaryToWriter
     );
   }
+  f = message.getStatus();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      4,
+      f
+    );
+  }
 };
 
+
+/**
+ * @enum {number}
+ */
+proto.v1.Result.ResultStatusCode = {
+  STATUS_OK: 0,
+  STATUS_CANCELLED: 1,
+  STATUS_UNKNOWN: 2,
+  STATUS_INVALID_ARGUMENT: 3,
+  STATUS_DEADLINE_EXCEEDED: 4,
+  STATUS_NOT_FOUND: 5,
+  STATUS_ALREADY_EXISTS: 6,
+  STATUS_PERMISSION_DENIED: 7,
+  STATUS_RESOURCE_EXHAUSTED: 8,
+  STATUS_FAILED_PRECONDITION: 9,
+  STATUS_ABORTED: 10,
+  STATUS_OUT_OF_RANGE: 11,
+  STATUS_UNIMPLEMENTED: 12,
+  STATUS_INTERNAL: 13,
+  STATUS_UNAVAILABLE: 14,
+  STATUS_DATA_LOSS: 15,
+  STATUS_UNAUTHENTICATED: 16
+};
 
 /**
  * optional string urn = 1;
@@ -1305,6 +1341,24 @@ proto.v1.Result.prototype.addSeeds = function(opt_value, opt_index) {
  */
 proto.v1.Result.prototype.clearSeedsList = function() {
   return this.setSeedsList([]);
+};
+
+
+/**
+ * optional ResultStatusCode status = 4;
+ * @return {!proto.v1.Result.ResultStatusCode}
+ */
+proto.v1.Result.prototype.getStatus = function() {
+  return /** @type {!proto.v1.Result.ResultStatusCode} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {!proto.v1.Result.ResultStatusCode} value
+ * @return {!proto.v1.Result} returns this
+ */
+proto.v1.Result.prototype.setStatus = function(value) {
+  return jspb.Message.setProto3EnumField(this, 4, value);
 };
 
 
@@ -2045,7 +2099,7 @@ proto.v1.Item.Resource.toObject = function(includeInstance, msg) {
     type: jspb.Message.getFieldWithDefault(msg, 2, 0),
     status: jspb.Message.getFieldWithDefault(msg, 3, 0),
     rawProperties: (f = msg.getRawProperties()) && proto.v1.Item.Resource.RawProperties.toObject(includeInstance, f),
-    processedProperties: (f = msg.getProcessedProperties()) && proto.v1.Item.Resource.ProcessedProperties.toObject(includeInstance, f)
+    processedProperties: (f = msg.getProcessedProperties()) && proto.v1.Item.Resource.TextProperties.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -2100,8 +2154,8 @@ proto.v1.Item.Resource.deserializeBinaryFromReader = function(msg, reader) {
       msg.setRawProperties(value);
       break;
     case 5:
-      var value = new proto.v1.Item.Resource.ProcessedProperties;
-      reader.readMessage(value,proto.v1.Item.Resource.ProcessedProperties.deserializeBinaryFromReader);
+      var value = new proto.v1.Item.Resource.TextProperties;
+      reader.readMessage(value,proto.v1.Item.Resource.TextProperties.deserializeBinaryFromReader);
       msg.setProcessedProperties(value);
       break;
     default:
@@ -2167,7 +2221,7 @@ proto.v1.Item.Resource.serializeBinaryToWriter = function(message, writer) {
     writer.writeMessage(
       5,
       f,
-      proto.v1.Item.Resource.ProcessedProperties.serializeBinaryToWriter
+      proto.v1.Item.Resource.TextProperties.serializeBinaryToWriter
     );
   }
 };
@@ -2369,8 +2423,8 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
  *     http://goto/soy-param-migration
  * @return {!Object}
  */
-proto.v1.Item.Resource.ProcessedProperties.prototype.toObject = function(opt_includeInstance) {
-  return proto.v1.Item.Resource.ProcessedProperties.toObject(opt_includeInstance, this);
+proto.v1.Item.Resource.TextProperties.prototype.toObject = function(opt_includeInstance) {
+  return proto.v1.Item.Resource.TextProperties.toObject(opt_includeInstance, this);
 };
 
 
@@ -2379,11 +2433,11 @@ proto.v1.Item.Resource.ProcessedProperties.prototype.toObject = function(opt_inc
  * @param {boolean|undefined} includeInstance Deprecated. Whether to include
  *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
- * @param {!proto.v1.Item.Resource.ProcessedProperties} msg The msg instance to transform.
+ * @param {!proto.v1.Item.Resource.TextProperties} msg The msg instance to transform.
  * @return {!Object}
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.v1.Item.Resource.ProcessedProperties.toObject = function(includeInstance, msg) {
+proto.v1.Item.Resource.TextProperties.toObject = function(includeInstance, msg) {
   var f, obj = {
     checksum: jspb.Message.getFieldWithDefault(msg, 1, ""),
     length: jspb.Message.getFieldWithDefault(msg, 2, 0)
@@ -2400,23 +2454,23 @@ proto.v1.Item.Resource.ProcessedProperties.toObject = function(includeInstance, 
 /**
  * Deserializes binary data (in protobuf wire format).
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
- * @return {!proto.v1.Item.Resource.ProcessedProperties}
+ * @return {!proto.v1.Item.Resource.TextProperties}
  */
-proto.v1.Item.Resource.ProcessedProperties.deserializeBinary = function(bytes) {
+proto.v1.Item.Resource.TextProperties.deserializeBinary = function(bytes) {
   var reader = new jspb.BinaryReader(bytes);
-  var msg = new proto.v1.Item.Resource.ProcessedProperties;
-  return proto.v1.Item.Resource.ProcessedProperties.deserializeBinaryFromReader(msg, reader);
+  var msg = new proto.v1.Item.Resource.TextProperties;
+  return proto.v1.Item.Resource.TextProperties.deserializeBinaryFromReader(msg, reader);
 };
 
 
 /**
  * Deserializes binary data (in protobuf wire format) from the
  * given reader into the given message object.
- * @param {!proto.v1.Item.Resource.ProcessedProperties} msg The message object to deserialize into.
+ * @param {!proto.v1.Item.Resource.TextProperties} msg The message object to deserialize into.
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
- * @return {!proto.v1.Item.Resource.ProcessedProperties}
+ * @return {!proto.v1.Item.Resource.TextProperties}
  */
-proto.v1.Item.Resource.ProcessedProperties.deserializeBinaryFromReader = function(msg, reader) {
+proto.v1.Item.Resource.TextProperties.deserializeBinaryFromReader = function(msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
@@ -2444,9 +2498,9 @@ proto.v1.Item.Resource.ProcessedProperties.deserializeBinaryFromReader = functio
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.v1.Item.Resource.ProcessedProperties.prototype.serializeBinary = function() {
+proto.v1.Item.Resource.TextProperties.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  proto.v1.Item.Resource.ProcessedProperties.serializeBinaryToWriter(this, writer);
+  proto.v1.Item.Resource.TextProperties.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
@@ -2454,11 +2508,11 @@ proto.v1.Item.Resource.ProcessedProperties.prototype.serializeBinary = function(
 /**
  * Serializes the given message to binary data (in protobuf wire
  * format), writing to the given BinaryWriter.
- * @param {!proto.v1.Item.Resource.ProcessedProperties} message
+ * @param {!proto.v1.Item.Resource.TextProperties} message
  * @param {!jspb.BinaryWriter} writer
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.v1.Item.Resource.ProcessedProperties.serializeBinaryToWriter = function(message, writer) {
+proto.v1.Item.Resource.TextProperties.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getChecksum();
   if (f.length > 0) {
@@ -2481,16 +2535,16 @@ proto.v1.Item.Resource.ProcessedProperties.serializeBinaryToWriter = function(me
  * optional string checksum = 1;
  * @return {string}
  */
-proto.v1.Item.Resource.ProcessedProperties.prototype.getChecksum = function() {
+proto.v1.Item.Resource.TextProperties.prototype.getChecksum = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /**
  * @param {string} value
- * @return {!proto.v1.Item.Resource.ProcessedProperties} returns this
+ * @return {!proto.v1.Item.Resource.TextProperties} returns this
  */
-proto.v1.Item.Resource.ProcessedProperties.prototype.setChecksum = function(value) {
+proto.v1.Item.Resource.TextProperties.prototype.setChecksum = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
 };
 
@@ -2499,16 +2553,16 @@ proto.v1.Item.Resource.ProcessedProperties.prototype.setChecksum = function(valu
  * optional uint32 length = 2;
  * @return {number}
  */
-proto.v1.Item.Resource.ProcessedProperties.prototype.getLength = function() {
+proto.v1.Item.Resource.TextProperties.prototype.getLength = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
 
 /**
  * @param {number} value
- * @return {!proto.v1.Item.Resource.ProcessedProperties} returns this
+ * @return {!proto.v1.Item.Resource.TextProperties} returns this
  */
-proto.v1.Item.Resource.ProcessedProperties.prototype.setLength = function(value) {
+proto.v1.Item.Resource.TextProperties.prototype.setLength = function(value) {
   return jspb.Message.setProto3IntField(this, 2, value);
 };
 
@@ -2605,17 +2659,17 @@ proto.v1.Item.Resource.prototype.hasRawProperties = function() {
 
 
 /**
- * optional ProcessedProperties processed_properties = 5;
- * @return {?proto.v1.Item.Resource.ProcessedProperties}
+ * optional TextProperties processed_properties = 5;
+ * @return {?proto.v1.Item.Resource.TextProperties}
  */
 proto.v1.Item.Resource.prototype.getProcessedProperties = function() {
-  return /** @type{?proto.v1.Item.Resource.ProcessedProperties} */ (
-    jspb.Message.getWrapperField(this, proto.v1.Item.Resource.ProcessedProperties, 5));
+  return /** @type{?proto.v1.Item.Resource.TextProperties} */ (
+    jspb.Message.getWrapperField(this, proto.v1.Item.Resource.TextProperties, 5));
 };
 
 
 /**
- * @param {?proto.v1.Item.Resource.ProcessedProperties|undefined} value
+ * @param {?proto.v1.Item.Resource.TextProperties|undefined} value
  * @return {!proto.v1.Item.Resource} returns this
 */
 proto.v1.Item.Resource.prototype.setProcessedProperties = function(value) {

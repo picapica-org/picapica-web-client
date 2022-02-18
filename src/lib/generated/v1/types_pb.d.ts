@@ -120,6 +120,9 @@ export class Result extends jspb.Message {
   clearSeedsList(): Result;
   addSeeds(value?: Seed, index?: number): Seed;
 
+  getStatus(): Result.ResultStatusCode;
+  setStatus(value: Result.ResultStatusCode): Result;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Result.AsObject;
   static toObject(includeInstance: boolean, msg: Result): Result.AsObject;
@@ -133,6 +136,27 @@ export namespace Result {
     urn: string,
     resources?: ResourcePair.AsObject,
     seedsList: Array<Seed.AsObject>,
+    status: Result.ResultStatusCode,
+  }
+
+  export enum ResultStatusCode { 
+    STATUS_OK = 0,
+    STATUS_CANCELLED = 1,
+    STATUS_UNKNOWN = 2,
+    STATUS_INVALID_ARGUMENT = 3,
+    STATUS_DEADLINE_EXCEEDED = 4,
+    STATUS_NOT_FOUND = 5,
+    STATUS_ALREADY_EXISTS = 6,
+    STATUS_PERMISSION_DENIED = 7,
+    STATUS_RESOURCE_EXHAUSTED = 8,
+    STATUS_FAILED_PRECONDITION = 9,
+    STATUS_ABORTED = 10,
+    STATUS_OUT_OF_RANGE = 11,
+    STATUS_UNIMPLEMENTED = 12,
+    STATUS_INTERNAL = 13,
+    STATUS_UNAVAILABLE = 14,
+    STATUS_DATA_LOSS = 15,
+    STATUS_UNAUTHENTICATED = 16,
   }
 }
 
@@ -258,8 +282,8 @@ export namespace Item {
     hasRawProperties(): boolean;
     clearRawProperties(): Resource;
 
-    getProcessedProperties(): Item.Resource.ProcessedProperties | undefined;
-    setProcessedProperties(value?: Item.Resource.ProcessedProperties): Resource;
+    getProcessedProperties(): Item.Resource.TextProperties | undefined;
+    setProcessedProperties(value?: Item.Resource.TextProperties): Resource;
     hasProcessedProperties(): boolean;
     clearProcessedProperties(): Resource;
 
@@ -277,7 +301,7 @@ export namespace Item {
       type: Item.Resource.Type,
       status: Item.Resource.ProcessingStatus,
       rawProperties?: Item.Resource.RawProperties.AsObject,
-      processedProperties?: Item.Resource.ProcessedProperties.AsObject,
+      processedProperties?: Item.Resource.TextProperties.AsObject,
     }
 
     export class RawProperties extends jspb.Message {
@@ -303,22 +327,22 @@ export namespace Item {
     }
 
 
-    export class ProcessedProperties extends jspb.Message {
+    export class TextProperties extends jspb.Message {
       getChecksum(): string;
-      setChecksum(value: string): ProcessedProperties;
+      setChecksum(value: string): TextProperties;
 
       getLength(): number;
-      setLength(value: number): ProcessedProperties;
+      setLength(value: number): TextProperties;
 
       serializeBinary(): Uint8Array;
-      toObject(includeInstance?: boolean): ProcessedProperties.AsObject;
-      static toObject(includeInstance: boolean, msg: ProcessedProperties): ProcessedProperties.AsObject;
-      static serializeBinaryToWriter(message: ProcessedProperties, writer: jspb.BinaryWriter): void;
-      static deserializeBinary(bytes: Uint8Array): ProcessedProperties;
-      static deserializeBinaryFromReader(message: ProcessedProperties, reader: jspb.BinaryReader): ProcessedProperties;
+      toObject(includeInstance?: boolean): TextProperties.AsObject;
+      static toObject(includeInstance: boolean, msg: TextProperties): TextProperties.AsObject;
+      static serializeBinaryToWriter(message: TextProperties, writer: jspb.BinaryWriter): void;
+      static deserializeBinary(bytes: Uint8Array): TextProperties;
+      static deserializeBinaryFromReader(message: TextProperties, reader: jspb.BinaryReader): TextProperties;
     }
 
-    export namespace ProcessedProperties {
+    export namespace TextProperties {
       export type AsObject = {
         checksum: string,
         length: number,

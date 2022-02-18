@@ -10617,7 +10617,7 @@ proto.v1.ExtractResponse.prototype.toObject = function(opt_includeInstance) {
 proto.v1.ExtractResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     rawProperties: (f = msg.getRawProperties()) && v1_types_pb.Item.Resource.RawProperties.toObject(includeInstance, f),
-    processedProperties: (f = msg.getProcessedProperties()) && v1_types_pb.Item.Resource.ProcessedProperties.toObject(includeInstance, f),
+    textProperties: (f = msg.getTextProperties()) && v1_types_pb.Item.Resource.TextProperties.toObject(includeInstance, f),
     text: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
@@ -10661,9 +10661,9 @@ proto.v1.ExtractResponse.deserializeBinaryFromReader = function(msg, reader) {
       msg.setRawProperties(value);
       break;
     case 2:
-      var value = new v1_types_pb.Item.Resource.ProcessedProperties;
-      reader.readMessage(value,v1_types_pb.Item.Resource.ProcessedProperties.deserializeBinaryFromReader);
-      msg.setProcessedProperties(value);
+      var value = new v1_types_pb.Item.Resource.TextProperties;
+      reader.readMessage(value,v1_types_pb.Item.Resource.TextProperties.deserializeBinaryFromReader);
+      msg.setTextProperties(value);
       break;
     case 3:
       var value = /** @type {string} */ (reader.readString());
@@ -10706,12 +10706,12 @@ proto.v1.ExtractResponse.serializeBinaryToWriter = function(message, writer) {
       v1_types_pb.Item.Resource.RawProperties.serializeBinaryToWriter
     );
   }
-  f = message.getProcessedProperties();
+  f = message.getTextProperties();
   if (f != null) {
     writer.writeMessage(
       2,
       f,
-      v1_types_pb.Item.Resource.ProcessedProperties.serializeBinaryToWriter
+      v1_types_pb.Item.Resource.TextProperties.serializeBinaryToWriter
     );
   }
   f = message.getText();
@@ -10762,20 +10762,20 @@ proto.v1.ExtractResponse.prototype.hasRawProperties = function() {
 
 
 /**
- * optional Item.Resource.ProcessedProperties processed_properties = 2;
- * @return {?proto.v1.Item.Resource.ProcessedProperties}
+ * optional Item.Resource.TextProperties text_properties = 2;
+ * @return {?proto.v1.Item.Resource.TextProperties}
  */
-proto.v1.ExtractResponse.prototype.getProcessedProperties = function() {
-  return /** @type{?proto.v1.Item.Resource.ProcessedProperties} */ (
-    jspb.Message.getWrapperField(this, v1_types_pb.Item.Resource.ProcessedProperties, 2));
+proto.v1.ExtractResponse.prototype.getTextProperties = function() {
+  return /** @type{?proto.v1.Item.Resource.TextProperties} */ (
+    jspb.Message.getWrapperField(this, v1_types_pb.Item.Resource.TextProperties, 2));
 };
 
 
 /**
- * @param {?proto.v1.Item.Resource.ProcessedProperties|undefined} value
+ * @param {?proto.v1.Item.Resource.TextProperties|undefined} value
  * @return {!proto.v1.ExtractResponse} returns this
 */
-proto.v1.ExtractResponse.prototype.setProcessedProperties = function(value) {
+proto.v1.ExtractResponse.prototype.setTextProperties = function(value) {
   return jspb.Message.setWrapperField(this, 2, value);
 };
 
@@ -10784,8 +10784,8 @@ proto.v1.ExtractResponse.prototype.setProcessedProperties = function(value) {
  * Clears the message field making it undefined.
  * @return {!proto.v1.ExtractResponse} returns this
  */
-proto.v1.ExtractResponse.prototype.clearProcessedProperties = function() {
-  return this.setProcessedProperties(undefined);
+proto.v1.ExtractResponse.prototype.clearTextProperties = function() {
+  return this.setTextProperties(undefined);
 };
 
 
@@ -10793,7 +10793,7 @@ proto.v1.ExtractResponse.prototype.clearProcessedProperties = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.v1.ExtractResponse.prototype.hasProcessedProperties = function() {
+proto.v1.ExtractResponse.prototype.hasTextProperties = function() {
   return jspb.Message.getField(this, 2) != null;
 };
 

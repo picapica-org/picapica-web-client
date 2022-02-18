@@ -171,15 +171,15 @@ class MockClient extends SessionServiceClient {
 		rawProps.setSize(raw.length);
 		rawProps.setChecksum(randomHex(32));
 
-		const processedProps = new Item.Resource.ProcessedProperties();
-		processedProps.setLength([...content].length);
-		processedProps.setChecksum(randomHex(32));
+		const textProps = new Item.Resource.TextProperties();
+		textProps.setLength([...content].length);
+		textProps.setChecksum(randomHex(32));
 
 		const resource = new Item.Resource();
 		resource.setItemUrn(itemUrn);
 		resource.setType(req.getType());
 		resource.setRawProperties(rawProps);
-		resource.setProcessedProperties(processedProps);
+		resource.setProcessedProperties(textProps);
 
 		const item = new Item();
 		item.setUrn(itemUrn);

@@ -1248,10 +1248,10 @@ export class ExtractResponse extends jspb.Message {
   hasRawProperties(): boolean;
   clearRawProperties(): ExtractResponse;
 
-  getProcessedProperties(): v1_types_pb.Item.Resource.ProcessedProperties | undefined;
-  setProcessedProperties(value?: v1_types_pb.Item.Resource.ProcessedProperties): ExtractResponse;
-  hasProcessedProperties(): boolean;
-  clearProcessedProperties(): ExtractResponse;
+  getTextProperties(): v1_types_pb.Item.Resource.TextProperties | undefined;
+  setTextProperties(value?: v1_types_pb.Item.Resource.TextProperties): ExtractResponse;
+  hasTextProperties(): boolean;
+  clearTextProperties(): ExtractResponse;
 
   getText(): string;
   setText(value: string): ExtractResponse;
@@ -1267,7 +1267,7 @@ export class ExtractResponse extends jspb.Message {
 export namespace ExtractResponse {
   export type AsObject = {
     rawProperties?: v1_types_pb.Item.Resource.RawProperties.AsObject,
-    processedProperties?: v1_types_pb.Item.Resource.ProcessedProperties.AsObject,
+    textProperties?: v1_types_pb.Item.Resource.TextProperties.AsObject,
     text: string,
   }
 }
