@@ -10,15 +10,12 @@ import { ItemTable } from "../elements/item-table";
 import { StepActionBar } from "../elements/step-action-bar";
 import { NextButton } from "../elements/step-buttons";
 import { SessionState } from "../elements/session-creating-loading";
-import { ItemProto, toItemResourceType } from "../lib/session/create-item";
+import { ItemProto } from "../lib/session/create-item";
 import { getSessionUrn, Ready, useCreateSession } from "../lib/use-session";
-import { FailedItem, UploadedItem, UploadingItem, useUpload } from "../lib/use-upload";
+import { FailedItem, optimisticallyAddItem, UploadedItem, UploadingItem, useUpload } from "../lib/use-upload";
 import { ItemTypeIcon } from "../elements/icon";
-import { cloneSession } from "../lib/session/util";
 import { useDropzone } from "react-dropzone";
 import { LoaderAnimation } from "../elements/loader-animation";
-import { Item } from "../lib/generated/v1/types_pb";
-import { SessionMutator } from "../lib/session/mutator";
 import "./submit.scss";
 
 export default function SubmitPage(): JSX.Element {
@@ -186,24 +183,6 @@ function randomText(): string {
 	}
 
 	return s;
-}
-
-function optimisticallyAddItem({ item, itemUrn }: UploadedItem): SessionMutator {
-	return oldSession => {
-		const session = cloneSession(oldSession);
-		session.itemsList.push({
-			urn: itemUrn,
-			meta: { name: item.name },
-			resource: {
-				itemUrn,
-				type: toItemResourceType(item.type),
-				status: Item.Resource.ProcessingStatus.STATUS_RUNNING,
-				rawProperties: { checksum: "fake", size: item.size },
-				processedProperties: { checksum: "fake", length: 0 },
-			},
-		});
-		return session;
-	};
 }
 
 const locales: Locales<SimpleString<"instruction" | "addItemHint">> = {

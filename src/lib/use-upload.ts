@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { v4 as uuidV4 } from "uuid";
-import { ItemMeta, ItemProto } from "./session/create-item";
+import { ItemMeta, ItemProto, toItemResourceType } from "./session/create-item";
 import { getSessionClient } from "./session/client";
+import { SessionMutator } from "./session/mutator";
+import { cloneSession } from "./session/util";
+import { Item } from "./generated/v1/types_pb";
 
 export interface UploadingItem {
 	readonly uploadId: string;
@@ -60,6 +63,7 @@ export function useUpload(
 					.read()
 					.then(async item => {
 						const request = item.getRequest(sessionUrn);
+						request.addComparisonUrns(sessionUrn);
 						const response = await getSessionClient().createItem(request, null);
 						return response.getItemUrn();
 					})
@@ -90,4 +94,29 @@ export function useUpload(
 	}, [done, setDone, successfulUpload, failedUpload]);
 
 	return [uploadingItems, upload];
+}
+
+export function optimisticallyAddItem({ item, itemUrn }: UploadedItem): SessionMutator {
+	return oldSession => {
+		const session = cloneSession(oldSession);
+
+		// add item
+		session.itemsList.push({
+			urn: itemUrn,
+			meta: { name: item.name },
+			resource: {
+				itemUrn,
+				type: toItemResourceType(item.type),
+				status: Item.Resource.ProcessingStatus.STATUS_RUNNING,
+				rawProperties: { checksum: "fake", size: item.size },
+				processedProperties: { checksum: "fake", length: 0 },
+			},
+		});
+
+		// add comparison URNs
+		session.config ??= { pairingsList: [] };
+		session.config.pairingsList.push({ urnA: itemUrn, urnB: session.urn });
+
+		return session;
+	};
 }
