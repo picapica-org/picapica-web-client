@@ -217,7 +217,11 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 	useAsyncEffect(
 		async () => {
 			if (state.type === "Ready") {
-				await delay(AUTO_REFRESH_INTERVAL);
+				// reload to:
+				// 1. refresh old sessions
+				// 2. refresh sessions that currently have a computation running
+
+				await delay(Math.min(AUTO_REFRESH_INTERVAL, getComputationRefreshDelay(state.session)));
 			} else {
 				throw new Error("Not ready");
 			}
@@ -358,6 +362,27 @@ function getRetryDelay(retries: number): number {
 	} else {
 		// and then slow sown even further
 		return 60_000;
+	}
+}
+
+function getComputationRefreshDelay(session: DeepReadonly<Session.AsObject>): number {
+	if (session.status !== Session.ComputeStatus.STATUS_RUNNING) {
+		return Infinity;
+	}
+
+	// We want to:
+	// 1. Display the first result ASAP.
+	// 2. Display next *few* results relatively quickly.
+	// 3. Not spam the server with too many refresh requests for longer-running tasks.
+
+	const resultCount = session.resultsList.length;
+	if (resultCount === 0) {
+		// Try to display the first result ASAP
+		return 500;
+	} else if (resultCount <= 3) {
+		return 1000;
+	} else {
+		return 3000;
 	}
 }
 
