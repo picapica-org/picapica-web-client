@@ -1,6 +1,6 @@
 import { CreateItemRequest } from "../generated/v1/services_pb";
 import { Item } from "../generated/v1/types_pb";
-import { assertNever, shorten } from "../util";
+import { assertNever, shorten, shortenWords } from "../util";
 
 export type ItemData =
 	| { readonly type: "file"; file: File }
@@ -142,5 +142,5 @@ export function toItemType(type: Item.Resource.Type): ItemType | undefined {
 }
 
 function extractNameFromText(text: string): string {
-	return shorten(text.replace(/\s+/g, " ").trim(), 50);
+	return shortenWords(text.replace(/\s+/g, " ").trim(), 30, 50);
 }

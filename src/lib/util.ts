@@ -89,6 +89,27 @@ export function shorten(text: string, maxLength: number): string {
 		return chars.slice(0, maxLength).join("") + "…";
 	}
 }
+export function shortenWords(text: string, minLength: number, maxLength: number): string {
+	if (text.length <= maxLength) {
+		return text;
+	} else {
+		const chars = [...text];
+		if (chars.length <= maxLength) {
+			return text;
+		}
+
+		let lastSpace = maxLength;
+		const space = /^\s$/;
+		for (let i = maxLength - 1; i >= minLength; i--) {
+			if (space.test(chars[i])) {
+				lastSpace = i;
+				break;
+			}
+		}
+
+		return chars.slice(0, lastSpace).join("").trim() + "…";
+	}
+}
 
 export function debugAssert(condition: boolean, message?: string): asserts condition {
 	if (!condition) {
