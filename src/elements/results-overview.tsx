@@ -74,6 +74,8 @@ export function ResultsOverview(props: ResultsOverviewProps): JSX.Element {
 		</CenterAlignTwo>
 	);
 
+	const running = props.session.status === Session.ComputeStatus.STATUS_RUNNING;
+
 	return (
 		<div className="ResultsOverview">
 			<OverviewContainer lang={props.lang} title={title}>
@@ -82,7 +84,10 @@ export function ResultsOverview(props: ResultsOverviewProps): JSX.Element {
 						<CenterAlignTwo grow="left">
 							{[
 								<SubmittedFilesLabel lang={props.lang} />,
-								<Badge kind="Light">{categories.items.length}</Badge>,
+								<Badge kind="Light">
+									{running && <LoaderAnimation />}
+									{categories.items.length}
+								</Badge>,
 							]}
 						</CenterAlignTwo>
 					</Link>

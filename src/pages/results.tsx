@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Helmet } from "react-helmet";
 import { Page } from "../elements/page";
 import { SharedHead } from "../elements/shared-header";
@@ -13,8 +13,9 @@ import { noMutation } from "../lib/session/mutator";
 import { useCollections } from "../lib/use-collections";
 import { CollectionResultsOverview, ItemResultsOverview, ResultsOverview } from "../elements/results-overview";
 import { getLocationSearchParams } from "../lib/url-params";
-import { LoaderAnimation } from "../elements/loader-animation";
 import { toResult, toResults } from "../lib/page-links";
+import { getSessionClient } from "../lib/session/client";
+import { ComputeResultsRequest, Session } from "../lib/generated/v1/services_pb";
 import "./results.scss";
 
 export default function ResultsPage(): JSX.Element {
@@ -36,24 +37,43 @@ function Results(props: LocalizableProps): JSX.Element {
 
 	const [state, update] = useLoadSession();
 
-	// Reload the current session as long as there are incomplete results
+	// request computation
+	const [didCompute, setDidCompute] = useState(false);
 	useAsyncEffect(
 		async token => {
-			if (state.type === "Ready" && state.session.resultsList.some(result => !result.completed)) {
-				// There are some results that have not completed yet.
+			if (didCompute) return;
 
-				// wait 3s so we don't spam the server
-				await delay(3_000);
-				token.checkCanceled();
+			if (state.type !== "Ready") return;
+			if (state.session.status === Session.ComputeStatus.STATUS_RUNNING) {
+				setDidCompute(true);
+				return;
+			}
 
-				update(Promise.resolve(), noMutation);
+			const req = new ComputeResultsRequest();
+			req.setSessionUrn(state.session.urn);
+
+			for (;;) {
+				try {
+					console.log("requesting");
+
+					const resp = await getSessionClient().computeResults(req, null);
+					setDidCompute(true);
+					update(Promise.resolve(), noMutation);
+					return resp;
+				} catch (error) {
+					// wait some time and retry
+					token.checkCanceled();
+					await delay(3_000);
+					token.checkCanceled();
+				}
 			}
 		},
 		noop,
 		noop,
-		[state, update]
+		[state, update, didCompute, setDidCompute]
 	);
 
+	// display result
 	const [collections] = useCollections(getSessionUrn(state));
 	console.log(collections);
 
@@ -90,15 +110,17 @@ function Results(props: LocalizableProps): JSX.Element {
 			),
 		});
 
+		const running = session.status === Session.ComputeStatus.STATUS_RUNNING;
+
 		return (
 			<>
 				{current}
 
-				<BackButton {...props} to={getLinkToStep("analysis", session.urn)} />
+				{running && <p>{l.running}</p>}
 
-				{view.type}
-
-				<LoaderAnimation />
+				<p>
+					<BackButton {...props} to={getLinkToStep("analysis", session.urn)} />
+				</p>
 			</>
 		);
 	};
@@ -146,11 +168,11 @@ function getLinkToView(sessionUrn: string, view: View): string {
 	return toResults({ urn: sessionUrn, view: viewValue });
 }
 
-const locales: Locales<SimpleString<"instruction">> = {
+const locales: Locales<SimpleString<"running">> = {
 	en: {
-		instruction: "TODO",
+		running: "Your submitted files are currently being processed. This might take a few seconds.",
 	},
 	de: {
-		instruction: "TODO",
+		running: "Ihre Eingabe wird bearbeited. Dies kann ein paar Sekunden dauern.",
 	},
 };

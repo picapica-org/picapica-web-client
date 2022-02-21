@@ -60,6 +60,11 @@
 .ItemResultsOverview {
 	.Badge {
 		font-size: 85%;
+
+		.LoaderAnimation {
+			margin-right: 0.5em;
+			font-weight: normal;
+		}
 	}
 
 	.CenterAlignTwo {
@@ -100,5 +105,12 @@
 		padding: 0.75em 1em;
 		color: $grey6;
 		font-style: italic;
+	}
+
+	.item-vs {
+		.vs {
+			margin: 0 1em;
+			font-weight: bold;
+		}
 	}
 }
