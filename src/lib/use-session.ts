@@ -13,6 +13,7 @@ import { changeLocationSearchParams, getLocationSearchParams } from "../lib/url-
 import { assertNever, DeepReadonly, delay, noop } from "../lib/util";
 import { SessionMutator } from "./session/mutator";
 import { StorageCache } from "./storage-cache";
+import { PicapicaUrn } from "./session/urn";
 
 export interface Creating {
 	readonly type: "Creating";
@@ -300,15 +301,33 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 	return [displayState, update];
 }
 
+function tryGetSessionId(urn: string | null): string | null {
+	if (!urn) return null;
+
+	const parsed = PicapicaUrn.tryParse(urn);
+	if (parsed) {
+		switch (parsed.type) {
+			case "item":
+			case "result":
+			case "session":
+				return parsed.sessionId;
+		}
+	}
+	return null;
+}
 function getLocationSessionUrn(): string | null {
-	const sessionUrn = getLocationSearchParams().get("urn");
-	if (sessionUrn) {
-		return sessionUrn;
+	const sessionId = tryGetSessionId(getLocationSearchParams().get("urn"));
+	if (sessionId) {
+		return PicapicaUrn.stringify({ type: "session", sessionId });
 	} else {
 		return null;
 	}
 }
 function setLocationSessionUrn(sessionUrn: string): void {
+	// check whether we have to update anything before making changes
+	const currentSessionId = tryGetSessionId(getLocationSearchParams().get("urn"));
+	if (currentSessionId && currentSessionId === tryGetSessionId(sessionUrn)) return;
+
 	changeLocationSearchParams("replace", { urn: sessionUrn });
 }
 
