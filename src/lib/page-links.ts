@@ -7,7 +7,7 @@ export const toPoster = "/poster/";
 export const toSubmit = withParameters<{ urn?: string }>("/submit/");
 export const toAnalysis = withParameters<{ urn: string }>("/analysis/");
 export const toResults = withParameters<{ urn: string; view?: string }>("/results/");
-export const toResult = withParameters<{ urn: string }>("/result/");
+export const toResult = withParameters<{ urn: string; view?: string }>("/result/");
 
 function withParameters<Parameters extends Partial<Record<string, string>>>(
 	to: string

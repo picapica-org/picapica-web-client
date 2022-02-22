@@ -8,7 +8,7 @@ import { getLinkToStep } from "../elements/step-selector";
 import { BackButton } from "../elements/step-buttons";
 import { SessionState } from "../elements/session-creating-loading";
 import { getSessionUrn, Ready, useLoadSession } from "../lib/use-session";
-import { delay, noop, visitType } from "../lib/util";
+import { DeepReadonly, delay, noop, visitType } from "../lib/util";
 import { noMutation } from "../lib/session/mutator";
 import { useCollections } from "../lib/use-collections";
 import { CollectionResultsOverview, ItemResultsOverview, ResultsOverview } from "../elements/results-overview";
@@ -16,6 +16,7 @@ import { getLocationSearchParams } from "../lib/url-params";
 import { toResult, toResults } from "../lib/page-links";
 import { getSessionClient } from "../lib/session/client";
 import { ComputeResultsRequest, Session } from "../lib/generated/v1/services_pb";
+import { Result } from "../lib/generated/v1/types_pb";
 import "./results.scss";
 
 export default function ResultsPage(): JSX.Element {
@@ -78,6 +79,9 @@ function Results(props: LocalizableProps): JSX.Element {
 	console.log(collections);
 
 	const view = getCurrentView();
+	const getLinkToResult = (result: DeepReadonly<Result.AsObject>): string => {
+		return toResult({ urn: result.urn, view: stringifyView(view) });
+	};
 
 	const onReady = ({ session }: Ready): JSX.Element => {
 		const current: JSX.Element = visitType(view, {
@@ -95,7 +99,7 @@ function Results(props: LocalizableProps): JSX.Element {
 					{...props}
 					session={session}
 					backTo={getLinkToView(session.urn, VIEW_OVERVIEW)}
-					resultTo={result => toResult({ urn: result.urn })}
+					resultTo={getLinkToResult}
 				/>
 			),
 			collection: ({ collectionUrn }) => (
@@ -105,7 +109,7 @@ function Results(props: LocalizableProps): JSX.Element {
 					session={session}
 					collections={collections}
 					backTo={getLinkToView(session.urn, VIEW_OVERVIEW)}
-					resultTo={result => toResult({ urn: result.urn })}
+					resultTo={getLinkToResult}
 				/>
 			),
 		});
@@ -139,9 +143,7 @@ type View =
 const VIEW_OVERVIEW: View = { type: "overview" };
 const VIEW_ITEMS: View = { type: "items" };
 
-function getCurrentView(): View {
-	const view = getLocationSearchParams().get("view");
-
+function parseView(view: string): View {
 	if (view) {
 		if (view === "items") {
 			return VIEW_ITEMS;
@@ -155,17 +157,22 @@ function getCurrentView(): View {
 
 	return VIEW_OVERVIEW;
 }
-function getLinkToView(sessionUrn: string, view: View): string {
-	let viewValue;
+function stringifyView(view: View): string | undefined {
 	if (view.type === "items") {
-		viewValue = "items";
+		return "items";
 	} else if (view.type === "collection") {
-		viewValue = `collection:${view.collectionUrn}`;
+		return `collection:${view.collectionUrn}`;
 	} else {
-		viewValue = undefined;
+		return undefined;
 	}
+}
 
-	return toResults({ urn: sessionUrn, view: viewValue });
+function getCurrentView(): View {
+	const view = getLocationSearchParams().get("view");
+	return view ? parseView(view) : VIEW_OVERVIEW;
+}
+function getLinkToView(sessionUrn: string, view: View): string {
+	return toResults({ urn: sessionUrn, view: stringifyView(view) });
 }
 
 const locales: Locales<SimpleString<"running">> = {
