@@ -1,22 +1,21 @@
-import React, { useState } from "react";
+import React from "react";
 import { Helmet } from "react-helmet";
 import { Page } from "../elements/page";
 import { SharedHead } from "../elements/shared-header";
 import { getCurrentLang, getLocalization, Locales, LocalizableProps, SimpleString } from "../lib/localization";
-import { dynamic, useAsyncEffect } from "../lib/react-util";
+import { dynamic } from "../lib/react-util";
 import { getLinkToStep } from "../elements/step-selector";
 import { BackButton } from "../elements/step-buttons";
 import { SessionState } from "../elements/session-creating-loading";
 import { getSessionUrn, Ready, useLoadSession } from "../lib/use-session";
-import { DeepReadonly, delay, noop, visitType } from "../lib/util";
-import { noMutation } from "../lib/session/mutator";
+import { DeepReadonly, visitType } from "../lib/util";
 import { useCollections } from "../lib/use-collections";
 import { CollectionResultsOverview, ItemResultsOverview, ResultsOverview } from "../elements/results-overview";
 import { getLocationSearchParams } from "../lib/url-params";
 import { toResult, toResults } from "../lib/page-links";
-import { getSessionClient } from "../lib/session/client";
-import { ComputeResultsRequest, Session } from "../lib/generated/v1/services_pb";
+import { Session } from "../lib/generated/v1/services_pb";
 import { Result } from "../lib/generated/v1/types_pb";
+import { useComputerResults } from "../lib/use-compute-results";
 import "./results.scss";
 
 export default function ResultsPage(): JSX.Element {
@@ -39,40 +38,7 @@ function Results(props: LocalizableProps): JSX.Element {
 	const [state, update] = useLoadSession();
 
 	// request computation
-	const [didCompute, setDidCompute] = useState(false);
-	useAsyncEffect(
-		async token => {
-			if (didCompute) return;
-
-			if (state.type !== "Ready") return;
-			if (state.session.status === Session.ComputeStatus.STATUS_RUNNING) {
-				setDidCompute(true);
-				return;
-			}
-
-			const req = new ComputeResultsRequest();
-			req.setSessionUrn(state.session.urn);
-
-			for (;;) {
-				try {
-					console.log("requesting");
-
-					const resp = await getSessionClient().computeResults(req, null);
-					setDidCompute(true);
-					update(Promise.resolve(), noMutation);
-					return resp;
-				} catch (error) {
-					// wait some time and retry
-					token.checkCanceled();
-					await delay(3_000);
-					token.checkCanceled();
-				}
-			}
-		},
-		noop,
-		noop,
-		[state, update, didCompute, setDidCompute]
-	);
+	useComputerResults(state, update);
 
 	// display result
 	const [collections] = useCollections(getSessionUrn(state));
