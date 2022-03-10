@@ -287,7 +287,7 @@ function useSession(create: boolean): UseSessionArray<InternalState> {
 		[stableState, setJournal, setConcurrentMutations, reload]
 	);
 
-	console.log(state);
+	useEffect(() => console.log("internal state: ", state), [state]);
 
 	const displayState = journal?.current ?? stableState;
 	useEffect(() => {

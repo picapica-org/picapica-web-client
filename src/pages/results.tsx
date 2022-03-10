@@ -41,7 +41,6 @@ function Results(props: LocalizableProps): JSX.Element {
 
 	// display result
 	const [collections] = useCollections(getSessionUrn(state));
-	console.log(collections);
 
 	const view = getCurrentView();
 	const getLinkToResult = (result: DeepReadonly<Result.AsObject>): string => {
