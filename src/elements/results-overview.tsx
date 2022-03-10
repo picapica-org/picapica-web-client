@@ -39,14 +39,15 @@ function OverviewContainer(props: React.PropsWithChildren<OverviewContainerProps
 interface CenterAlignTwoProps {
 	readonly className?: string;
 	readonly grow: "left" | "right";
-	readonly children: [left: React.ReactNode, right: React.ReactNode];
+	readonly left: React.ReactNode;
+	readonly right: React.ReactNode;
 }
 
 function CenterAlignTwo(props: CenterAlignTwoProps): JSX.Element {
 	return (
 		<div className={"CenterAlignTwo" + (props.className ? " " + props.className : "")}>
-			<div className={`left${props.grow === "left" ? " grow" : ""}`}>{props.children[0]}</div>
-			<div className={`right${props.grow === "right" ? " grow" : ""}`}>{props.children[1]}</div>
+			<div className={`left${props.grow === "left" ? " grow" : ""}`}>{props.left}</div>
+			<div className={`right${props.grow === "right" ? " grow" : ""}`}>{props.right}</div>
 		</div>
 	);
 }
@@ -70,9 +71,11 @@ export function ResultsOverview(props: ResultsOverviewProps): JSX.Element {
 	}
 
 	const title = (
-		<CenterAlignTwo grow="left">
-			{[<span className="title">{l.analysisResults}</span>, <Badge kind="Dark">{l.results}</Badge>]}
-		</CenterAlignTwo>
+		<CenterAlignTwo
+			grow="left"
+			left={<span className="title">{l.analysisResults}</span>}
+			right={<Badge kind="Dark">{l.results}</Badge>}
+		/>
 	);
 
 	const running = props.session.status === Session.ComputeStatus.STATUS_RUNNING;
@@ -82,31 +85,33 @@ export function ResultsOverview(props: ResultsOverviewProps): JSX.Element {
 			<OverviewContainer lang={props.lang} backTo={props.backTo} title={title}>
 				<div>
 					<Link className={Buttons.BUTTON} to={props.itemTo}>
-						<CenterAlignTwo grow="left">
-							{[
-								<SubmittedFilesLabel lang={props.lang} />,
+						<CenterAlignTwo
+							grow="left"
+							left={<SubmittedFilesLabel lang={props.lang} />}
+							right={
 								<Badge kind="Light">
 									{running && <LoaderAnimation />}
 									{categories.items.length}
-								</Badge>,
-							]}
-						</CenterAlignTwo>
+								</Badge>
+							}
+						/>
 					</Link>
 				</div>
 				{[...categories.collections].map(([urn, results]) => {
 					return (
 						<div key={urn}>
 							<Link className={Buttons.BUTTON} to={props.collectionTo(urn)}>
-								<CenterAlignTwo grow="left">
-									{[
+								<CenterAlignTwo
+									grow="left"
+									left={
 										<CollectionLabel
 											lang={props.lang}
 											collectionUrn={urn}
 											collections={props.collections}
-										/>,
-										<Badge kind="Light">{results.length}</Badge>,
-									]}
-								</CenterAlignTwo>
+										/>
+									}
+									right={<Badge kind="Light">{results.length}</Badge>}
+								/>
 							</Link>
 						</div>
 					);
@@ -129,9 +134,11 @@ export function ItemResultsOverview(props: ItemResultsOverviewProps): JSX.Elemen
 	const { items } = categorizeResults(props.session.resultsList);
 
 	const title = (
-		<CenterAlignTwo grow="left">
-			{[<SubmittedFilesLabel lang={props.lang} />, <Badge kind="Dark">{l.matches}</Badge>]}
-		</CenterAlignTwo>
+		<CenterAlignTwo
+			grow="left"
+			left={<SubmittedFilesLabel lang={props.lang} />}
+			right={<Badge kind="Dark">{l.matches}</Badge>}
+		/>
 	);
 
 	const itemNameMap = new Map(props.session.itemsList.map(item => [item.urn, item.meta?.name]));
@@ -146,20 +153,23 @@ export function ItemResultsOverview(props: ItemResultsOverviewProps): JSX.Elemen
 					return (
 						<div key={result.urn}>
 							<Link className={Buttons.BUTTON} to={props.resultTo(result)}>
-								<CenterAlignTwo grow="left">
-									{[
+								<CenterAlignTwo
+									grow="left"
+									left={
 										<span className="item-vs">
 											<span className="left">{leftName}</span>
 											<span className="vs">vs.</span>
 											<span className="right">{rightName}</span>
-										</span>,
+										</span>
+									}
+									right={
 										status === Session.ComputeStatus.STATUS_COMPLETED ? (
 											<Badge kind="Light">{result.seedsList.length}</Badge>
 										) : (
 											<LoaderAnimation />
-										),
-									]}
-								</CenterAlignTwo>
+										)
+									}
+								/>
 							</Link>
 						</div>
 					);
@@ -186,16 +196,17 @@ export function CollectionResultsOverview(props: CollectionResultsOverviewProps)
 	const results = categorizeResults(props.session.resultsList).collections.get(props.collectionUrn) ?? [];
 
 	const title = (
-		<CenterAlignTwo grow="left">
-			{[
+		<CenterAlignTwo
+			grow="left"
+			left={
 				<CollectionLabel
 					lang={props.lang}
 					collectionUrn={props.collectionUrn}
 					collections={props.collections}
-				/>,
-				<Badge kind="Dark">{l.matches}</Badge>,
-			]}
-		</CenterAlignTwo>
+				/>
+			}
+			right={<Badge kind="Dark">{l.matches}</Badge>}
+		/>
 	);
 
 	const itemNameMap = new Map(props.session.itemsList.map(item => [item.urn, item.meta?.name]));
@@ -210,20 +221,23 @@ export function CollectionResultsOverview(props: CollectionResultsOverviewProps)
 					return (
 						<div key={result.urn}>
 							<Link className={Buttons.BUTTON} to={props.resultTo(result)}>
-								<CenterAlignTwo grow="left">
-									{[
+								<CenterAlignTwo
+									grow="left"
+									left={
 										<span className="item-vs">
 											<span className="left">{itemName}</span>
 											<span className="vs">vs.</span>
 											<span className="right">{documentName}</span>
-										</span>,
+										</span>
+									}
+									right={
 										status === Session.ComputeStatus.STATUS_COMPLETED ? (
 											<Badge kind="Light">{result.seedsList.length}</Badge>
 										) : (
 											<LoaderAnimation />
-										),
-									]}
-								</CenterAlignTwo>
+										)
+									}
+								/>
 							</Link>
 						</div>
 					);
