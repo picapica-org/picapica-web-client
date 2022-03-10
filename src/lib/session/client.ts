@@ -1,10 +1,11 @@
 import { SessionServiceClient } from "../generated/v1/ServicesServiceClientPb";
 import * as v1_services_pb from "../generated/v1/services_pb";
-import { Item } from "../generated/v1/types_pb";
+import { Item, ResourcePair } from "../generated/v1/types_pb";
 import type * as grpcWeb from "grpc-web";
 import { v4 as uuidv4 } from "uuid";
 import { delay, lazy } from "../util";
 import { PicapicaSessionUrn, PicapicaUrn } from "./urn";
+import { SessionConfig } from "../generated/v1/configs_pb";
 
 const CLIENT: SessionServiceClient = new SessionServiceClient("http://localhost:8080");
 const mock = false;
@@ -189,6 +190,18 @@ class MockClient extends SessionServiceClient {
 		sessionRef.addItems(item);
 		this._content.set(resource, content);
 
+		let config = sessionRef.getConfig();
+		if (config === undefined) {
+			config = new SessionConfig();
+			sessionRef.setConfig(config);
+		}
+		for (const other of req.getComparisonUrnsList()) {
+			const p = new ResourcePair();
+			p.setUrnA(itemUrn);
+			p.setUrnB(other);
+			config.addPairings(p);
+		}
+
 		return new v1_services_pb.CreateItemResponse().setItemUrn(item.getUrn());
 	});
 	updateItem = mockUnary<v1_services_pb.UpdateItemRequest, v1_services_pb.UpdateItemResponse>(async req => {
@@ -218,6 +231,17 @@ class MockClient extends SessionServiceClient {
 
 		return new v1_services_pb.DeleteItemResponse();
 	});
+
+	computeResults = mockUnary<v1_services_pb.ComputeResultsRequest, v1_services_pb.ComputeResultsResponse>(
+		async req => {
+			await this.simulateNetwork();
+
+			const sessionRef = await this._getSessionRef(req.getSessionUrn());
+			sessionRef.setStatus(v1_services_pb.Session.ComputeStatus.STATUS_COMPLETED);
+
+			return new v1_services_pb.ComputeResultsResponse();
+		}
+	);
 }
 
 function randomHex(length: number): string {
