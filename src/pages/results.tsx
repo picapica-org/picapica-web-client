@@ -5,7 +5,6 @@ import { SharedHead } from "../elements/shared-header";
 import { getCurrentLang, getLocalization, Locales, LocalizableProps, SimpleString } from "../lib/localization";
 import { dynamic } from "../lib/react-util";
 import { getLinkToStep } from "../elements/step-selector";
-import { BackButton } from "../elements/step-buttons";
 import { SessionState } from "../elements/session-creating-loading";
 import { getSessionUrn, Ready, useLoadSession } from "../lib/use-session";
 import { DeepReadonly, visitType } from "../lib/util";
@@ -56,6 +55,7 @@ function Results(props: LocalizableProps): JSX.Element {
 					{...props}
 					session={session}
 					collections={collections}
+					backTo={getLinkToStep("analysis", session.urn)}
 					itemTo={getLinkToView(session.urn, VIEW_ITEMS)}
 					collectionTo={collectionUrn => getLinkToView(session.urn, { type: "collection", collectionUrn })}
 				/>
@@ -87,10 +87,6 @@ function Results(props: LocalizableProps): JSX.Element {
 				{current}
 
 				{running && <p>{l.running}</p>}
-
-				<p>
-					<BackButton {...props} to={getLinkToStep("analysis", session.urn)} />
-				</p>
 			</>
 		);
 	};

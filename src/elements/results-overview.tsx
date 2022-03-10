@@ -54,6 +54,7 @@ function CenterAlignTwo(props: CenterAlignTwoProps): JSX.Element {
 export interface ResultsOverviewProps extends LocalizableProps {
 	readonly session: DeepReadonly<Session.AsObject>;
 	readonly collections?: DeepReadonly<Collection.AsObject[]>;
+	readonly backTo: string;
 	readonly itemTo: string;
 	readonly collectionTo: (collectionUrn: string) => string;
 }
@@ -78,7 +79,7 @@ export function ResultsOverview(props: ResultsOverviewProps): JSX.Element {
 
 	return (
 		<div className="ResultsOverview">
-			<OverviewContainer lang={props.lang} title={title}>
+			<OverviewContainer lang={props.lang} backTo={props.backTo} title={title}>
 				<div>
 					<Link className={Buttons.BUTTON} to={props.itemTo}>
 						<CenterAlignTwo grow="left">
