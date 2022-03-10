@@ -17,7 +17,23 @@ npm ci
 
 And now, you should be ready to rock. As for IDEs, I recommend [VS Code](https://code.visualstudio.com/) together with the [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) and [Stylelint](https://marketplace.visualstudio.com/items?itemName=stylelint.vscode-stylelint) extensions.
 
-Use the `npm run develop` command to open a local server with a live preview of the website. The page will automatically update as source files change.
+Use the `npm start` command to open a local server with a live preview of the website. The page will automatically update as source files change.
+
+### gRPC Proxy
+
+Since browsers currently don't support gRPC as is, we need to proxy to translate gRPC (server) to gRPC-web (website). We use `grpcwebproxy` to do this. Download the executable CLI [here](https://github.com/improbable-eng/grpc-web/releases).
+
+For local testing, use this command to proxy a backend gRPC server of your choosing. The proxy will start a gRPC-web server available at port `8080`; this is the port the website will by default.
+
+Windows:
+```powershell
+.\grpcwebproxy-v0.14.0-win64.exe --allow_all_origins --backend_addr=<backend domain>:<port> --backend_tls=false --run_tls_server=false
+```
+
+Linux:
+```bash
+./grpcwebproxy-v0.14.0-linux-x86_64 --allow_all_origins --backend_addr=<backend domain>:<port> --backend_tls=false --run_tls_server=false
+```
 
 ## Build
 
@@ -43,4 +59,4 @@ It's a bit hacky and has some [limitations](https://stackoverflow.com/a/63814668
 
 ## Contributors
 
-[Michael Schmidt](mailto:mitchi5000.ms@googlemail.com) (2021 - 2021)
+[Michael Schmidt](mailto:mitchi5000.ms@googlemail.com) (2021 - 2022)
