@@ -237,7 +237,9 @@ class MockClient extends SessionServiceClient {
 			await this.simulateNetwork();
 
 			const sessionRef = await this._getSessionRef(req.getSessionUrn());
-			sessionRef.setStatus(v1_services_pb.Session.ComputeStatus.STATUS_COMPLETED);
+			sessionRef.setStatus(v1_services_pb.Session.ComputeStatus.STATUS_RUNNING);
+
+			delay(10_000).then(() => sessionRef.setStatus(v1_services_pb.Session.ComputeStatus.STATUS_COMPLETED));
 
 			return new v1_services_pb.ComputeResultsResponse();
 		}
