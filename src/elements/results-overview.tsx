@@ -9,16 +9,16 @@ import { Badge } from "./badge";
 import { CollectionLabel, SubmittedFilesLabel } from "./labels";
 import { Buttons } from "./buttons";
 import { PicaIcon } from "./icon";
-import "./results-overview.scss";
 import { LoaderAnimation } from "./loader-animation";
 import { PicapicaUrn } from "../lib/session/urn";
+import "./results-overview.scss";
 
-interface OverviewContainerProps extends LocalizableProps {
+export interface OverviewContainerProps extends LocalizableProps {
 	readonly backTo?: string;
 	readonly title: React.ReactNode;
 }
 
-function OverviewContainer(props: React.PropsWithChildren<OverviewContainerProps>): JSX.Element {
+export function OverviewContainer(props: React.PropsWithChildren<OverviewContainerProps>): JSX.Element {
 	const l = getLocalization(props, locales);
 
 	return (
