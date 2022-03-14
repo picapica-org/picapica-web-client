@@ -10,7 +10,7 @@ import { BackButton, StartButton } from "../elements/step-buttons";
 import { SessionState } from "../elements/session-creating-loading";
 import { getSessionUrn, Ready, useLoadSession } from "../lib/use-session";
 import { Icon, ItemTypeIcon } from "../elements/icon";
-import { updateConfigAction } from "../lib/session/actions";
+import { updateComparisonSetAction } from "../lib/session/actions";
 import { Session } from "../lib/generated/v1/services_pb";
 import { AnalysisConfig, CollectionUrn, ItemUrn } from "../lib/session/analysis-config";
 import { DeepReadonly, EMPTY_ARRAY, EMPTY_SET, noop } from "../lib/util";
@@ -42,9 +42,9 @@ function Analysis(props: LocalizableProps): JSX.Element {
 	const updateConfig = useCallback(
 		(config: AnalysisConfig) => {
 			if (state.type === "Ready") {
-				const { mutate, request } = updateConfigAction(state.session, config);
+				const { mutate, request } = updateComparisonSetAction(state.session, config);
 				// TODO: Handle errors
-				update(getSessionClient().updateConfig(request, null).then(noop), mutate);
+				update(getSessionClient().updateComparisonSet(request, null).then(noop), mutate);
 			}
 		},
 		[state, update]
@@ -53,7 +53,7 @@ function Analysis(props: LocalizableProps): JSX.Element {
 	const config = useMemo(() => {
 		if (state.type === "Ready") {
 			return AnalysisConfig.fromResourcePairs(
-				state.session.config?.pairingsList ?? EMPTY_ARRAY,
+				state.session.comparisonsList ?? EMPTY_ARRAY,
 				state.session.itemsList.map(i => i.urn)
 			);
 		} else {

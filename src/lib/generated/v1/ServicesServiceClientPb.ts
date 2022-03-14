@@ -899,6 +899,126 @@ export class SessionServiceClient {
     this.methodInfoDeleteItem);
   }
 
+  methodInfoUpdateComparisonSet = new grpcWeb.AbstractClientBase.MethodInfo(
+    v1_services_pb.UpdateComparisonSetResponse,
+    (request: v1_services_pb.UpdateComparisonSetRequest) => {
+      return request.serializeBinary();
+    },
+    v1_services_pb.UpdateComparisonSetResponse.deserializeBinary
+  );
+
+  updateComparisonSet(
+    request: v1_services_pb.UpdateComparisonSetRequest,
+    metadata: grpcWeb.Metadata | null): Promise<v1_services_pb.UpdateComparisonSetResponse>;
+
+  updateComparisonSet(
+    request: v1_services_pb.UpdateComparisonSetRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.Error,
+               response: v1_services_pb.UpdateComparisonSetResponse) => void): grpcWeb.ClientReadableStream<v1_services_pb.UpdateComparisonSetResponse>;
+
+  updateComparisonSet(
+    request: v1_services_pb.UpdateComparisonSetRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.Error,
+               response: v1_services_pb.UpdateComparisonSetResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/v1.SessionService/UpdateComparisonSet',
+        request,
+        metadata || {},
+        this.methodInfoUpdateComparisonSet,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/v1.SessionService/UpdateComparisonSet',
+    request,
+    metadata || {},
+    this.methodInfoUpdateComparisonSet);
+  }
+
+  methodInfoGetComparisonSet = new grpcWeb.AbstractClientBase.MethodInfo(
+    v1_services_pb.GetComparisonSetResponse,
+    (request: v1_services_pb.GetComparisonSetRequest) => {
+      return request.serializeBinary();
+    },
+    v1_services_pb.GetComparisonSetResponse.deserializeBinary
+  );
+
+  getComparisonSet(
+    request: v1_services_pb.GetComparisonSetRequest,
+    metadata: grpcWeb.Metadata | null): Promise<v1_services_pb.GetComparisonSetResponse>;
+
+  getComparisonSet(
+    request: v1_services_pb.GetComparisonSetRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.Error,
+               response: v1_services_pb.GetComparisonSetResponse) => void): grpcWeb.ClientReadableStream<v1_services_pb.GetComparisonSetResponse>;
+
+  getComparisonSet(
+    request: v1_services_pb.GetComparisonSetRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.Error,
+               response: v1_services_pb.GetComparisonSetResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/v1.SessionService/GetComparisonSet',
+        request,
+        metadata || {},
+        this.methodInfoGetComparisonSet,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/v1.SessionService/GetComparisonSet',
+    request,
+    metadata || {},
+    this.methodInfoGetComparisonSet);
+  }
+
+  methodInfoDeleteComparisonSet = new grpcWeb.AbstractClientBase.MethodInfo(
+    v1_services_pb.DeleteComparisonSetResponse,
+    (request: v1_services_pb.DeleteComparisonSetRequest) => {
+      return request.serializeBinary();
+    },
+    v1_services_pb.DeleteComparisonSetResponse.deserializeBinary
+  );
+
+  deleteComparisonSet(
+    request: v1_services_pb.DeleteComparisonSetRequest,
+    metadata: grpcWeb.Metadata | null): Promise<v1_services_pb.DeleteComparisonSetResponse>;
+
+  deleteComparisonSet(
+    request: v1_services_pb.DeleteComparisonSetRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.Error,
+               response: v1_services_pb.DeleteComparisonSetResponse) => void): grpcWeb.ClientReadableStream<v1_services_pb.DeleteComparisonSetResponse>;
+
+  deleteComparisonSet(
+    request: v1_services_pb.DeleteComparisonSetRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.Error,
+               response: v1_services_pb.DeleteComparisonSetResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/v1.SessionService/DeleteComparisonSet',
+        request,
+        metadata || {},
+        this.methodInfoDeleteComparisonSet,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/v1.SessionService/DeleteComparisonSet',
+    request,
+    metadata || {},
+    this.methodInfoDeleteComparisonSet);
+  }
+
   methodInfoComputeResults = new grpcWeb.AbstractClientBase.MethodInfo(
     v1_services_pb.ComputeResultsResponse,
     (request: v1_services_pb.ComputeResultsRequest) => {

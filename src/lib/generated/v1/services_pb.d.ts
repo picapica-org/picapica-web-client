@@ -280,8 +280,8 @@ export class Session extends jspb.Message {
   getUrn(): string;
   setUrn(value: string): Session;
 
-  getConfig(): v1_configs_pb.SessionConfig | undefined;
-  setConfig(value?: v1_configs_pb.SessionConfig): Session;
+  getConfig(): v1_configs_pb.ApiConfig | undefined;
+  setConfig(value?: v1_configs_pb.ApiConfig): Session;
   hasConfig(): boolean;
   clearConfig(): Session;
 
@@ -289,6 +289,11 @@ export class Session extends jspb.Message {
   setItemsList(value: Array<v1_types_pb.Item>): Session;
   clearItemsList(): Session;
   addItems(value?: v1_types_pb.Item, index?: number): v1_types_pb.Item;
+
+  getComparisonsList(): Array<v1_types_pb.ResourcePair>;
+  setComparisonsList(value: Array<v1_types_pb.ResourcePair>): Session;
+  clearComparisonsList(): Session;
+  addComparisons(value?: v1_types_pb.ResourcePair, index?: number): v1_types_pb.ResourcePair;
 
   getResultsList(): Array<v1_types_pb.Result>;
   setResultsList(value: Array<v1_types_pb.Result>): Session;
@@ -309,8 +314,9 @@ export class Session extends jspb.Message {
 export namespace Session {
   export type AsObject = {
     urn: string,
-    config?: v1_configs_pb.SessionConfig.AsObject,
+    config?: v1_configs_pb.ApiConfig.AsObject,
     itemsList: Array<v1_types_pb.Item.AsObject>,
+    comparisonsList: Array<v1_types_pb.ResourcePair.AsObject>,
     resultsList: Array<v1_types_pb.Result.AsObject>,
     status: Session.ComputeStatus,
   }
@@ -518,8 +524,8 @@ export namespace GetConfigRequest {
 }
 
 export class GetConfigResponse extends jspb.Message {
-  getConfig(): v1_configs_pb.SessionConfig | undefined;
-  setConfig(value?: v1_configs_pb.SessionConfig): GetConfigResponse;
+  getConfig(): v1_configs_pb.ApiConfig | undefined;
+  setConfig(value?: v1_configs_pb.ApiConfig): GetConfigResponse;
   hasConfig(): boolean;
   clearConfig(): GetConfigResponse;
 
@@ -533,7 +539,7 @@ export class GetConfigResponse extends jspb.Message {
 
 export namespace GetConfigResponse {
   export type AsObject = {
-    config?: v1_configs_pb.SessionConfig.AsObject,
+    config?: v1_configs_pb.ApiConfig.AsObject,
   }
 }
 
@@ -541,8 +547,8 @@ export class UpdateConfigRequest extends jspb.Message {
   getSessionUrn(): string;
   setSessionUrn(value: string): UpdateConfigRequest;
 
-  getConfig(): v1_configs_pb.SessionConfig | undefined;
-  setConfig(value?: v1_configs_pb.SessionConfig): UpdateConfigRequest;
+  getConfig(): v1_configs_pb.ApiConfig | undefined;
+  setConfig(value?: v1_configs_pb.ApiConfig): UpdateConfigRequest;
   hasConfig(): boolean;
   clearConfig(): UpdateConfigRequest;
 
@@ -557,7 +563,7 @@ export class UpdateConfigRequest extends jspb.Message {
 export namespace UpdateConfigRequest {
   export type AsObject = {
     sessionUrn: string,
-    config?: v1_configs_pb.SessionConfig.AsObject,
+    config?: v1_configs_pb.ApiConfig.AsObject,
   }
 }
 
@@ -823,6 +829,114 @@ export class DeleteItemResponse extends jspb.Message {
 }
 
 export namespace DeleteItemResponse {
+  export type AsObject = {
+  }
+}
+
+export class UpdateComparisonSetRequest extends jspb.Message {
+  getSessionUrn(): string;
+  setSessionUrn(value: string): UpdateComparisonSetRequest;
+
+  getComparisonsList(): Array<v1_types_pb.ResourcePair>;
+  setComparisonsList(value: Array<v1_types_pb.ResourcePair>): UpdateComparisonSetRequest;
+  clearComparisonsList(): UpdateComparisonSetRequest;
+  addComparisons(value?: v1_types_pb.ResourcePair, index?: number): v1_types_pb.ResourcePair;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UpdateComparisonSetRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: UpdateComparisonSetRequest): UpdateComparisonSetRequest.AsObject;
+  static serializeBinaryToWriter(message: UpdateComparisonSetRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UpdateComparisonSetRequest;
+  static deserializeBinaryFromReader(message: UpdateComparisonSetRequest, reader: jspb.BinaryReader): UpdateComparisonSetRequest;
+}
+
+export namespace UpdateComparisonSetRequest {
+  export type AsObject = {
+    sessionUrn: string,
+    comparisonsList: Array<v1_types_pb.ResourcePair.AsObject>,
+  }
+}
+
+export class UpdateComparisonSetResponse extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UpdateComparisonSetResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: UpdateComparisonSetResponse): UpdateComparisonSetResponse.AsObject;
+  static serializeBinaryToWriter(message: UpdateComparisonSetResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UpdateComparisonSetResponse;
+  static deserializeBinaryFromReader(message: UpdateComparisonSetResponse, reader: jspb.BinaryReader): UpdateComparisonSetResponse;
+}
+
+export namespace UpdateComparisonSetResponse {
+  export type AsObject = {
+  }
+}
+
+export class GetComparisonSetRequest extends jspb.Message {
+  getSessionUrn(): string;
+  setSessionUrn(value: string): GetComparisonSetRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetComparisonSetRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetComparisonSetRequest): GetComparisonSetRequest.AsObject;
+  static serializeBinaryToWriter(message: GetComparisonSetRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetComparisonSetRequest;
+  static deserializeBinaryFromReader(message: GetComparisonSetRequest, reader: jspb.BinaryReader): GetComparisonSetRequest;
+}
+
+export namespace GetComparisonSetRequest {
+  export type AsObject = {
+    sessionUrn: string,
+  }
+}
+
+export class GetComparisonSetResponse extends jspb.Message {
+  getComparisonsList(): Array<v1_types_pb.ResourcePair>;
+  setComparisonsList(value: Array<v1_types_pb.ResourcePair>): GetComparisonSetResponse;
+  clearComparisonsList(): GetComparisonSetResponse;
+  addComparisons(value?: v1_types_pb.ResourcePair, index?: number): v1_types_pb.ResourcePair;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetComparisonSetResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetComparisonSetResponse): GetComparisonSetResponse.AsObject;
+  static serializeBinaryToWriter(message: GetComparisonSetResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetComparisonSetResponse;
+  static deserializeBinaryFromReader(message: GetComparisonSetResponse, reader: jspb.BinaryReader): GetComparisonSetResponse;
+}
+
+export namespace GetComparisonSetResponse {
+  export type AsObject = {
+    comparisonsList: Array<v1_types_pb.ResourcePair.AsObject>,
+  }
+}
+
+export class DeleteComparisonSetRequest extends jspb.Message {
+  getSessionUrn(): string;
+  setSessionUrn(value: string): DeleteComparisonSetRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DeleteComparisonSetRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: DeleteComparisonSetRequest): DeleteComparisonSetRequest.AsObject;
+  static serializeBinaryToWriter(message: DeleteComparisonSetRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DeleteComparisonSetRequest;
+  static deserializeBinaryFromReader(message: DeleteComparisonSetRequest, reader: jspb.BinaryReader): DeleteComparisonSetRequest;
+}
+
+export namespace DeleteComparisonSetRequest {
+  export type AsObject = {
+    sessionUrn: string,
+  }
+}
+
+export class DeleteComparisonSetResponse extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DeleteComparisonSetResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: DeleteComparisonSetResponse): DeleteComparisonSetResponse.AsObject;
+  static serializeBinaryToWriter(message: DeleteComparisonSetResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DeleteComparisonSetResponse;
+  static deserializeBinaryFromReader(message: DeleteComparisonSetResponse, reader: jspb.BinaryReader): DeleteComparisonSetResponse;
+}
+
+export namespace DeleteComparisonSetResponse {
   export type AsObject = {
   }
 }

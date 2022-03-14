@@ -2099,7 +2099,7 @@ proto.v1.Item.Resource.toObject = function(includeInstance, msg) {
     type: jspb.Message.getFieldWithDefault(msg, 2, 0),
     status: jspb.Message.getFieldWithDefault(msg, 3, 0),
     rawProperties: (f = msg.getRawProperties()) && proto.v1.Item.Resource.RawProperties.toObject(includeInstance, f),
-    processedProperties: (f = msg.getProcessedProperties()) && proto.v1.Item.Resource.TextProperties.toObject(includeInstance, f)
+    textProperties: (f = msg.getTextProperties()) && proto.v1.Item.Resource.TextProperties.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -2156,7 +2156,7 @@ proto.v1.Item.Resource.deserializeBinaryFromReader = function(msg, reader) {
     case 5:
       var value = new proto.v1.Item.Resource.TextProperties;
       reader.readMessage(value,proto.v1.Item.Resource.TextProperties.deserializeBinaryFromReader);
-      msg.setProcessedProperties(value);
+      msg.setTextProperties(value);
       break;
     default:
       reader.skipField();
@@ -2216,7 +2216,7 @@ proto.v1.Item.Resource.serializeBinaryToWriter = function(message, writer) {
       proto.v1.Item.Resource.RawProperties.serializeBinaryToWriter
     );
   }
-  f = message.getProcessedProperties();
+  f = message.getTextProperties();
   if (f != null) {
     writer.writeMessage(
       5,
@@ -2659,10 +2659,10 @@ proto.v1.Item.Resource.prototype.hasRawProperties = function() {
 
 
 /**
- * optional TextProperties processed_properties = 5;
+ * optional TextProperties text_properties = 5;
  * @return {?proto.v1.Item.Resource.TextProperties}
  */
-proto.v1.Item.Resource.prototype.getProcessedProperties = function() {
+proto.v1.Item.Resource.prototype.getTextProperties = function() {
   return /** @type{?proto.v1.Item.Resource.TextProperties} */ (
     jspb.Message.getWrapperField(this, proto.v1.Item.Resource.TextProperties, 5));
 };
@@ -2672,7 +2672,7 @@ proto.v1.Item.Resource.prototype.getProcessedProperties = function() {
  * @param {?proto.v1.Item.Resource.TextProperties|undefined} value
  * @return {!proto.v1.Item.Resource} returns this
 */
-proto.v1.Item.Resource.prototype.setProcessedProperties = function(value) {
+proto.v1.Item.Resource.prototype.setTextProperties = function(value) {
   return jspb.Message.setWrapperField(this, 5, value);
 };
 
@@ -2681,8 +2681,8 @@ proto.v1.Item.Resource.prototype.setProcessedProperties = function(value) {
  * Clears the message field making it undefined.
  * @return {!proto.v1.Item.Resource} returns this
  */
-proto.v1.Item.Resource.prototype.clearProcessedProperties = function() {
-  return this.setProcessedProperties(undefined);
+proto.v1.Item.Resource.prototype.clearTextProperties = function() {
+  return this.setTextProperties(undefined);
 };
 
 
@@ -2690,7 +2690,7 @@ proto.v1.Item.Resource.prototype.clearProcessedProperties = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.v1.Item.Resource.prototype.hasProcessedProperties = function() {
+proto.v1.Item.Resource.prototype.hasTextProperties = function() {
   return jspb.Message.getField(this, 5) != null;
 };
 

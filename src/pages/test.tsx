@@ -29,7 +29,7 @@ function Test(props: LocalizableProps): JSX.Element {
 		type: 3,
 		status: Item.Resource.ProcessingStatus.STATUS_COMPLETED,
 		rawProperties: { checksum: "", size: 4 },
-		processedProperties: { checksum: "", length: 4 },
+		textProperties: { checksum: "", length: 4 },
 	};
 	return (
 		<Page {...props} className="Test" header="small">

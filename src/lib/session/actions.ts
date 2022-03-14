@@ -1,5 +1,4 @@
-import { SessionConfig } from "../generated/v1/configs_pb";
-import { DeleteItemRequest, Session, UpdateConfigRequest, UpdateItemRequest } from "../generated/v1/services_pb";
+import { DeleteItemRequest, Session, UpdateComparisonSetRequest, UpdateItemRequest } from "../generated/v1/services_pb";
 import { Item } from "../generated/v1/types_pb";
 import { DeepReadonly } from "../util";
 import { AnalysisConfig } from "./analysis-config";
@@ -54,26 +53,22 @@ export function updateItemAction(
 	};
 }
 
-export function updateConfigAction(
+export function updateComparisonSetAction(
 	session: DeepReadonly<Session.AsObject>,
 	analysisConfig: AnalysisConfig
-): ActionResult<UpdateConfigRequest> {
+): ActionResult<UpdateComparisonSetRequest> {
 	const pairs = analysisConfig.getResourcePairs();
 	const pairingsList = pairs.map(p => p.toObject());
 
-	const sessionConfig = new SessionConfig();
-	sessionConfig.setPairingsList(pairs);
-
-	const request = new UpdateConfigRequest();
+	const request = new UpdateComparisonSetRequest();
 	request.setSessionUrn(session.urn);
-	request.setConfig(sessionConfig);
+	request.setComparisonsList(pairs);
 
 	return {
 		request,
 		mutate(oldSession) {
 			const session = cloneSession(oldSession);
-			session.config ??= { pairingsList: [] };
-			session.config.pairingsList = pairingsList;
+			session.comparisonsList = pairingsList;
 			return session;
 		},
 	};

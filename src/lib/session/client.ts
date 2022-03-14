@@ -5,7 +5,6 @@ import type * as grpcWeb from "grpc-web";
 import { v4 as uuidv4 } from "uuid";
 import { delay, lazy } from "../util";
 import { PicapicaSessionUrn, PicapicaUrn } from "./urn";
-import { SessionConfig } from "../generated/v1/configs_pb";
 
 const CLIENT: SessionServiceClient = new SessionServiceClient("http://localhost:8080");
 const mock = false;
@@ -135,6 +134,37 @@ class MockClient extends SessionServiceClient {
 		return new v1_services_pb.DeleteConfigResponse();
 	});
 
+	getComparisonSet = mockUnary<v1_services_pb.GetComparisonSetRequest, v1_services_pb.GetComparisonSetResponse>(
+		async req => {
+			await this.simulateNetwork();
+
+			const sessionRef = await this._getSessionRef(req.getSessionUrn());
+			return new v1_services_pb.GetComparisonSetResponse().setComparisonsList(
+				sessionRef.getComparisonsList().map(p => p.clone())
+			);
+		}
+	);
+	updateComparisonSet = mockUnary<
+		v1_services_pb.UpdateComparisonSetRequest,
+		v1_services_pb.UpdateComparisonSetResponse
+	>(async req => {
+		await this.simulateNetwork();
+
+		const sessionRef = await this._getSessionRef(req.getSessionUrn());
+		sessionRef.setComparisonsList(req.getComparisonsList().map(p => p.clone()));
+		return new v1_services_pb.UpdateComparisonSetResponse();
+	});
+	deleteComparisonSet = mockUnary<
+		v1_services_pb.DeleteComparisonSetRequest,
+		v1_services_pb.DeleteComparisonSetResponse
+	>(async req => {
+		await this.simulateNetwork();
+
+		const sessionRef = await this._getSessionRef(req.getSessionUrn());
+		sessionRef.setComparisonsList([]);
+		return new v1_services_pb.DeleteComparisonSetResponse();
+	});
+
 	createItem = mockUnary<v1_services_pb.CreateItemRequest, v1_services_pb.CreateItemResponse>(async req => {
 		await this.simulateNetwork();
 
@@ -180,7 +210,7 @@ class MockClient extends SessionServiceClient {
 		resource.setItemUrn(itemUrn);
 		resource.setType(req.getType());
 		resource.setRawProperties(rawProps);
-		resource.setProcessedProperties(textProps);
+		resource.setTextProperties(textProps);
 
 		const item = new Item();
 		item.setUrn(itemUrn);
@@ -190,16 +220,11 @@ class MockClient extends SessionServiceClient {
 		sessionRef.addItems(item);
 		this._content.set(resource, content);
 
-		let config = sessionRef.getConfig();
-		if (config === undefined) {
-			config = new SessionConfig();
-			sessionRef.setConfig(config);
-		}
 		for (const other of req.getComparisonUrnsList()) {
 			const p = new ResourcePair();
 			p.setUrnA(itemUrn);
 			p.setUrnB(other);
-			config.addPairings(p);
+			sessionRef.addComparisons(p);
 		}
 
 		return new v1_services_pb.CreateItemResponse().setItemUrn(item.getUrn());

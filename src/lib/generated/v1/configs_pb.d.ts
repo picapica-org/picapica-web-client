@@ -656,29 +656,3 @@ export namespace AlignmentConfig {
   }
 }
 
-export class SessionConfig extends jspb.Message {
-  getConfig(): ApiConfig | undefined;
-  setConfig(value?: ApiConfig): SessionConfig;
-  hasConfig(): boolean;
-  clearConfig(): SessionConfig;
-
-  getPairingsList(): Array<v1_types_pb.ResourcePair>;
-  setPairingsList(value: Array<v1_types_pb.ResourcePair>): SessionConfig;
-  clearPairingsList(): SessionConfig;
-  addPairings(value?: v1_types_pb.ResourcePair, index?: number): v1_types_pb.ResourcePair;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): SessionConfig.AsObject;
-  static toObject(includeInstance: boolean, msg: SessionConfig): SessionConfig.AsObject;
-  static serializeBinaryToWriter(message: SessionConfig, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): SessionConfig;
-  static deserializeBinaryFromReader(message: SessionConfig, reader: jspb.BinaryReader): SessionConfig;
-}
-
-export namespace SessionConfig {
-  export type AsObject = {
-    config?: ApiConfig.AsObject,
-    pairingsList: Array<v1_types_pb.ResourcePair.AsObject>,
-  }
-}
-

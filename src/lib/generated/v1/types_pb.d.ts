@@ -282,10 +282,10 @@ export namespace Item {
     hasRawProperties(): boolean;
     clearRawProperties(): Resource;
 
-    getProcessedProperties(): Item.Resource.TextProperties | undefined;
-    setProcessedProperties(value?: Item.Resource.TextProperties): Resource;
-    hasProcessedProperties(): boolean;
-    clearProcessedProperties(): Resource;
+    getTextProperties(): Item.Resource.TextProperties | undefined;
+    setTextProperties(value?: Item.Resource.TextProperties): Resource;
+    hasTextProperties(): boolean;
+    clearTextProperties(): Resource;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): Resource.AsObject;
@@ -301,7 +301,7 @@ export namespace Item {
       type: Item.Resource.Type,
       status: Item.Resource.ProcessingStatus,
       rawProperties?: Item.Resource.RawProperties.AsObject,
-      processedProperties?: Item.Resource.TextProperties.AsObject,
+      textProperties?: Item.Resource.TextProperties.AsObject,
     }
 
     export class RawProperties extends jspb.Message {

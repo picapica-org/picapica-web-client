@@ -109,13 +109,12 @@ export function optimisticallyAddItem({ item, itemUrn }: UploadedItem): SessionM
 				type: toItemResourceType(item.type),
 				status: Item.Resource.ProcessingStatus.STATUS_RUNNING,
 				rawProperties: { checksum: "fake", size: item.size },
-				processedProperties: { checksum: "fake", length: 0 },
+				textProperties: { checksum: "fake", length: 0 },
 			},
 		});
 
 		// add comparison URNs
-		session.config ??= { pairingsList: [] };
-		session.config.pairingsList.push({ urnA: itemUrn, urnB: session.urn });
+		session.comparisonsList.push({ urnA: itemUrn, urnB: session.urn });
 
 		return session;
 	};
