@@ -39,6 +39,7 @@ export function useComputerResults(state: State, update: UseSessionArray[1]): vo
 			const req = new ComputeResultsRequest();
 			req.setSessionUrn(session.urn);
 
+			console.log("Compute results");
 			const action = getSessionClient()
 				.computeResults(req, null)
 				.then(
