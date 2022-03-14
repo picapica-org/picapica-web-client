@@ -117,4 +117,15 @@ export namespace PicapicaUrn {
 				return "";
 		}
 	}
+
+	export function toSessionUrn(urn: PicapicaUrn): PicapicaSessionUrn | undefined {
+		switch (urn.type) {
+			case "item":
+			case "result":
+			case "session":
+				return { type: "session", sessionId: urn.sessionId };
+			default:
+				return undefined;
+		}
+	}
 }

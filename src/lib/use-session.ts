@@ -306,12 +306,7 @@ function tryGetSessionId(urn: string | null): string | null {
 
 	const parsed = PicapicaUrn.tryParse(urn);
 	if (parsed) {
-		switch (parsed.type) {
-			case "item":
-			case "result":
-			case "session":
-				return parsed.sessionId;
-		}
+		return PicapicaUrn.toSessionUrn(parsed)?.sessionId ?? null;
 	}
 	return null;
 }
