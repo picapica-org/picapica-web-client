@@ -1,5 +1,12 @@
 @import "../colors.scss";
 
 .Result {
+	padding: 1em 2em 2em 2em;
+
+	@media screen and (max-width: 600px) {
+		& {
+			padding: 0 0 2em 0;
+		}
+	}
 	// TODO
 }
