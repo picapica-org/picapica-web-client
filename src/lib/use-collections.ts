@@ -6,6 +6,12 @@ import { DeepReadonly } from "./util";
 
 export function useCollections(sessionUrn: string): [collections: DeepReadonly<Collection.AsObject[]> | undefined] {
 	const query = useQuery(["collections", sessionUrn] as const, {
+		// collections are an immutable resource, so we don't need to refetch
+		refetchInterval: false,
+		refetchOnMount: false,
+		refetchOnReconnect: false,
+		refetchOnWindowFocus: false,
+
 		queryFn: async () => {
 			const req = new GetCollectionsRequest();
 			req.setSessionUrn(sessionUrn);
