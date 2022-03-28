@@ -1,12 +1,15 @@
 import React, { DependencyList, useCallback, useEffect, useRef } from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { CancellationController, CancellationToken } from "./cancellation";
+
+const queryClient = new QueryClient();
 
 export function dynamic(supplier: () => JSX.Element): JSX.Element {
 	const isSSR = typeof window === "undefined";
 	if (isSSR) {
 		return <></>;
 	} else {
-		return supplier();
+		return <QueryClientProvider client={queryClient}>{supplier()}</QueryClientProvider>;
 	}
 }
 
