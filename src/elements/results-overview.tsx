@@ -11,6 +11,7 @@ import { Buttons } from "./buttons";
 import { PicaIcon } from "./icon";
 import { LoaderAnimation } from "./loader-animation";
 import { PicapicaUrn } from "../lib/session/urn";
+import { CenterAlignTwo } from "./center-align-two";
 import "./results-overview.scss";
 
 export interface OverviewContainerProps extends LocalizableProps {
@@ -32,22 +33,6 @@ export function OverviewContainer(props: React.PropsWithChildren<OverviewContain
 				<div>{props.title}</div>
 			</div>
 			<div className="content">{props.children}</div>
-		</div>
-	);
-}
-
-interface CenterAlignTwoProps {
-	readonly className?: string;
-	readonly grow: "left" | "right";
-	readonly left: React.ReactNode;
-	readonly right: React.ReactNode;
-}
-
-function CenterAlignTwo(props: CenterAlignTwoProps): JSX.Element {
-	return (
-		<div className={"CenterAlignTwo" + (props.className ? " " + props.className : "")}>
-			<div className={`left${props.grow === "left" ? " grow" : ""}`}>{props.left}</div>
-			<div className={`right${props.grow === "right" ? " grow" : ""}`}>{props.right}</div>
 		</div>
 	);
 }

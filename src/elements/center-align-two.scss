@@ -1,0 +1,15 @@
+.CenterAlignTwo {
+	display: flex;
+
+	& > * {
+		display: flex;
+		align-items: center;
+		flex-direction: row;
+	}
+	& > .grow {
+		flex-grow: 1;
+	}
+	& > :not(.grow) {
+		flex-shrink: 0;
+	}
+}
