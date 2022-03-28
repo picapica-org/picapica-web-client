@@ -8,5 +8,38 @@
 			padding: 0 0 2em 0;
 		}
 	}
-	// TODO
+}
+
+.ResultSummary {
+	padding: 0 1em;
+
+	.summary {
+		color: $black;
+		margin-bottom: 0.75em;
+	}
+	.details {
+		color: $grey6;
+		margin-top: 0.75em;
+	}
+}
+
+.ResultSeedView {
+	border-top: 1px solid $grey3;
+
+	& > .header {
+		background-color: $grey1;
+		padding: 0.66em 1em;
+
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		column-gap: 2em;
+
+		& > div {
+			grid-row: 1 / auto;
+		}
+	}
+	& > .alignment {
+		border-top: 1px solid $grey3;
+		padding: 1em;
+	}
 }
