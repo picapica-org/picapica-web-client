@@ -6,6 +6,7 @@ import { DropzoneRootProps, DropzoneState } from "react-dropzone";
 import { identity } from "../lib/util";
 import "./page.scss";
 import "reactjs-popup/dist/index.css";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 type HeaderType = "small" | "big";
 
@@ -13,6 +14,8 @@ const HEADER_MAP: Record<HeaderType, typeof SmallHeader | typeof BigHeader> = {
 	big: BigHeader,
 	small: SmallHeader,
 };
+
+const queryClient = new QueryClient();
 
 export interface Props extends LocalizableProps {
 	header: HeaderType;
@@ -27,17 +30,19 @@ export function Page(props: Props): JSX.Element {
 	const getRootProps: (x: DropzoneRootProps) => DropzoneRootProps = props.dropState?.getRootProps ?? identity;
 
 	return (
-		<div {...getRootProps({ id: "Page", className: props.header + "-header", tabIndex: -1 })}>
-			{props.dropState && <input {...props.dropState.getInputProps()} />}
+		<QueryClientProvider client={queryClient}>
+			<div {...getRootProps({ id: "Page", className: props.header + "-header", tabIndex: -1 })}>
+				{props.dropState && <input {...props.dropState.getInputProps()} />}
 
-			<Header lang={props.lang} />
-			<div id="content" className={props.className}>
-				{props.children}
+				<Header lang={props.lang} />
+				<div id="content" className={props.className}>
+					{props.children}
+				</div>
+				<div className="footer-wrapper">
+					<Footer lang={props.lang} />
+				</div>
 			</div>
-			<div className="footer-wrapper">
-				<Footer lang={props.lang} />
-			</div>
-		</div>
+		</QueryClientProvider>
 	);
 }
 

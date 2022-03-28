@@ -1,42 +1,19 @@
-import { useState } from "react";
+import { useQuery } from "react-query";
 import { GetCollectionsRequest } from "./generated/v1/services_pb";
 import { Collection } from "./generated/v1/types_pb";
-import { useAsyncEffect } from "./react-util";
 import { getSessionClient } from "./session/client";
-import { StorageCache } from "./storage-cache";
-import { DeepReadonly, delay, noop } from "./util";
-
-const cache = new StorageCache<string, DeepReadonly<Collection.AsObject[]>>("collections");
+import { DeepReadonly } from "./util";
 
 export function useCollections(sessionUrn: string): [collections: DeepReadonly<Collection.AsObject[]> | undefined] {
-	const [collections, setCollections] = useState(() => cache.get(sessionUrn));
+	const query = useQuery(["collections", sessionUrn] as const, {
+		queryFn: async () => {
+			const req = new GetCollectionsRequest();
+			req.setSessionUrn(sessionUrn);
 
-	useAsyncEffect(
-		async token => {
-			for (;;) {
-				try {
-					const req = new GetCollectionsRequest();
-					req.setSessionUrn(sessionUrn);
-
-					const resp = await getSessionClient().getCollections(req, null);
-					return resp.toObject().collectionsList;
-				} catch (e) {
-					console.log(e);
-				}
-
-				// wait 3s and retry
-				token.checkCanceled();
-				await delay(3_000);
-				token.checkCanceled();
-			}
+			const resp = await getSessionClient().getCollections(req, null);
+			return resp.toObject().collectionsList;
 		},
-		result => {
-			cache.set(sessionUrn, result);
-			setCollections(result);
-		},
-		noop,
-		[sessionUrn, setCollections]
-	);
+	});
 
-	return [collections];
+	return [query.data];
 }
