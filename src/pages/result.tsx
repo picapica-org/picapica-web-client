@@ -16,6 +16,7 @@ import { SeedText, useResultText } from "../lib/use-result-text";
 import { AlignmentView } from "../elements/alignment-view";
 import { ItemTypeIcon } from "../elements/icon";
 import { CenterAlignTwo } from "../elements/center-align-two";
+import { getCombinedDiff } from "../lib/alignment";
 import "./result.scss";
 
 export default function ResultPage(): JSX.Element {
@@ -118,10 +119,18 @@ function ResultSummary(props: ResultSummaryProps): JSX.Element {
 
 	const [texts] = useResultText(props.result);
 
+	let sharedWords = undefined;
+	if (texts) {
+		sharedWords = 0;
+		for (const text of texts) {
+			sharedWords += getCombinedDiff(text.a.text, text.b.text).diff.reduce((a, b) => a + b.left.equal.length, 0);
+		}
+	}
+
 	return (
 		<div className="ResultSummary">
 			<p className="summary">{l.reusedPassages(props.result.seedsList.length)}</p>
-			<p className="details">TODO: {texts?.reduce((a, b) => a + b.a.text.length, 0)}</p>
+			<p className="details">{l.detailed(props.result.seedsList.length, sharedWords)}</p>
 		</div>
 	);
 }
@@ -163,21 +172,51 @@ function ResultLabel(props: ResultLabelProps): JSX.Element {
 	);
 }
 
-const locales: Locales<SimpleString<"invalidUrn"> & { reusedPassages: (value: number) => JSX.Element }> = {
+const locales: Locales<
+	SimpleString<"invalidUrn"> & {
+		reusedPassages: (reused: number) => JSX.Element;
+		detailed: (reused: number, sharedWords: number | undefined) => JSX.Element;
+	}
+> = {
 	en: {
 		// TODO: Better error message
 		invalidUrn: "Invalid link. The result you are trying to access is not available.",
 
-		reusedPassages: number => (number === 1 ? <>Found 1 reused passage.</> : <>Found {number} reused passages.</>),
+		reusedPassages(reused) {
+			if (reused === 1) {
+				return <>Found 1 reused passage.</>;
+			}
+			return <>Found {reused} reused passages.</>;
+		},
+		detailed(reused, sharedWords) {
+			const details: string[] = [];
+
+			details.push(reused === 1 ? `1 reused passage` : `${reused} reused passages`);
+			if (sharedWords !== undefined) {
+				details.push(sharedWords === 1 ? `1 shared word` : `${sharedWords} shared words`);
+			}
+
+			return <>Detailed comparison of your submitted document: {details.join(", ")}</>;
+		},
 	},
 	de: {
 		invalidUrn: "Falscher Link. Das Ergebnis ist nicht verfügbar.",
 
-		reusedPassages: number =>
-			number === 1 ? (
-				<>1 wiederverwendeter Abschnitt gefunden.</>
-			) : (
-				<>{number} wiederverwendete Abschnitte gefunden.</>
-			),
+		reusedPassages(reused) {
+			if (reused === 1) {
+				return <>1 wiederverwendete Passage gefunden.</>;
+			}
+			return <>{reused} wiederverwendete Passagen gefunden.</>;
+		},
+		detailed(reused, sharedWords) {
+			const details: string[] = [];
+
+			details.push(reused === 1 ? `1 wiederverwendete Passage` : `${reused} wiederverwendete Passagen`);
+			if (sharedWords !== undefined) {
+				details.push(sharedWords === 1 ? `1 gemeinsames Wort` : `${sharedWords} gemeinsame Wörter`);
+			}
+
+			return <>Detailierter Vergleich Ihres eingereichten Dokuments: {details.join(", ")}</>;
+		},
 	},
 };
