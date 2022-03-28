@@ -4,6 +4,7 @@
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
 	column-gap: 2em;
+	word-break: break-word;
 
 	& > .left,
 	& > .right {
