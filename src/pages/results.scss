@@ -3,9 +3,17 @@
 .Results {
 	padding: 1em 2em 2em 2em;
 
+	p.loading {
+		color: $grey6;
+	}
+
 	@media screen and (max-width: 600px) {
 		& {
 			padding: 0 0 2em 0;
+		}
+
+		p.loading {
+			padding: 0 1em;
 		}
 	}
 }

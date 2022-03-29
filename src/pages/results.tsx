@@ -85,7 +85,9 @@ function Results(props: LocalizableProps): JSX.Element {
 			<>
 				{current}
 
-				<p style={running ? {} : { opacity: 0, userSelect: "none" }}>{l.running}</p>
+				<p className="loading" style={running ? {} : { opacity: 0, userSelect: "none" }}>
+					{l.running}
+				</p>
 			</>
 		);
 	};
