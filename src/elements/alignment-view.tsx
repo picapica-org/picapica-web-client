@@ -61,8 +61,8 @@ function Change(
 
 	return (
 		<div className={type} style={{ gridRow: props.index + 1 }}>
-			<span className="unchanged">{equal}</span>
-			{equal && changed ? " " : ""}
+			<span className="unchanged">{equal.trim()}</span>
+			{/\s$/.test(equal) ? " " : ""}
 			<span className={changedClass}>{changed}</span>
 		</div>
 	);

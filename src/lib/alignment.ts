@@ -21,7 +21,7 @@ export function getSimpleCombinedDiff(left: string, right: string): SimpleCombin
 	};
 }
 function join(words: readonly WordToken[]): string {
-	return words.join("").trim();
+	return words.join("");
 }
 
 export interface LeftChange<T> {
