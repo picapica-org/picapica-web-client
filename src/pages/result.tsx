@@ -16,7 +16,7 @@ import { SeedText, useResultText } from "../lib/use-result-text";
 import { AlignmentView } from "../elements/alignment-view";
 import { ItemTypeIcon } from "../elements/icon";
 import { CenterAlignTwo } from "../elements/center-align-two";
-import { getCombinedDiff } from "../lib/alignment";
+import { useAlignment } from "../lib/use-alignment";
 import "./result.scss";
 
 export default function ResultPage(): JSX.Element {
@@ -86,7 +86,14 @@ function ResultView(props: ResultViewProps): JSX.Element {
 		<>
 			<ResultSummary {...props} resources={resources} />
 			{texts?.map((text, i) => {
-				return <ResultSeedView key={i} resources={resources} text={text} />;
+				return (
+					<ResultSeedView
+						key={i}
+						alignmentKey={`${i}:${props.result.urn}`}
+						resources={resources}
+						text={text}
+					/>
+				);
 			})}
 		</>
 	);
@@ -119,21 +126,25 @@ function ResultSummary(props: ResultSummaryProps): JSX.Element {
 
 	const [texts] = useResultText(props.result);
 
+	const [alignments] = useAlignment(
+		`${texts?.length}:${props.result.urn}`,
+		texts?.map(t => ({ left: t.a.text, right: t.b.text })) ?? []
+	);
+
 	let sharedWords = undefined;
+	let incomplete = false;
 	if (texts) {
 		sharedWords = 0;
-		for (const text of texts) {
-			sharedWords += getCombinedDiff(text.a.text, text.b.text).diff.reduce(
-				(acc, change) => acc + change.left.equal.length,
-				0
-			);
+		for (const alignment of alignments) {
+			sharedWords += alignment.diff?.sharedWords ?? 0;
+			incomplete ||= alignment.diff === undefined;
 		}
 	}
 
 	return (
 		<div className="ResultSummary">
 			<p className="summary">{l.reusedPassages(props.result.seedsList.length)}</p>
-			<p className="details">{l.detailed(props.result.seedsList.length, sharedWords)}</p>
+			<p className="details">{l.detailed(props.result.seedsList.length, sharedWords, incomplete)}</p>
 		</div>
 	);
 }
@@ -141,8 +152,9 @@ function ResultSummary(props: ResultSummaryProps): JSX.Element {
 interface ResultSeedViewProps {
 	readonly resources: ResultResources;
 	readonly text: SeedText;
+	readonly alignmentKey: string;
 }
-function ResultSeedView({ resources, text }: ResultSeedViewProps): JSX.Element {
+function ResultSeedView({ resources, text, alignmentKey }: ResultSeedViewProps): JSX.Element {
 	return (
 		<div className="ResultSeedView">
 			<div className="header">
@@ -154,7 +166,7 @@ function ResultSeedView({ resources, text }: ResultSeedViewProps): JSX.Element {
 				</div>
 			</div>
 			<div className="alignment">
-				<AlignmentView left={text.a.text} right={text.b.text} />
+				<AlignmentView alignmentKey={alignmentKey} left={text.a.text} right={text.b.text} />
 			</div>
 		</div>
 	);
@@ -178,7 +190,7 @@ function ResultLabel(props: ResultLabelProps): JSX.Element {
 const locales: Locales<
 	SimpleString<"invalidUrn"> & {
 		reusedPassages: (reused: number) => JSX.Element;
-		detailed: (reused: number, sharedWords: number | undefined) => JSX.Element;
+		detailed: (reused: number, sharedWords: number | undefined, incomplete: boolean) => JSX.Element;
 	}
 > = {
 	en: {
@@ -191,12 +203,13 @@ const locales: Locales<
 			}
 			return <>Found {reused} reused passages.</>;
 		},
-		detailed(reused, sharedWords) {
+		detailed(reused, sharedWords, incomplete) {
 			const details: string[] = [];
 
 			details.push(reused === 1 ? `1 reused passage` : `${reused} reused passages`);
 			if (sharedWords !== undefined) {
-				details.push(sharedWords === 1 ? `1 shared word` : `${sharedWords} shared words`);
+				const atLeast = incomplete ? ">" : "";
+				details.push(sharedWords === 1 ? `${atLeast}1 shared word` : `${atLeast}${sharedWords} shared words`);
 			}
 
 			return <>Detailed comparison of your submitted document: {details.join(", ")}</>;
@@ -211,12 +224,15 @@ const locales: Locales<
 			}
 			return <>{reused} wiederverwendete Passagen gefunden.</>;
 		},
-		detailed(reused, sharedWords) {
+		detailed(reused, sharedWords, incomplete) {
 			const details: string[] = [];
 
 			details.push(reused === 1 ? `1 wiederverwendete Passage` : `${reused} wiederverwendete Passagen`);
 			if (sharedWords !== undefined) {
-				details.push(sharedWords === 1 ? `1 gemeinsames Wort` : `${sharedWords} gemeinsame Wörter`);
+				const atLeast = incomplete ? ">" : "";
+				details.push(
+					sharedWords === 1 ? `${atLeast}1 gemeinsames Wort` : `${atLeast}${sharedWords} gemeinsame Wörter`
+				);
 			}
 
 			return <>Detailierter Vergleich Ihres eingereichten Dokuments: {details.join(", ")}</>;

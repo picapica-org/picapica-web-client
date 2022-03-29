@@ -1,25 +1,48 @@
 import { EditPair, filterUnchanged, fromDiff, iteratePairs } from "./edit";
-import { debugAssert, groupByCategory } from "./util";
+import { debugAssert, DeepReadonly, groupByCategory } from "./util";
 
-export interface LeftChange {
-	equal: WordToken[];
-	removed: WordToken[];
+export interface SimpleCombinedDiff {
+	readonly diff: DeepReadonly<CombinedChange<string>>[];
+	readonly sharedWords: number;
 }
-export interface RightChange {
-	equal: WordToken[];
-	added: WordToken[];
-}
-export class CombinedChange {
-	readonly left: LeftChange;
-	readonly right: RightChange;
+export function getSimpleCombinedDiff(left: string, right: string): SimpleCombinedDiff {
+	const { diff } = getCombinedDiff(left, right);
 
-	constructor(left: LeftChange, right: RightChange) {
+	const sharedWords = diff.reduce((acc, change) => acc + change.left.equal.length, 0);
+
+	return {
+		diff: diff.map(c => {
+			return new CombinedChange<string>(
+				{ equal: join(c.left.equal), removed: join(c.left.removed) },
+				{ equal: join(c.right.equal), added: join(c.right.added) }
+			);
+		}),
+		sharedWords,
+	};
+}
+function join(words: readonly WordToken[]): string {
+	return words.join("").trim();
+}
+
+export interface LeftChange<T> {
+	equal: T;
+	removed: T;
+}
+export interface RightChange<T> {
+	equal: T;
+	added: T;
+}
+export class CombinedChange<T> {
+	readonly left: LeftChange<T>;
+	readonly right: RightChange<T>;
+
+	constructor(left: LeftChange<T>, right: RightChange<T>) {
 		this.left = left;
 		this.right = right;
 	}
 
-	static fromEditPair([unchanged, changed]: EditPair<WordToken>): CombinedChange {
-		return new CombinedChange(
+	static fromEditPair<T>([unchanged, changed]: EditPair<T>): CombinedChange<T[]> {
+		return new CombinedChange<T[]>(
 			{ equal: unchanged.left, removed: changed.removed },
 			{ equal: unchanged.right, added: changed.added }
 		);
@@ -29,7 +52,7 @@ export class CombinedChange {
 export function getCombinedDiff(
 	left: string,
 	right: string
-): { diff: CombinedChange[]; scores: Map<WordToken, number> } {
+): { diff: CombinedChange<WordToken[]>[]; scores: Map<WordToken, number> } {
 	let edits = fromDiff(tokenizeWords(left), tokenizeWords(right), WordToken.equals);
 
 	const filteredOut = new Map<WordToken, WordToken>();

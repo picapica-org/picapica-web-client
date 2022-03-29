@@ -21,34 +21,4 @@
 		background-color: $light-green;
 		text-shadow: 0 0.1em 0.1em $white;
 	}
-
-	.partial-low,
-	.partial-medium,
-	.partial-high {
-		display: inline-block;
-		position: relative;
-
-		text-shadow: 0 0.1em 0.1em $white;
-	}
-	.partial-low::before,
-	.partial-medium::before,
-	.partial-high::before {
-		content: "";
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		left: 0;
-		z-index: -1;
-		background: radial-gradient(closest-side, $light-green, $light-green, transparent);
-	}
-	.partial-low::before {
-		opacity: 30%;
-	}
-	.partial-medium::before {
-		opacity: 50%;
-	}
-	.partial-high::before {
-		opacity: 100%;
-	}
 }

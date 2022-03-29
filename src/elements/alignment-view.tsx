@@ -1,94 +1,69 @@
 import React from "react";
-import { getCombinedDiff, LeftChange, RightChange, WordToken } from "../lib/alignment";
-import { CategoryGroup, groupByCategory } from "../lib/util";
+import { LeftChange, RightChange } from "../lib/alignment";
+import { useAlignment } from "../lib/use-alignment";
 import "./alignment-view.scss";
 
 export interface Props {
 	readonly left: string;
 	readonly right: string;
+	readonly alignmentKey: string;
 }
 
 export function AlignmentView(props: Props): JSX.Element {
-	const { diff, scores } = getCombinedDiff(props.left, props.right);
+	const [alignments] = useAlignment(props.alignmentKey, [props]);
+
+	const diff = alignments[0]?.diff?.diff;
 
 	return (
 		<div className="AlignmentView">
-			{diff.map(({ left }, i) => {
-				return <Change key={"l" + i} left={left} index={i} scores={scores} />;
-			})}
-			{diff.map(({ right }, i) => {
-				return <Change key={"r" + i} right={right} index={i} scores={scores} />;
-			})}
+			{diff ? (
+				<>
+					{diff.map(({ left }, i) => {
+						return <Change key={"l" + i} left={left} index={i} />;
+					})}
+					{diff.map(({ right }, i) => {
+						return <Change key={"r" + i} right={right} index={i} />;
+					})}
+				</>
+			) : (
+				<>
+					<div className="left" style={{ gridRow: 1 }}>
+						<span>{props.left}</span>
+					</div>
+					<div className="right" style={{ gridRow: 1 }}>
+						<span>{props.right}</span>
+					</div>
+				</>
+			)}
 		</div>
 	);
 }
 
 function Change(
-	props: ({ left: LeftChange } | { right: RightChange }) & { index: number; scores: Map<WordToken, number> }
+	props: ({ left: LeftChange<string> } | { right: RightChange<string> }) & {
+		index: number;
+	}
 ): JSX.Element {
-	let equalTokens: readonly WordToken[];
+	let equal: string;
+	let changed: string;
 	let type: "left" | "right";
-	let changedTokens;
 	if ("left" in props) {
-		equalTokens = props.left.equal;
+		equal = props.left.equal;
+		changed = props.left.removed;
 		type = "left";
-		changedTokens = props.left.removed;
 	} else {
-		equalTokens = props.right.equal;
+		equal = props.right.equal;
+		changed = props.right.added;
 		type = "right";
-		changedTokens = props.right.added;
 	}
 
 	const changedClass = type === "left" ? "removed" : "added";
 
-	const groups = groupByCategory([...equalTokens, ...changedTokens], (t, i) => {
-		if (i < equalTokens.length) {
-			return "unchanged";
-		}
-		const score = quantizeScore(props.scores.get(t) ?? 0);
-		if (score !== "ignore") {
-			return `partial-${score}`;
-		}
-		return changedClass;
-	});
-
 	return (
 		<div className={type} style={{ gridRow: props.index + 1 }}>
-			{renderGroups(groups)}
+			<span className="unchanged">{equal}</span>
+			{equal && changed ? " " : ""}
+			<span className={changedClass}>{changed}</span>
 		</div>
 	);
-}
-
-function renderGroups(groups: readonly CategoryGroup<WordToken, string>[]): JSX.Element {
-	const combined = groups.map(g => ({ name: g.category, value: g.items.join("") }));
-	const length = combined.length;
-
-	return (
-		<>
-			{combined.map((g, i) => {
-				const space =
-					(i < length - 1 && /\s$/.test(g.value)) || (i + 1 < length && /^\s/.test(combined[i + 1].value));
-
-				return (
-					<React.Fragment key={i}>
-						<span className={g.name}>{g.value.trim()}</span>
-						{space ? " " : ""}
-					</React.Fragment>
-				);
-			})}
-		</>
-	);
-}
-
-function quantizeScore(score: number): "ignore" | "low" | "medium" | "high" {
-	if (score <= 5) {
-		return "ignore";
-	}
-	if (score <= 10) {
-		return "low";
-	}
-	if (score <= 20) {
-		return "medium";
-	}
-	return "high";
 }
