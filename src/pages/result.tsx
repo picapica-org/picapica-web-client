@@ -131,10 +131,9 @@ function ResultSummary(props: ResultSummaryProps): JSX.Element {
 		texts?.map(t => ({ left: t.a.text, right: t.b.text })) ?? []
 	);
 
-	let sharedWords = undefined;
-	let incomplete = false;
+	let sharedWords = 0;
+	let incomplete = texts === undefined;
 	if (texts) {
-		sharedWords = 0;
 		for (const alignment of alignments) {
 			sharedWords += alignment.diff?.sharedWords ?? 0;
 			incomplete ||= alignment.diff === undefined;
@@ -190,7 +189,7 @@ function ResultLabel(props: ResultLabelProps): JSX.Element {
 const locales: Locales<
 	SimpleString<"invalidUrn"> & {
 		reusedPassages: (reused: number) => JSX.Element;
-		detailed: (reused: number, sharedWords: number | undefined, incomplete: boolean) => JSX.Element;
+		detailed: (reused: number, sharedWords: number, incomplete: boolean) => JSX.Element;
 	}
 > = {
 	en: {
@@ -207,10 +206,9 @@ const locales: Locales<
 			const details: string[] = [];
 
 			details.push(reused === 1 ? `1 reused passage` : `${reused} reused passages`);
-			if (sharedWords !== undefined) {
-				const atLeast = incomplete ? ">" : "";
-				details.push(sharedWords === 1 ? `${atLeast}1 shared word` : `${atLeast}${sharedWords} shared words`);
-			}
+
+			const atLeast = incomplete ? ">" : "";
+			details.push(sharedWords === 1 ? `${atLeast}1 shared word` : `${atLeast}${sharedWords} shared words`);
 
 			return <>Detailed comparison of your submitted document: {details.join(", ")}</>;
 		},
@@ -228,12 +226,11 @@ const locales: Locales<
 			const details: string[] = [];
 
 			details.push(reused === 1 ? `1 wiederverwendete Passage` : `${reused} wiederverwendete Passagen`);
-			if (sharedWords !== undefined) {
-				const atLeast = incomplete ? ">" : "";
-				details.push(
-					sharedWords === 1 ? `${atLeast}1 gemeinsames Wort` : `${atLeast}${sharedWords} gemeinsame Wörter`
-				);
-			}
+
+			const atLeast = incomplete ? ">" : "";
+			details.push(
+				sharedWords === 1 ? `${atLeast}1 gemeinsames Wort` : `${atLeast}${sharedWords} gemeinsame Wörter`
+			);
 
 			return <>Detailierter Vergleich Ihres eingereichten Dokuments: {details.join(", ")}</>;
 		},
