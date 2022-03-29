@@ -63,8 +63,13 @@
 		gap: 0.5em;
 	}
 
-	.title {
+	.head .Label {
 		color: $grey6;
+
+		.Icon {
+			// The icon used here should be just a little more down
+			top: -0.05em;
+		}
 	}
 
 	.content {

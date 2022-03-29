@@ -6,7 +6,7 @@ import { Session } from "../lib/generated/v1/services_pb";
 import { Collection, Result } from "../lib/generated/v1/types_pb";
 import { categorizeResults } from "../lib/session/result-categories";
 import { Badge } from "./badge";
-import { CollectionLabel, SubmittedFilesLabel } from "./labels";
+import { CollectionLabel, Label, SubmittedFilesLabel } from "./labels";
 import { Buttons } from "./buttons";
 import { PicaIcon } from "./icon";
 import { LoaderAnimation } from "./loader-animation";
@@ -58,7 +58,7 @@ export function ResultsOverview(props: ResultsOverviewProps): JSX.Element {
 	const title = (
 		<CenterAlignTwo
 			grow="left"
-			left={<span className="title">{l.analysisResults}</span>}
+			left={<Label icon="results" text={l.analysisResults} />}
 			right={<Badge kind="Dark">{l.results}</Badge>}
 		/>
 	);
