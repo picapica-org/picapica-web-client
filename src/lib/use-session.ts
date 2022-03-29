@@ -8,6 +8,7 @@ import {
 	GetSessionResponse,
 	Session,
 } from "../lib/generated/v1/services_pb";
+import { Item } from "./generated/v1/types_pb";
 import { addLocationChangeListener, useAsyncEffect } from "../lib/react-util";
 import { changeLocationSearchParams, getLocationSearchParams } from "../lib/url-params";
 import { assertNever, DeepReadonly, delay, noop } from "../lib/util";
@@ -379,8 +380,20 @@ function getRetryDelay(retries: number): number {
 	}
 }
 
+/**
+ * Returns whether the backend is currently processing data will likely update the session soon.
+ */
+function isCurrentlyProcessing(session: DeepReadonly<Session.AsObject>): boolean {
+	if (session.status === Session.ComputeStatus.STATUS_RUNNING) {
+		// it's currently computing results
+		return true;
+	}
+
+	// any items are currently being processed
+	return session.itemsList.some(i => i.resource?.status === Item.Resource.ProcessingStatus.STATUS_RUNNING);
+}
 function getComputationRefreshDelay(session: DeepReadonly<Session.AsObject>): number {
-	if (session.status !== Session.ComputeStatus.STATUS_RUNNING) {
+	if (!isCurrentlyProcessing(session)) {
 		return Infinity;
 	}
 
