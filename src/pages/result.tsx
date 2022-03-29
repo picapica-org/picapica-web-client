@@ -123,7 +123,10 @@ function ResultSummary(props: ResultSummaryProps): JSX.Element {
 	if (texts) {
 		sharedWords = 0;
 		for (const text of texts) {
-			sharedWords += getCombinedDiff(text.a.text, text.b.text).diff.reduce((a, b) => a + b.left.equal.length, 0);
+			sharedWords += getCombinedDiff(text.a.text, text.b.text).diff.reduce(
+				(acc, change) => acc + change.left.equal.length,
+				0
+			);
 		}
 	}
 
