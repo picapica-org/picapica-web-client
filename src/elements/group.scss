@@ -22,6 +22,7 @@
 		box-sizing: border-box;
 		border-radius: 0.3em;
 		border: 0.1em solid $grey3;
+		overflow: hidden;
 
 		padding-top: calc(var(--group-heading-height) / 2);
 	}
