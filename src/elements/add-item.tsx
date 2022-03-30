@@ -333,6 +333,6 @@ const locales: Locales<
 
 		"emptyTextError": "Kein Text. Bitte fügen Sie Text ein.",
 		"emptyUrlError": "Keine URL. Bitte geben Sie eine URL ein.",
-		"invalidUrlError": "Ungültige URL. Bitte geben eine gültige URL ein.",
+		"invalidUrlError": "Ungültige URL. Bitte Sie geben eine gültige URL ein.",
 	},
 };
