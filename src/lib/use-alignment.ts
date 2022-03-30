@@ -2,19 +2,22 @@ import { useEffect, useState } from "react";
 import { SimpleCombinedDiff } from "./alignment";
 import { LRUCache } from "./lru-cache";
 import { useAsyncEffect } from "./react-util";
-import { noop } from "./util";
+import { lazy, noop } from "./util";
 
 let pendingResolvesCounter = 0;
 const pendingResolves = new Map<number, (diff: SimpleCombinedDiff) => void>();
 
-const worker = new Worker(new URL("./alignment.worker.ts", import.meta.url));
-worker.onmessage = ({ data: { diff, id } }) => {
-	const resolve = pendingResolves.get(id);
-	pendingResolves.delete(id);
-	if (resolve) {
-		resolve(diff);
-	}
-};
+const getWorker = lazy(() => {
+	const worker = new Worker(new URL("./alignment.worker.ts", import.meta.url));
+	worker.onmessage = ({ data: { diff, id } }) => {
+		const resolve = pendingResolves.get(id);
+		pendingResolves.delete(id);
+		if (resolve) {
+			resolve(diff);
+		}
+	};
+	return worker;
+});
 
 const promiseCache = new LRUCache<Promise<SimpleCombinedDiff>>(500);
 const resultCache = new LRUCache<SimpleCombinedDiff>(500);
@@ -29,7 +32,7 @@ function getSimpleCombinedDiff(left: string, right: string): Promise<SimpleCombi
 		promise = new Promise<SimpleCombinedDiff>(resolve => {
 			const id = pendingResolvesCounter++;
 			pendingResolves.set(id, resolve);
-			worker.postMessage({ left, right, id });
+			getWorker().postMessage({ left, right, id });
 		});
 		promiseCache.add(key, promise);
 		promise.then(diff => resultCache.add(key, diff));
