@@ -33,7 +33,7 @@ function Test(props: LocalizableProps): JSX.Element {
 	};
 	return (
 		<Page {...props} className="Test" header="small">
-			<AlignmentView left={testA} right={testB} />
+			<AlignmentView alignmentKey="fake-key" left={testA} right={testB} />
 			{foo.itemUrn}
 		</Page>
 	);
