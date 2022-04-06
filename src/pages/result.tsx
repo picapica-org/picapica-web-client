@@ -88,6 +88,7 @@ function ResultView(props: ResultViewProps): JSX.Element {
 			{texts?.map((text, i) => {
 				return (
 					<ResultSeedView
+						lang={props.lang}
 						key={i}
 						alignmentKey={`${i}:${props.result.urn}`}
 						resources={resources}
@@ -148,12 +149,12 @@ function ResultSummary(props: ResultSummaryProps): JSX.Element {
 	);
 }
 
-interface ResultSeedViewProps {
+interface ResultSeedViewProps extends LocalizableProps {
 	readonly resources: ResultResources;
 	readonly text: SeedText;
 	readonly alignmentKey: string;
 }
-function ResultSeedView({ resources, text, alignmentKey }: ResultSeedViewProps): JSX.Element {
+function ResultSeedView({ lang, resources, text, alignmentKey }: ResultSeedViewProps): JSX.Element {
 	return (
 		<div className="ResultSeedView">
 			<div className="header">
@@ -165,7 +166,7 @@ function ResultSeedView({ resources, text, alignmentKey }: ResultSeedViewProps):
 				</div>
 			</div>
 			<div className="alignment">
-				<AlignmentView alignmentKey={alignmentKey} left={text.a.text} right={text.b.text} />
+				<AlignmentView lang={lang} alignmentKey={alignmentKey} left={text.a.text} right={text.b.text} />
 			</div>
 		</div>
 	);

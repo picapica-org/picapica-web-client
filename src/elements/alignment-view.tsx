@@ -1,9 +1,10 @@
 import React from "react";
 import { LeftChange, RightChange } from "../lib/alignment";
+import { getLocalization, Locales, LocalizableProps } from "../lib/localization";
 import { useAlignment } from "../lib/use-alignment";
 import "./alignment-view.scss";
 
-export interface Props {
+export interface Props extends LocalizableProps {
 	readonly left: string;
 	readonly right: string;
 	readonly alignmentKey: string;
@@ -19,10 +20,10 @@ export function AlignmentView(props: Props): JSX.Element {
 			{diff ? (
 				<>
 					{diff.map(({ left }, i) => {
-						return <Change key={"l" + i} left={left} index={i} />;
+						return <DiffView key={"l" + i} lang={props.lang} left={left} index={i} total={diff.length} />;
 					})}
 					{diff.map(({ right }, i) => {
-						return <Change key={"r" + i} right={right} index={i} />;
+						return <DiffView key={"r" + i} lang={props.lang} right={right} index={i} total={diff.length} />;
 					})}
 				</>
 			) : (
@@ -39,11 +40,11 @@ export function AlignmentView(props: Props): JSX.Element {
 	);
 }
 
-function Change(
-	props: ({ left: LeftChange<string> } | { right: RightChange<string> }) & {
-		index: number;
-	}
-): JSX.Element {
+interface DiffLineProps extends LocalizableProps {
+	index: number;
+	total: number;
+}
+function DiffView(props: ({ left: LeftChange<string> } | { right: RightChange<string> }) & DiffLineProps): JSX.Element {
 	let equal: string;
 	let changed: string;
 	let type: "left" | "right";
@@ -61,9 +62,157 @@ function Change(
 
 	return (
 		<div className={type} style={{ gridRow: props.index + 1 }}>
-			<span className="unchanged">{equal.trim()}</span>
-			{/\s$/.test(equal) ? " " : ""}
-			<span className={changedClass}>{changed}</span>
+			{equal !== "" ? (
+				<>
+					<span className="unchanged">{equal.trim()}</span>
+					{/\s$/.test(equal) ? " " : ""}
+					<Change {...props} type={changedClass} text={changed} isFirst={false} />
+				</>
+			) : (
+				<Change {...props} type={changedClass} text={changed} isFirst={true} />
+			)}
 		</div>
 	);
 }
+
+interface ChangeProps extends LocalizableProps {
+	text: string;
+	type: "added" | "removed";
+	index: number;
+	total: number;
+	isFirst: boolean;
+}
+function Change(props: ChangeProps): JSX.Element {
+	const text = props.text;
+
+	const context = 500;
+	const minOmitted = 20;
+
+	const isLast = props.index === props.total - 1;
+	if (isLast && text.length > context) {
+		const tokens = tokenizeWords(text);
+		const rest = splitRest(tokens, context);
+		if (rest.length > minOmitted) {
+			return (
+				<>
+					<span className={props.type}>
+						<FadeText text={tokens.join(" ").trim()} position="end" />
+					</span>
+					<Omitted lang={props.lang} words={rest.length} />
+				</>
+			);
+		}
+	} else if (props.isFirst && text.length > context) {
+		const tokens = tokenizeWords(text).reverse();
+		const rest = splitRest(tokens, context);
+		if (rest.length > minOmitted) {
+			return (
+				<>
+					<Omitted lang={props.lang} words={rest.length} />
+					<span className={props.type}>
+						<FadeText text={tokens.reverse().join(" ").trim()} position="start" />
+					</span>
+				</>
+			);
+		}
+	} else if (text.length > context * 2) {
+		const start = tokenizeWords(text);
+		const end = splitRest(start, context).reverse();
+		const rest = splitRest(end, context);
+
+		if (rest.length > minOmitted) {
+			return (
+				<>
+					<span className={props.type}>
+						<FadeText text={start.join(" ").trim()} position="end" />
+					</span>
+					<Omitted lang={props.lang} words={rest.length} />
+					<span className={props.type}>
+						<FadeText text={end.reverse().join(" ").trim()} position="start" />
+					</span>
+				</>
+			);
+		}
+	}
+
+	return <span className={props.type}>{props.text}</span>;
+}
+function tokenizeWords(text: string): string[] {
+	return text.split(/ /g);
+}
+function splitRest(tokens: string[], stringLength: number): string[] {
+	let length = 0;
+	for (let i = 0; i < tokens.length; i++) {
+		length += tokens[i].length;
+		if (length >= stringLength) {
+			return tokens.splice(i + 1, tokens.length - i - 1);
+		}
+	}
+
+	return [];
+}
+
+interface FadeTextProps {
+	text: string;
+	position: "start" | "end";
+}
+function FadeText(props: FadeTextProps): JSX.Element {
+	const fadeLength = 10;
+
+	const chars = [...props.text];
+	if (chars.length < fadeLength) {
+		// fail safe
+		return <>{props.text}</>;
+	}
+
+	const fade =
+		props.position === "start" ? chars.splice(0, fadeLength) : chars.splice(chars.length - fadeLength, fadeLength);
+	const text = chars.join("");
+
+	if (props.position === "start") {
+		return (
+			<>
+				{fade.map((c, i) => (
+					<span key={i} className="fade" style={{ opacity: i / fadeLength }}>
+						{c}
+					</span>
+				))}
+				{text}
+			</>
+		);
+	} else {
+		return (
+			<>
+				{text}
+				{fade.map((c, i) => (
+					<span key={i} className="fade" style={{ opacity: (fadeLength - i) / fadeLength }}>
+						{c}
+					</span>
+				))}
+			</>
+		);
+	}
+}
+
+interface OmittedProps extends LocalizableProps {
+	words: number;
+}
+function Omitted(props: OmittedProps): JSX.Element {
+	const l = getLocalization(props, locales);
+	return <span className="Omitted"> [{l.omitted(props.words)}] </span>;
+}
+
+const locales: Locales<{
+	omitted: (words: number) => JSX.Element;
+}> = {
+	en: {
+		omitted(words) {
+			return <>… {words} words omitted</>;
+		},
+	},
+	de: {
+		omitted(words) {
+			return <>… {words} Wörter weggelassen</>;
+		},
+	},
+};
