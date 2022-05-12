@@ -1,6 +1,7 @@
 import { Link } from "gatsby";
 import React from "react";
-import { getLocalization, Locales, LocalizableProps, SimpleString } from "../lib/localization";
+import { Locales, SimpleString } from "../lib/localization";
+import { useLocalization } from "../lib/use-localization";
 import { toAnalysis, toResults, toSubmit } from "../lib/page-links";
 import { assertNever } from "../lib/util";
 import { Buttons } from "./buttons";
@@ -27,7 +28,7 @@ export function getLinkToStep(step: StepKind, sessionUrn: string): string {
 
 const STEPS = ["submit", "analysis", "checkout", "results"] as const;
 
-export interface StepSelectorProps extends LocalizableProps {
+export interface StepSelectorProps {
 	readonly sessionUrn: string;
 	readonly current: StepKind;
 	readonly disableOthers?: boolean;
@@ -43,7 +44,7 @@ const ICONS: Readonly<Record<StepKind, PicaIconKind>> = {
 const ENABLE_CHECKOUT = false;
 
 export function StepSelector(props: StepSelectorProps): JSX.Element {
-	const l = getLocalization(props, locales);
+	const l = useLocalization(locales);
 
 	return (
 		<span className={`StepSelector ${Buttons.BUTTON_GROUP}`}>

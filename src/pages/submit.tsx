@@ -2,7 +2,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Page } from "../elements/page";
 import { SharedHead } from "../elements/shared-header";
-import { getCurrentLang, getLocalization, Locales, LocalizableProps, SimpleString } from "../lib/localization";
+import { Locales, SimpleString } from "../lib/localization";
+import { useLocalization } from "../lib/use-localization";
 import { dynamic } from "../lib/react-util";
 import { getLinkToStep, StepSelectorGroup } from "../elements/step-selector";
 import { AddItem } from "../elements/add-item";
@@ -22,7 +23,7 @@ export default function SubmitPage(): JSX.Element {
 	return (
 		<>
 			{dynamic(() => (
-				<Submit lang={getCurrentLang()} />
+				<Submit />
 			))}
 			<SharedHead />
 			<Helmet>
@@ -43,8 +44,8 @@ const ACCEPT = [
 	"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 ].join(",");
 
-function Submit(props: LocalizableProps): JSX.Element {
-	const l = getLocalization(props, locales);
+function Submit(): JSX.Element {
+	const l = useLocalization(locales);
 
 	const [state, update] = useCreateSession();
 
@@ -95,7 +96,7 @@ function Submit(props: LocalizableProps): JSX.Element {
 	});
 
 	const onReady = ({ session }: Ready): JSX.Element => {
-		const addItem = <AddItem {...props} onAdd={items => upload(items, session.urn)} accept={ACCEPT} />;
+		const addItem = <AddItem onAdd={items => upload(items, session.urn)} accept={ACCEPT} />;
 
 		return (
 			<>
@@ -117,13 +118,13 @@ function Submit(props: LocalizableProps): JSX.Element {
 					<>
 						<StepActionBar
 							left={addItem}
-							right={<NextButton {...props} to={getLinkToStep("analysis", session.urn)} />}
+							right={<NextButton to={getLinkToStep("analysis", session.urn)} />}
 							instruction={l.instruction}
 						/>
 
 						<UploadingList uploading={uploading} />
 
-						<ItemTable {...props} session={session} update={update} />
+						<ItemTable session={session} update={update} />
 					</>
 				)}
 			</>
@@ -131,13 +132,12 @@ function Submit(props: LocalizableProps): JSX.Element {
 	};
 
 	return (
-		<Page {...props} className="Submit" header="small" dropState={dropState}>
+		<Page className="Submit" header="small" dropState={dropState}>
 			<StepSelectorGroup
-				{...props}
 				sessionUrn={getSessionUrn(state) ?? ""}
 				current="submit"
 				disableOthers={state.type !== "Ready" || state.session.itemsList.length === 0}>
-				<SessionState {...props} state={state} onReady={onReady} />
+				<SessionState state={state} onReady={onReady} />
 			</StepSelectorGroup>
 		</Page>
 	);

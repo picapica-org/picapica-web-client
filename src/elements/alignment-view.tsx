@@ -1,10 +1,11 @@
 import React from "react";
 import { LeftChange, RightChange } from "../lib/alignment";
-import { getLocalization, Locales, LocalizableProps } from "../lib/localization";
+import { Locales } from "../lib/localization";
+import { useLocalization } from "../lib/use-localization";
 import { useAlignment } from "../lib/use-alignment";
 import "./alignment-view.scss";
 
-export interface Props extends LocalizableProps {
+export interface Props {
 	readonly left: string;
 	readonly right: string;
 	readonly alignmentKey: string;
@@ -20,10 +21,10 @@ export function AlignmentView(props: Props): JSX.Element {
 			{diff ? (
 				<>
 					{diff.map(({ left }, i) => {
-						return <DiffView key={"l" + i} lang={props.lang} left={left} index={i} total={diff.length} />;
+						return <DiffView key={"l" + i} left={left} index={i} total={diff.length} />;
 					})}
 					{diff.map(({ right }, i) => {
-						return <DiffView key={"r" + i} lang={props.lang} right={right} index={i} total={diff.length} />;
+						return <DiffView key={"r" + i} right={right} index={i} total={diff.length} />;
 					})}
 				</>
 			) : (
@@ -40,7 +41,7 @@ export function AlignmentView(props: Props): JSX.Element {
 	);
 }
 
-interface DiffLineProps extends LocalizableProps {
+interface DiffLineProps {
 	index: number;
 	total: number;
 }
@@ -75,7 +76,7 @@ function DiffView(props: ({ left: LeftChange<string> } | { right: RightChange<st
 	);
 }
 
-interface ChangeProps extends LocalizableProps {
+interface ChangeProps {
 	text: string;
 	type: "added" | "removed";
 	index: number;
@@ -98,7 +99,7 @@ function Change(props: ChangeProps): JSX.Element {
 					<span className={props.type}>
 						<FadeText text={tokens.join(" ").trim()} position="end" />
 					</span>
-					<Omitted lang={props.lang} words={rest.length} />
+					<Omitted words={rest.length} />
 				</>
 			);
 		}
@@ -108,7 +109,7 @@ function Change(props: ChangeProps): JSX.Element {
 		if (rest.length > minOmitted) {
 			return (
 				<>
-					<Omitted lang={props.lang} words={rest.length} />
+					<Omitted words={rest.length} />
 					<span className={props.type}>
 						<FadeText text={tokens.reverse().join(" ").trim()} position="start" />
 					</span>
@@ -126,7 +127,7 @@ function Change(props: ChangeProps): JSX.Element {
 					<span className={props.type}>
 						<FadeText text={start.join(" ").trim()} position="end" />
 					</span>
-					<Omitted lang={props.lang} words={rest.length} />
+					<Omitted words={rest.length} />
 					<span className={props.type}>
 						<FadeText text={end.reverse().join(" ").trim()} position="start" />
 					</span>
@@ -194,11 +195,11 @@ function FadeText(props: FadeTextProps): JSX.Element {
 	}
 }
 
-interface OmittedProps extends LocalizableProps {
+interface OmittedProps {
 	words: number;
 }
 function Omitted(props: OmittedProps): JSX.Element {
-	const l = getLocalization(props, locales);
+	const l = useLocalization(locales);
 	return <span className="Omitted"> [{l.omitted(props.words)}] </span>;
 }
 

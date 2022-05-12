@@ -1,12 +1,13 @@
 import React from "react";
 import { Link } from "gatsby";
-import { getLocalization, Locales, LocalizableProps } from "../lib/localization";
+import { Locales } from "../lib/localization";
+import { useLocalization } from "../lib/use-localization";
 import { PicaIcon } from "./icon";
 import { Buttons } from "./buttons";
 import { toSubmit } from "../lib/page-links";
 
-export function NewAnalysis(props: LocalizableProps): JSX.Element {
-	const l = getLocalization(props, locales);
+export function NewAnalysis(): JSX.Element {
+	const l = useLocalization(locales);
 
 	return (
 		<span className={"NewAnalysis " + Buttons.BUTTON_GROUP}>

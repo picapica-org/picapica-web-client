@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { getLocalization, Locales, LocalizableProps } from "../lib/localization";
+import { Locales } from "../lib/localization";
+import { useLocalization } from "../lib/use-localization";
 import { Buttons } from "./buttons";
 import { Icon, PicaIcon } from "./icon";
 import { PopupActions } from "reactjs-popup/dist/types";
@@ -9,7 +10,7 @@ import { useOpenFileDialog } from "../lib/react-util";
 import { ItemProto, ItemType } from "../lib/session/create-item";
 import "./add-item.scss";
 
-export interface AddItemProps extends LocalizableProps {
+export interface AddItemProps {
 	readonly onAdd: (items: ItemProto[]) => void;
 	readonly accept?: string;
 }
@@ -17,7 +18,7 @@ export interface AddItemProps extends LocalizableProps {
 const INPUT_KINDS = ["file", "url", "text"] as const;
 
 export function AddItem(props: AddItemProps): JSX.Element {
-	const l = getLocalization(props, locales);
+	const l = useLocalization(locales);
 
 	const [currentTab, setCurrentTab] = useState<ItemType>("file");
 
@@ -58,13 +59,13 @@ export function AddItem(props: AddItemProps): JSX.Element {
 
 	const modalContent: Record<ItemType, (close: () => void) => JSX.Element> = {
 		file(close) {
-			return <ModalFileInput lang={props.lang} close={close} openFiles={openFiles} />;
+			return <ModalFileInput close={close} openFiles={openFiles} />;
 		},
 		url(close) {
-			return <ModalUrlInput lang={props.lang} close={close} submit={submit} />;
+			return <ModalUrlInput close={close} submit={submit} />;
 		},
 		text(close) {
-			return <ModalTextInput lang={props.lang} close={close} submit={submit} />;
+			return <ModalTextInput close={close} submit={submit} />;
 		},
 	};
 
@@ -161,8 +162,8 @@ interface OpenFilesProps {
 	readonly openFiles: () => void;
 }
 
-function ModalFileInput(props: OpenFilesProps & ClosableProps & LocalizableProps): JSX.Element {
-	const l = getLocalization(props, locales);
+function ModalFileInput(props: OpenFilesProps & ClosableProps): JSX.Element {
+	const l = useLocalization(locales);
 
 	return (
 		<>
@@ -173,13 +174,13 @@ function ModalFileInput(props: OpenFilesProps & ClosableProps & LocalizableProps
 				</button>
 				<p className="hint">{l.dragAndDropHint}</p>
 			</div>
-			<ModalFooter lang={props.lang} close={props.close} add={props.openFiles} />
+			<ModalFooter close={props.close} add={props.openFiles} />
 		</>
 	);
 }
 
-function ModalUrlInput(props: SubmitProps & ClosableProps & LocalizableProps): JSX.Element {
-	const l = getLocalization(props, locales);
+function ModalUrlInput(props: SubmitProps & ClosableProps): JSX.Element {
+	const l = useLocalization(locales);
 
 	const [url, setUrl] = useState("");
 	const [error, setError] = useState("");
@@ -219,13 +220,13 @@ function ModalUrlInput(props: SubmitProps & ClosableProps & LocalizableProps): J
 				/>
 				{!!error && <p className="error">{error}</p>}
 			</div>
-			<ModalFooter lang={props.lang} close={props.close} add={trySubmit} />
+			<ModalFooter close={props.close} add={trySubmit} />
 		</>
 	);
 }
 
-function ModalTextInput(props: SubmitProps & ClosableProps & LocalizableProps): JSX.Element {
-	const l = getLocalization(props, locales);
+function ModalTextInput(props: SubmitProps & ClosableProps): JSX.Element {
+	const l = useLocalization(locales);
 
 	const [text, setText] = useState("");
 	const [error, setError] = useState("");
@@ -255,13 +256,13 @@ function ModalTextInput(props: SubmitProps & ClosableProps & LocalizableProps): 
 					spellCheck={false}></textarea>
 				{!!error && <p className="error">{error}</p>}
 			</div>
-			<ModalFooter lang={props.lang} close={props.close} add={trySubmit} />
+			<ModalFooter close={props.close} add={trySubmit} />
 		</>
 	);
 }
 
-function ModalFooter(props: { add?: () => void } & ClosableProps & LocalizableProps): JSX.Element {
-	const l = getLocalization(props, locales);
+function ModalFooter(props: { add?: () => void } & ClosableProps): JSX.Element {
+	const l = useLocalization(locales);
 
 	return (
 		<div className="ModalFooter">

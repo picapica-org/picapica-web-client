@@ -1,16 +1,17 @@
 import React from "react";
 import { Link } from "gatsby";
-import { getLocalization, Locales, LocalizableProps, SimpleString } from "../lib/localization";
+import { Locales, SimpleString } from "../lib/localization";
+import { useLocalization } from "../lib/use-localization";
 import { Buttons } from "./buttons";
 import { PicaIcon } from "./icon";
 import "./step-buttons.scss";
 
-export interface StepButtonProps extends LocalizableProps {
+export interface StepButtonProps {
 	to: string;
 }
 
 export function NextButton(props: StepButtonProps): JSX.Element {
-	const l = getLocalization(props, locales);
+	const l = useLocalization(locales);
 	const title = l.next;
 
 	return (
@@ -22,7 +23,7 @@ export function NextButton(props: StepButtonProps): JSX.Element {
 }
 
 export function BackButton(props: StepButtonProps): JSX.Element {
-	const l = getLocalization(props, locales);
+	const l = useLocalization(locales);
 	const title = l.back;
 
 	return (
@@ -34,7 +35,7 @@ export function BackButton(props: StepButtonProps): JSX.Element {
 }
 
 export function StartButton(props: StepButtonProps): JSX.Element {
-	const l = getLocalization(props, locales);
+	const l = useLocalization(locales);
 	const title = l.start;
 
 	return (

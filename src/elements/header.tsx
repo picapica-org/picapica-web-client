@@ -1,5 +1,6 @@
 import React from "react";
-import { getLocalization, Locales, LocalizableProps } from "../lib/localization";
+import { Locales } from "../lib/localization";
+import { useLocalization } from "../lib/use-localization";
 import { Link } from "gatsby";
 import { NewAnalysis } from "./new-analysis";
 import logoDark from "../../assets/images/picapica3-logo2-rgb-dark.min.svg";
@@ -7,20 +8,20 @@ import logoWhite from "../../assets/images/picapica3-logo2-rgb-white.min.svg";
 import { toIndex } from "../lib/page-links";
 import "./header.scss";
 
-export function SmallHeader(props: LocalizableProps): JSX.Element {
+export function SmallHeader(): JSX.Element {
 	return (
 		<div className="SmallHeader">
 			<Link to={toIndex}>
 				<img src={logoDark} alt="Picapica Logo" />
 			</Link>
 
-			<NewAnalysis {...props} />
+			<NewAnalysis />
 		</div>
 	);
 }
 
-export function BigHeader(props: LocalizableProps): JSX.Element {
-	const l = getLocalization(props, locales);
+export function BigHeader(): JSX.Element {
+	const l = useLocalization(locales);
 
 	return (
 		<div className="BigHeader">

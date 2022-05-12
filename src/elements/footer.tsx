@@ -1,11 +1,12 @@
 import { Link } from "gatsby";
-import React from "react";
-import { getLocalization, Locales, LocalizableProps, setCurrentLang, SupportedLanguage } from "../lib/localization";
+import React, { useContext } from "react";
+import { Locales, SupportedLanguage } from "../lib/localization";
+import { LocalizationContext, useLocalization } from "../lib/use-localization";
 import { toHelp, toLegal, toPoster } from "../lib/page-links";
 import "./footer.scss";
 
-export function Footer(props: LocalizableProps): JSX.Element {
-	const l = getLocalization(props, locales);
+export function Footer(): JSX.Element {
+	const l = useLocalization(locales);
 
 	return (
 		<div className="Footer">
@@ -59,13 +60,9 @@ export function Footer(props: LocalizableProps): JSX.Element {
 				</div>
 				<div id="language-section">
 					<span className="pipe">|</span>
-					<LangSelect lang={props.lang} thisLang="de">
-						Deutsch
-					</LangSelect>
+					<LangSelect thisLang="de">Deutsch</LangSelect>
 					<Bullet />
-					<LangSelect lang={props.lang} thisLang="en">
-						English
-					</LangSelect>
+					<LangSelect thisLang="en">English</LangSelect>
 				</div>
 			</div>
 
@@ -74,18 +71,17 @@ export function Footer(props: LocalizableProps): JSX.Element {
 	);
 }
 
-function LangSelect(props: { lang: string; thisLang: SupportedLanguage; children: React.ReactNode }): JSX.Element {
-	const { lang, thisLang } = props;
+function LangSelect({ thisLang, children }: React.PropsWithChildren<{ thisLang: SupportedLanguage }>): JSX.Element {
+	const { lang, setLang } = useContext(LocalizationContext);
 
 	const className = lang === thisLang ? "current-lang" : "";
 	const clickHandler = (): void => {
-		setCurrentLang(thisLang);
-		window.location.reload();
+		setLang(thisLang);
 	};
 
 	return (
 		<button className={className} onClick={clickHandler}>
-			{props.children}
+			{children}
 		</button>
 	);
 }

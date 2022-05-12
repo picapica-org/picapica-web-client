@@ -1,7 +1,7 @@
 export const supportedLanguages: ReadonlySet<string> = new Set(["en", "de"]);
 export type SupportedLanguage = "en" | "de";
 
-export interface LocalizableProps {
+export interface LocalizableOptions {
 	readonly lang: SupportedLanguage;
 }
 
@@ -9,7 +9,7 @@ export type Locales<T> = { [K in SupportedLanguage]: T };
 export type SimpleString<Keys extends string> = Record<Keys, string>;
 export type SimpleElement<Keys extends string> = Record<Keys, () => JSX.Element>;
 
-export function getLocalization<T>(props: LocalizableProps, locales: Locales<T>): Readonly<T> {
+export function getLocalization<T>(props: LocalizableOptions, locales: Locales<T>): Readonly<T> {
 	return locales[props.lang];
 }
 
@@ -49,6 +49,6 @@ const intlLocales: Record<SupportedLanguage, string> = {
 	de: "de-DE",
 };
 
-export function getIntlLocales(props: LocalizableProps): string | string[] {
+export function getIntlLocales(props: LocalizableOptions): string | string[] {
 	return intlLocales[props.lang];
 }

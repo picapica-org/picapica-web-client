@@ -1,6 +1,7 @@
 import React from "react";
 import { Collection } from "../lib/generated/v1/types_pb";
-import { getLocalization, Locales, LocalizableProps, SimpleString } from "../lib/localization";
+import { Locales, SimpleString } from "../lib/localization";
+import { useLocalization } from "../lib/use-localization";
 import { PicapicaCollectionUrn, PicapicaUrn } from "../lib/session/urn";
 import { DeepReadonly } from "../lib/util";
 import { PicaIcon, PicaIconKind } from "./icon";
@@ -20,8 +21,8 @@ export function Label(props: LabelProps): JSX.Element {
 	);
 }
 
-export function SubmittedFilesLabel(props: LocalizableProps): JSX.Element {
-	const l = getLocalization(props, locales);
+export function SubmittedFilesLabel(): JSX.Element {
+	const l = useLocalization(locales);
 	return <Label icon="upload" text={l.submittedFiles} />;
 }
 
@@ -34,13 +35,9 @@ export type CollectionProps =
 			readonly collection: DeepReadonly<Collection.AsObject>;
 	  };
 
-export function CollectionLabel(props: CollectionProps & LocalizableProps): JSX.Element {
+export function CollectionLabel(props: CollectionProps): JSX.Element {
 	if ("collection" in props) {
-		return getCollectionLabel(
-			PicapicaUrn.parse(props.collection.urn) as PicapicaCollectionUrn,
-			props.collection,
-			props
-		);
+		return getCollectionLabel(PicapicaUrn.parse(props.collection.urn) as PicapicaCollectionUrn, props.collection);
 	} else {
 		let urn: PicapicaCollectionUrn;
 		let urnString: string;
@@ -50,7 +47,7 @@ export function CollectionLabel(props: CollectionProps & LocalizableProps): JSX.
 				urn = parsed;
 				urnString = props.collectionUrn;
 			} else {
-				return <UnknownCollectionLabel lang={props.lang} />;
+				return <UnknownCollectionLabel />;
 			}
 		} else {
 			urn = props.collectionUrn;
@@ -59,17 +56,16 @@ export function CollectionLabel(props: CollectionProps & LocalizableProps): JSX.
 
 		const collection = props.collections?.find(c => c.urn === urnString);
 
-		return getCollectionLabel(urn, collection, props);
+		return getCollectionLabel(urn, collection);
 	}
 }
 function getCollectionLabel(
 	urn: PicapicaCollectionUrn,
-	collection: DeepReadonly<Collection.AsObject> | undefined,
-	props: LocalizableProps
+	collection: DeepReadonly<Collection.AsObject> | undefined
 ): JSX.Element {
-	const known = getKnownCollectionLabel(urn, props);
-	if (known) {
-		return known;
+	const Known = getKnownCollectionLabel(urn);
+	if (Known) {
+		return <Known />;
 	}
 
 	const name = collection?.properties?.name;
@@ -77,17 +73,18 @@ function getCollectionLabel(
 		return <Label text={name} />;
 	}
 
-	return <UnknownCollectionLabel {...props} />;
+	return <UnknownCollectionLabel />;
 }
-function getKnownCollectionLabel(urn: PicapicaCollectionUrn, props: LocalizableProps): JSX.Element | undefined {
-	const l = getLocalization(props, locales);
-
+function getKnownCollectionLabel(urn: PicapicaCollectionUrn): (() => JSX.Element) | undefined {
 	if (urn.collectionId.startsWith("wikipedia")) {
-		return <Label text={l.wikipedia} />;
+		return () => {
+			const l = useLocalization(locales);
+			return <Label text={l.wikipedia} />;
+		};
 	}
 }
-function UnknownCollectionLabel(props: LocalizableProps): JSX.Element {
-	const l = getLocalization(props, locales);
+function UnknownCollectionLabel(): JSX.Element {
+	const l = useLocalization(locales);
 	return <Label text={l.unknown} />;
 }
 

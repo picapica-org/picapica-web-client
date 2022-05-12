@@ -1,5 +1,4 @@
 import React from "react";
-import { LocalizableProps } from "../lib/localization";
 import { Footer } from "./footer";
 import { BigHeader, SmallHeader } from "./header";
 import { DropzoneRootProps, DropzoneState } from "react-dropzone";
@@ -14,7 +13,7 @@ const HEADER_MAP: Record<HeaderType, typeof SmallHeader | typeof BigHeader> = {
 	small: SmallHeader,
 };
 
-export interface Props extends LocalizableProps {
+export interface Props {
 	header: HeaderType;
 	className: string;
 	dropState?: DropzoneState;
@@ -30,12 +29,12 @@ export function Page(props: Props): JSX.Element {
 		<div {...getRootProps({ id: "Page", className: props.header + "-header", tabIndex: -1 })}>
 			{props.dropState && <input {...props.dropState.getInputProps()} />}
 
-			<Header lang={props.lang} />
+			<Header />
 			<div id="content" className={props.className}>
 				{props.children}
 			</div>
 			<div className="footer-wrapper">
-				<Footer lang={props.lang} />
+				<Footer />
 			</div>
 		</div>
 	);

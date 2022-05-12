@@ -3,7 +3,6 @@ import { Helmet } from "react-helmet";
 import { Page } from "../elements/page";
 import { SharedHead } from "../elements/shared-header";
 import { Item } from "../lib/generated/v1/types_pb";
-import { getCurrentLang, LocalizableProps } from "../lib/localization";
 import { dynamic } from "../lib/react-util";
 import { DeepRequired } from "../lib/util";
 import { AlignmentView } from "../elements/alignment-view";
@@ -13,7 +12,7 @@ export default function TestPage(): JSX.Element {
 	return (
 		<>
 			{dynamic(() => (
-				<Test lang={getCurrentLang()} />
+				<Test />
 			))}
 			<SharedHead />
 			<Helmet>
@@ -23,7 +22,7 @@ export default function TestPage(): JSX.Element {
 	);
 }
 
-function Test(props: LocalizableProps): JSX.Element {
+function Test(): JSX.Element {
 	const foo: DeepRequired<Item.Resource.AsObject> = {
 		itemUrn: "asdasdasd",
 		type: 3,
@@ -32,8 +31,8 @@ function Test(props: LocalizableProps): JSX.Element {
 		textProperties: { checksum: "", length: 4 },
 	};
 	return (
-		<Page {...props} className="Test" header="small">
-			<AlignmentView {...props} alignmentKey="fake-key" left={testA} right={testB} />
+		<Page className="Test" header="small">
+			<AlignmentView alignmentKey="fake-key" left={testA} right={testB} />
 			{foo.itemUrn}
 		</Page>
 	);

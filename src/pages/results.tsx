@@ -2,7 +2,8 @@ import React from "react";
 import { Helmet } from "react-helmet";
 import { Page } from "../elements/page";
 import { SharedHead } from "../elements/shared-header";
-import { getCurrentLang, getLocalization, Locales, LocalizableProps, SimpleString } from "../lib/localization";
+import { Locales, SimpleString } from "../lib/localization";
+import { useLocalization } from "../lib/use-localization";
 import { dynamic } from "../lib/react-util";
 import { getLinkToStep } from "../elements/step-selector";
 import { SessionState } from "../elements/session-creating-loading";
@@ -21,7 +22,7 @@ export default function ResultsPage(): JSX.Element {
 	return (
 		<>
 			{dynamic(() => (
-				<Results lang={getCurrentLang()} />
+				<Results />
 			))}
 			<SharedHead />
 			<Helmet>
@@ -31,8 +32,8 @@ export default function ResultsPage(): JSX.Element {
 	);
 }
 
-function Results(props: LocalizableProps): JSX.Element {
-	const l = getLocalization(props, locales);
+function Results(): JSX.Element {
+	const l = useLocalization(locales);
 
 	const [state, update] = useLoadSession();
 
@@ -51,7 +52,6 @@ function Results(props: LocalizableProps): JSX.Element {
 		const current: JSX.Element = visitType(view, {
 			overview: () => (
 				<ResultsOverview
-					{...props}
 					session={session}
 					collections={collections}
 					backTo={getLinkToStep("analysis", session.urn)}
@@ -61,7 +61,6 @@ function Results(props: LocalizableProps): JSX.Element {
 			),
 			items: () => (
 				<ItemResultsOverview
-					{...props}
 					session={session}
 					backTo={getLinkToView(session.urn, VIEW_OVERVIEW)}
 					resultTo={getLinkToResult}
@@ -69,7 +68,6 @@ function Results(props: LocalizableProps): JSX.Element {
 			),
 			collection: ({ collectionUrn }) => (
 				<CollectionResultsOverview
-					{...props}
 					collectionUrn={collectionUrn}
 					session={session}
 					collections={collections}
@@ -93,8 +91,8 @@ function Results(props: LocalizableProps): JSX.Element {
 	};
 
 	return (
-		<Page {...props} className="Results" header="small">
-			<SessionState {...props} state={state} onReady={onReady} />
+		<Page className="Results" header="small">
+			<SessionState state={state} onReady={onReady} />
 		</Page>
 	);
 }

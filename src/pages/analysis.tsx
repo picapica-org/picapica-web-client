@@ -2,7 +2,8 @@ import React, { useCallback, useMemo } from "react";
 import { Helmet } from "react-helmet";
 import { Page } from "../elements/page";
 import { SharedHead } from "../elements/shared-header";
-import { getCurrentLang, getLocalization, Locales, LocalizableProps, SimpleString } from "../lib/localization";
+import { Locales, SimpleString } from "../lib/localization";
+import { useLocalization } from "../lib/use-localization";
 import { dynamic } from "../lib/react-util";
 import { getLinkToStep, StepSelectorGroup } from "../elements/step-selector";
 import { StepActionBar } from "../elements/step-action-bar";
@@ -24,7 +25,7 @@ export default function AnalysisPage(): JSX.Element {
 	return (
 		<>
 			{dynamic(() => (
-				<Analysis lang={getCurrentLang()} />
+				<Analysis />
 			))}
 			<SharedHead />
 			<Helmet>
@@ -34,8 +35,8 @@ export default function AnalysisPage(): JSX.Element {
 	);
 }
 
-function Analysis(props: LocalizableProps): JSX.Element {
-	const l = getLocalization(props, locales);
+function Analysis(): JSX.Element {
+	const l = useLocalization(locales);
 
 	const [state, update] = useLoadSession();
 
@@ -64,14 +65,13 @@ function Analysis(props: LocalizableProps): JSX.Element {
 	const onReady = ({ session }: Ready): JSX.Element => (
 		<>
 			<StepActionBar
-				left={<BackButton {...props} to={getLinkToStep("submit", session.urn)} />}
-				right={<StartButton {...props} to={getLinkToStep("results", session.urn)} />}
+				left={<BackButton to={getLinkToStep("submit", session.urn)} />}
+				right={<StartButton to={getLinkToStep("results", session.urn)} />}
 				instruction={l.instruction}
 			/>
 
-			<ItemConfig {...props} session={session} config={config} update={updateConfig} />
+			<ItemConfig session={session} config={config} update={updateConfig} />
 			<CollectionConfig
-				{...props}
 				session={session}
 				config={config}
 				update={updateConfig}
@@ -80,30 +80,30 @@ function Analysis(props: LocalizableProps): JSX.Element {
 			/>
 
 			<StepActionBar
-				left={<BackButton {...props} to={getLinkToStep("submit", session.urn)} />}
-				right={<StartButton {...props} to={getLinkToStep("results", session.urn)} />}
+				left={<BackButton to={getLinkToStep("submit", session.urn)} />}
+				right={<StartButton to={getLinkToStep("results", session.urn)} />}
 				instruction={""}
 			/>
 		</>
 	);
 
 	return (
-		<Page {...props} className="Analysis" header="small">
-			<StepSelectorGroup {...props} sessionUrn={getSessionUrn(state)} current="analysis">
-				<SessionState {...props} state={state} onReady={onReady} />
+		<Page className="Analysis" header="small">
+			<StepSelectorGroup sessionUrn={getSessionUrn(state)} current="analysis">
+				<SessionState state={state} onReady={onReady} />
 			</StepSelectorGroup>
 		</Page>
 	);
 }
 
-interface ItemConfigProps extends LocalizableProps {
+interface ItemConfigProps {
 	session: DeepReadonly<Session.AsObject>;
 	config: AnalysisConfig;
 	update: (config: AnalysisConfig) => void;
 }
 
 function ItemConfig(props: ItemConfigProps): JSX.Element {
-	const l = getLocalization(props, locales);
+	const l = useLocalization(locales);
 
 	const allUrns: ItemUrn[] = props.session.itemsList.map(i => i.urn);
 	const allA = allUrns.every(urn => props.config.groupA.has(urn));
@@ -142,7 +142,7 @@ function ItemConfig(props: ItemConfigProps): JSX.Element {
 		<div className="ItemConfig">
 			<div className="heading">
 				<span className="title">
-					<SubmittedFilesLabel lang={props.lang} />
+					<SubmittedFilesLabel />
 				</span>
 				<span className="buttons">
 					<span className={Buttons.BUTTON_GROUP}>
@@ -196,7 +196,7 @@ function ItemConfig(props: ItemConfigProps): JSX.Element {
 	);
 }
 
-interface CollectionConfigProps extends LocalizableProps {
+interface CollectionConfigProps {
 	session: DeepReadonly<Session.AsObject>;
 	config: AnalysisConfig;
 	collection: CollectionUrn;
@@ -205,7 +205,7 @@ interface CollectionConfigProps extends LocalizableProps {
 }
 
 function CollectionConfig(props: CollectionConfigProps): JSX.Element {
-	const l = getLocalization(props, locales);
+	const l = useLocalization(locales);
 
 	const set = props.config.collections.get(props.collection) ?? EMPTY_SET;
 
@@ -232,7 +232,7 @@ function CollectionConfig(props: CollectionConfigProps): JSX.Element {
 		<div className="CollectionConfig">
 			<div className="heading">
 				<span className="title">
-					<CollectionLabel lang={props.lang} collectionUrn={props.collection} />
+					<CollectionLabel collectionUrn={props.collection} />
 				</span>
 				<span className="buttons">
 					<span className={Buttons.BUTTON_GROUP}>

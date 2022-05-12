@@ -1,16 +1,17 @@
 import React from "react";
 import { Link } from "gatsby";
-import { getLocalization, Locales, LocalizableProps, SimpleString } from "../lib/localization";
+import { Locales, SimpleString } from "../lib/localization";
+import { useLocalization } from "../lib/use-localization";
 import { Creating, Loading, Ready, State, visitState } from "../lib/use-session";
 import { toSubmit } from "../lib/page-links";
 import "./session-creating-loading.scss";
 
-export interface SessionCreatingProps extends LocalizableProps {
+export interface SessionCreatingProps {
 	readonly state: Creating;
 }
 
 export function SessionCreating(props: SessionCreatingProps): JSX.Element {
-	const l = getLocalization(props, locales);
+	const l = useLocalization(locales);
 
 	return (
 		<div className="SessionCreating">
@@ -27,12 +28,12 @@ export function SessionCreating(props: SessionCreatingProps): JSX.Element {
 	);
 }
 
-export interface SessionLoadingProps extends LocalizableProps {
+export interface SessionLoadingProps {
 	readonly state: Loading;
 }
 
 export function SessionLoading(props: SessionLoadingProps): JSX.Element {
-	const l = getLocalization(props, locales);
+	const l = useLocalization(locales);
 
 	return (
 		<div className="SessionLoading">
@@ -50,7 +51,7 @@ export function SessionLoading(props: SessionLoadingProps): JSX.Element {
 	);
 }
 
-export interface SessionStateProps extends LocalizableProps {
+export interface SessionStateProps {
 	readonly state: State;
 	readonly onReady: (state: Ready) => JSX.Element;
 }
@@ -58,10 +59,10 @@ export interface SessionStateProps extends LocalizableProps {
 export function SessionState(props: SessionStateProps): JSX.Element {
 	return visitState(props.state, {
 		Creating(state) {
-			return <SessionCreating lang={props.lang} state={state} />;
+			return <SessionCreating state={state} />;
 		},
 		Loading(state) {
-			return <SessionLoading lang={props.lang} state={state} />;
+			return <SessionLoading state={state} />;
 		},
 		Ready(state) {
 			return props.onReady(state);

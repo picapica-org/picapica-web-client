@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Helmet } from "react-helmet";
 import { Page } from "../elements/page";
 import { SharedHead } from "../elements/shared-header";
-import { getCurrentLang, LocalizableProps, SupportedLanguage } from "../lib/localization";
+import { SupportedLanguage } from "../lib/localization";
+import { LocalizationContext } from "../lib/use-localization";
 import { dynamic } from "../lib/react-util";
 import PosterDe from "../../assets/images/poster-de.inline.svg";
 import PosterEn from "../../assets/images/poster-en.inline.svg";
@@ -12,7 +13,7 @@ export default function PosterPage(): JSX.Element {
 	return (
 		<>
 			{dynamic(() => (
-				<Poster lang={getCurrentLang()} />
+				<Poster />
 			))}
 			<SharedHead />
 			<Helmet>
@@ -27,11 +28,12 @@ const POSTERS: Record<SupportedLanguage, () => JSX.Element> = {
 	de: PosterDe,
 };
 
-function Poster(props: LocalizableProps): JSX.Element {
-	const Poster = POSTERS[props.lang];
+function Poster(): JSX.Element {
+	const { lang } = useContext(LocalizationContext);
+	const Poster = POSTERS[lang];
 
 	return (
-		<Page {...props} className="Poster" header="big">
+		<Page className="Poster" header="big">
 			<Poster />
 		</Page>
 	);

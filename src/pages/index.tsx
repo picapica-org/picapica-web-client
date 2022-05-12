@@ -4,7 +4,8 @@ import { Helmet } from "react-helmet";
 import { Page } from "../elements/page";
 import { NewAnalysis } from "../elements/new-analysis";
 import { SharedHead } from "../elements/shared-header";
-import { getCurrentLang, getLocalization, Locales, LocalizableProps } from "../lib/localization";
+import { Locales } from "../lib/localization";
+import { useLocalization } from "../lib/use-localization";
 import { dynamic } from "../lib/react-util";
 import { toPoster } from "../lib/page-links";
 import "./index.scss";
@@ -13,7 +14,7 @@ export default function HomePage(): JSX.Element {
 	return (
 		<>
 			{dynamic(() => (
-				<Home lang={getCurrentLang()} />
+				<Home />
 			))}
 			<SharedHead />
 			<Helmet>
@@ -32,13 +33,13 @@ export default function HomePage(): JSX.Element {
 	);
 }
 
-function Home(props: LocalizableProps): JSX.Element {
-	const l = getLocalization(props, locales);
+function Home(): JSX.Element {
+	const l = useLocalization(locales);
 
 	return (
-		<Page {...props} className="Home" header="big">
+		<Page className="Home" header="big">
 			<div className="new-analysis-container">
-				<NewAnalysis {...props} />
+				<NewAnalysis />
 			</div>
 
 			<div className="features">

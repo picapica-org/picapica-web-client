@@ -1,22 +1,24 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useContext } from "react";
 import { ItemTypeIcon, PicaIcon } from "../elements/icon";
 import { UseSessionArray } from "../lib/use-session";
 import { getSessionClient } from "../lib/session/client";
 import { Session } from "../lib/generated/v1/services_pb";
 import { Item } from "../lib/generated/v1/types_pb";
-import { getIntlLocales, getLocalization, Locales, LocalizableProps, SimpleString } from "../lib/localization";
+import { getIntlLocales, Locales, LocalizableOptions, SimpleString } from "../lib/localization";
+import { LocalizationContext, useLocalization } from "../lib/use-localization";
 import { DeepReadonly, noop } from "../lib/util";
 import { Buttons } from "../elements/buttons";
 import { EditInput } from "../elements/edit-input";
 import { deleteItemAction, updateItemAction } from "../lib/session/actions";
 import "./item-table.scss";
 
-export interface ItemTableProps extends LocalizableProps {
+export interface ItemTableProps {
 	readonly session: DeepReadonly<Session.AsObject>;
 	readonly update: UseSessionArray[1];
 }
 export function ItemTable(props: ItemTableProps): JSX.Element {
-	const l = getLocalization(props, locales);
+	const localizationOptions = useContext(LocalizationContext);
+	const l = useLocalization(locales);
 
 	function deleteItem(item: Item.AsObject): void {
 		const { mutate, request } = deleteItemAction(props.session, item.urn);
@@ -84,7 +86,6 @@ export function ItemTable(props: ItemTableProps): JSX.Element {
 							</td>
 							<td className="name">
 								<EditInput
-									lang={props.lang}
 									text={item.meta?.name ?? ""}
 									onSubmit={newName => renameItem(item, newName)}
 									validate={validateItemName}
@@ -92,7 +93,7 @@ export function ItemTable(props: ItemTableProps): JSX.Element {
 							</td>
 							<td className="size">
 								<span className="size">
-									{formatBytes(item.resource?.rawProperties?.size ?? 0, props)}
+									{formatBytes(item.resource?.rawProperties?.size ?? 0, localizationOptions)}
 								</span>
 							</td>
 							<td className="action">
@@ -118,7 +119,7 @@ export function ItemTable(props: ItemTableProps): JSX.Element {
 	);
 }
 
-function formatBytes(bytes: number, props: LocalizableProps): string {
+function formatBytes(bytes: number, props: LocalizableOptions): string {
 	let unit;
 	if (bytes < 100) {
 		unit = "byte";

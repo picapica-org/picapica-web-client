@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "gatsby";
-import { getLocalization, Locales, LocalizableProps, SimpleString } from "../lib/localization";
+import { Locales, SimpleString } from "../lib/localization";
+import { useLocalization } from "../lib/use-localization";
 import { DeepReadonly } from "../lib/util";
 import { Session } from "../lib/generated/v1/services_pb";
 import { Collection, Result } from "../lib/generated/v1/types_pb";
@@ -14,13 +15,13 @@ import { PicapicaUrn } from "../lib/session/urn";
 import { CenterAlignTwo } from "./center-align-two";
 import "./results-overview.scss";
 
-export interface OverviewContainerProps extends LocalizableProps {
+export interface OverviewContainerProps {
 	readonly backTo?: string;
 	readonly title: React.ReactNode;
 }
 
 export function OverviewContainer(props: React.PropsWithChildren<OverviewContainerProps>): JSX.Element {
-	const l = getLocalization(props, locales);
+	const l = useLocalization(locales);
 
 	return (
 		<div className="OverviewContainer">
@@ -37,7 +38,7 @@ export function OverviewContainer(props: React.PropsWithChildren<OverviewContain
 	);
 }
 
-export interface ResultsOverviewProps extends LocalizableProps {
+export interface ResultsOverviewProps {
 	readonly session: DeepReadonly<Session.AsObject>;
 	readonly collections?: DeepReadonly<Collection.AsObject[]>;
 	readonly backTo: string;
@@ -46,7 +47,7 @@ export interface ResultsOverviewProps extends LocalizableProps {
 }
 
 export function ResultsOverview(props: ResultsOverviewProps): JSX.Element {
-	const l = getLocalization(props, locales);
+	const l = useLocalization(locales);
 
 	const categories = categorizeResults(props.session.resultsList);
 
@@ -67,12 +68,12 @@ export function ResultsOverview(props: ResultsOverviewProps): JSX.Element {
 
 	return (
 		<div className="ResultsOverview">
-			<OverviewContainer lang={props.lang} backTo={props.backTo} title={title}>
+			<OverviewContainer backTo={props.backTo} title={title}>
 				<div>
 					<Link className={Buttons.BUTTON} to={props.itemTo}>
 						<CenterAlignTwo
 							grow="left"
-							left={<SubmittedFilesLabel lang={props.lang} />}
+							left={<SubmittedFilesLabel />}
 							right={
 								<Badge kind="Light">
 									{running && <LoaderAnimation />}
@@ -88,13 +89,7 @@ export function ResultsOverview(props: ResultsOverviewProps): JSX.Element {
 							<Link className={Buttons.BUTTON} to={props.collectionTo(urn)}>
 								<CenterAlignTwo
 									grow="left"
-									left={
-										<CollectionLabel
-											lang={props.lang}
-											collectionUrn={urn}
-											collections={props.collections}
-										/>
-									}
+									left={<CollectionLabel collectionUrn={urn} collections={props.collections} />}
 									right={<Badge kind="Light">{results.length}</Badge>}
 								/>
 							</Link>
@@ -106,31 +101,27 @@ export function ResultsOverview(props: ResultsOverviewProps): JSX.Element {
 	);
 }
 
-export interface ItemResultsOverviewProps extends LocalizableProps {
+export interface ItemResultsOverviewProps {
 	readonly session: DeepReadonly<Session.AsObject>;
 	readonly backTo: string;
 	readonly resultTo: (result: DeepReadonly<Result.AsObject>) => string;
 }
 
 export function ItemResultsOverview(props: ItemResultsOverviewProps): JSX.Element {
-	const l = getLocalization(props, locales);
+	const l = useLocalization(locales);
 
 	const { status } = props.session;
 	const { items } = categorizeResults(props.session.resultsList);
 
 	const title = (
-		<CenterAlignTwo
-			grow="left"
-			left={<SubmittedFilesLabel lang={props.lang} />}
-			right={<Badge kind="Dark">{l.matches}</Badge>}
-		/>
+		<CenterAlignTwo grow="left" left={<SubmittedFilesLabel />} right={<Badge kind="Dark">{l.matches}</Badge>} />
 	);
 
 	const itemNameMap = new Map(props.session.itemsList.map(item => [item.urn, item.meta?.name]));
 
 	return (
 		<div className="ItemResultsOverview">
-			<OverviewContainer lang={props.lang} backTo={props.backTo} title={title}>
+			<OverviewContainer backTo={props.backTo} title={title}>
 				{items.map(({ result }) => {
 					const leftName = itemNameMap.get(result.resources?.urnA ?? "") ?? l.unknownItem;
 					const rightName = itemNameMap.get(result.resources?.urnB ?? "") ?? l.unknownItem;
@@ -166,7 +157,7 @@ export function ItemResultsOverview(props: ItemResultsOverviewProps): JSX.Elemen
 	);
 }
 
-export interface CollectionResultsOverviewProps extends LocalizableProps {
+export interface CollectionResultsOverviewProps {
 	readonly collectionUrn: string;
 	readonly session: DeepReadonly<Session.AsObject>;
 	readonly collections?: DeepReadonly<Collection.AsObject[]>;
@@ -175,7 +166,7 @@ export interface CollectionResultsOverviewProps extends LocalizableProps {
 }
 
 export function CollectionResultsOverview(props: CollectionResultsOverviewProps): JSX.Element {
-	const l = getLocalization(props, locales);
+	const l = useLocalization(locales);
 
 	const { status } = props.session;
 	const results = categorizeResults(props.session.resultsList).collections.get(props.collectionUrn) ?? [];
@@ -183,13 +174,7 @@ export function CollectionResultsOverview(props: CollectionResultsOverviewProps)
 	const title = (
 		<CenterAlignTwo
 			grow="left"
-			left={
-				<CollectionLabel
-					lang={props.lang}
-					collectionUrn={props.collectionUrn}
-					collections={props.collections}
-				/>
-			}
+			left={<CollectionLabel collectionUrn={props.collectionUrn} collections={props.collections} />}
 			right={<Badge kind="Dark">{l.matches}</Badge>}
 		/>
 	);
@@ -198,7 +183,7 @@ export function CollectionResultsOverview(props: CollectionResultsOverviewProps)
 
 	return (
 		<div className="CollectionResultsOverview">
-			<OverviewContainer lang={props.lang} backTo={props.backTo} title={title}>
+			<OverviewContainer backTo={props.backTo} title={title}>
 				{results.map(({ item, document, result }) => {
 					const itemName = itemNameMap.get(PicapicaUrn.stringify(item)) ?? l.unknownItem;
 					const documentName = document.documentId;

@@ -4,7 +4,8 @@ import { Page } from "../elements/page";
 import { SessionState } from "../elements/session-creating-loading";
 import { SharedHead } from "../elements/shared-header";
 import { OverviewContainer } from "../elements/results-overview";
-import { getCurrentLang, getLocalization, Locales, LocalizableProps, SimpleString } from "../lib/localization";
+import { Locales, SimpleString } from "../lib/localization";
+import { useLocalization } from "../lib/use-localization";
 import { toResults } from "../lib/page-links";
 import { dynamic } from "../lib/react-util";
 import { getLocationSearchParams } from "../lib/url-params";
@@ -23,7 +24,7 @@ export default function ResultPage(): JSX.Element {
 	return (
 		<>
 			{dynamic(() => (
-				<Result lang={getCurrentLang()} />
+				<Result />
 			))}
 			<SharedHead />
 			<Helmet>
@@ -33,8 +34,8 @@ export default function ResultPage(): JSX.Element {
 	);
 }
 
-function Result(props: LocalizableProps): JSX.Element {
-	const l = getLocalization(props, locales);
+function Result(): JSX.Element {
+	const l = useLocalization(locales);
 
 	const [state] = useLoadSession();
 
@@ -44,14 +45,13 @@ function Result(props: LocalizableProps): JSX.Element {
 
 		return (
 			<OverviewContainer
-				{...props}
 				title="Text alignment"
 				backTo={toResults({
 					urn: session.urn,
 					view: getLocationSearchParams().get("view") ?? undefined,
 				})}>
 				{result ? (
-					<ResultView {...props} session={session} result={result} />
+					<ResultView session={session} result={result} />
 				) : (
 					<div className="invalid-result-error">
 						<p>{l.invalidUrn}</p>
@@ -62,19 +62,19 @@ function Result(props: LocalizableProps): JSX.Element {
 	};
 
 	return (
-		<Page {...props} className="Result" header="small">
-			<SessionState {...props} state={state} onReady={onReady} />
+		<Page className="Result" header="small">
+			<SessionState state={state} onReady={onReady} />
 		</Page>
 	);
 }
 
-interface ResultViewProps extends LocalizableProps {
+interface ResultViewProps {
 	readonly session: DeepReadonly<Session.AsObject>;
 	readonly result: DeepReadonly<types.Result.AsObject>;
 }
 
 function ResultView(props: ResultViewProps): JSX.Element {
-	const l = getLocalization(props, locales);
+	const l = useLocalization(locales);
 
 	// TODO: Error view. For now, I'll assume that all results have status=OK
 	// TODO: Account for missing items
@@ -88,7 +88,6 @@ function ResultView(props: ResultViewProps): JSX.Element {
 			{texts?.map((text, i) => {
 				return (
 					<ResultSeedView
-						lang={props.lang}
 						key={i}
 						alignmentKey={`${i}:${props.result.urn}`}
 						resources={resources}
@@ -117,13 +116,13 @@ function getResultResources(
 	return { left: a, right: b };
 }
 
-interface ResultSummaryProps extends LocalizableProps {
+interface ResultSummaryProps {
 	readonly session: DeepReadonly<Session.AsObject>;
 	readonly result: DeepReadonly<types.Result.AsObject>;
 	readonly resources: ResultResources;
 }
 function ResultSummary(props: ResultSummaryProps): JSX.Element {
-	const l = getLocalization(props, locales);
+	const l = useLocalization(locales);
 
 	const [texts] = useResultText(props.result);
 
@@ -149,12 +148,12 @@ function ResultSummary(props: ResultSummaryProps): JSX.Element {
 	);
 }
 
-interface ResultSeedViewProps extends LocalizableProps {
+interface ResultSeedViewProps {
 	readonly resources: ResultResources;
 	readonly text: SeedText;
 	readonly alignmentKey: string;
 }
-function ResultSeedView({ lang, resources, text, alignmentKey }: ResultSeedViewProps): JSX.Element {
+function ResultSeedView({ resources, text, alignmentKey }: ResultSeedViewProps): JSX.Element {
 	return (
 		<div className="ResultSeedView">
 			<div className="header">
@@ -166,7 +165,7 @@ function ResultSeedView({ lang, resources, text, alignmentKey }: ResultSeedViewP
 				</div>
 			</div>
 			<div className="alignment">
-				<AlignmentView lang={lang} alignmentKey={alignmentKey} left={text.a.text} right={text.b.text} />
+				<AlignmentView alignmentKey={alignmentKey} left={text.a.text} right={text.b.text} />
 			</div>
 		</div>
 	);

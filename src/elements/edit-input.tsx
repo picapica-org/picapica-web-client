@@ -1,12 +1,11 @@
 import React, { useCallback, useRef, useState } from "react";
-import { LocalizableProps } from "../lib/localization";
 import { Buttons } from "./buttons";
 import { Icon, PicaIcon } from "./icon";
 import Popup from "reactjs-popup";
 import { PopupActions } from "reactjs-popup/dist/types";
 import "./edit-input.scss";
 
-export interface EditInputProps extends LocalizableProps {
+export interface EditInputProps {
 	readonly text: string;
 	readonly onSubmit: (newText: string) => void;
 	readonly validate?: (newText: string) => false | string;

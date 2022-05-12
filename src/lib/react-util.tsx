@@ -1,6 +1,7 @@
 import React, { DependencyList, useCallback, useEffect, useRef } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { CancellationController, CancellationToken } from "./cancellation";
+import { LocalizationProvider } from "./use-localization";
 
 const queryClient = new QueryClient();
 
@@ -9,7 +10,11 @@ export function dynamic(supplier: () => JSX.Element): JSX.Element {
 	if (isSSR) {
 		return <></>;
 	} else {
-		return <QueryClientProvider client={queryClient}>{supplier()}</QueryClientProvider>;
+		return (
+			<LocalizationProvider>
+				<QueryClientProvider client={queryClient}>{supplier()}</QueryClientProvider>
+			</LocalizationProvider>
+		);
 	}
 }
 

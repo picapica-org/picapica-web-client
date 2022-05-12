@@ -3,7 +3,8 @@ import { Helmet } from "react-helmet";
 import { H2 } from "../elements/headings";
 import { Page } from "../elements/page";
 import { SharedHead } from "../elements/shared-header";
-import { getCurrentLang, getLocalization, Locales, LocalizableProps } from "../lib/localization";
+import { Locales } from "../lib/localization";
+import { useLocalization } from "../lib/use-localization";
 import { dynamic } from "../lib/react-util";
 import "./legal.scss";
 
@@ -11,7 +12,7 @@ export default function LegalPage(): JSX.Element {
 	return (
 		<>
 			{dynamic(() => (
-				<Legal lang={getCurrentLang()} />
+				<Legal />
 			))}
 			<SharedHead />
 			<Helmet>
@@ -21,11 +22,11 @@ export default function LegalPage(): JSX.Element {
 	);
 }
 
-function Legal(props: LocalizableProps): JSX.Element {
-	const l = getLocalization(props, locales);
+function Legal(): JSX.Element {
+	const l = useLocalization(locales);
 
 	return (
-		<Page {...props} className="Legal" header="small">
+		<Page className="Legal" header="small">
 			<H2 id="publisher">{l.publisher}</H2>
 			{l.publisherContent()}
 
