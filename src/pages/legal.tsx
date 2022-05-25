@@ -203,7 +203,6 @@ const locales: Locales<{
 				<p>This website makes use of the following services:</p>
 				<ul>
 					<li>Picapica Search API</li>
-					<li>Google Analytics</li>
 				</ul>
 				<p>In what follows you will find our privacy policies concerning each of these services.</p>
 				<h4>Picapica Search API</h4>
@@ -225,36 +224,6 @@ const locales: Locales<{
 					accessed Picapica. In case your internet provider assigns dynamic IP addresses we also need the
 					exact time frames at which you have accessed Picapica. Please direct your request at the publisher
 					of this website.
-				</p>
-				<h4>Google Analytics</h4>
-				<p>
-					This website uses Google Analytics, a web usage analysis service by Google Inc. ("Google"). Google
-					Analytics uses so-called "Cookies" which are text files stored on your computer and which are used
-					to analyze your usage of this website. The information about your usage of this website stored
-					within a cookie are typically transferred to a computer within Google's US-based data centers. In
-					case IP anonymization is activated on this website your IP address is shortened on a server within
-					the European Union beforehand. On rare occasions the full IP address may be transferred to an
-					US-based Google server and be shortened there. On behalf of this website's publisher this
-					information will be used by Google to analyze your usage of this website, to generate reports about
-					your activities, and to render services related to analyzing your usage of this website to its
-					publisher. Your IP address will not be connected to other data about you known to Google. You can
-					disable the use of cookies in the preferences of your browser. As a result of that, however, it is
-					possible that you may not be able to access and use all services rendered by this website. Also, you
-					can prevent Google from collecting data about your usage of this website by downloading and
-					installing the browser plugin found under the following address:
-					http://tools.google.com/dlpage/gaoptout. You may demand information about or deletion of the
-					information about you. In such a case, please contact Google under the following address:
-				</p>
-				<p>
-					Privacy Matters
-					<br /> c/o Google Inc.
-					<br /> 1600 Amphitheatre Parkway
-					<br /> Mountain View, California, 94043
-					<br /> USA
-				</p>
-				<p>
-					More information can be found here:
-					<br /> <a href="http://www.google.com/intl/en/privacy">http://www.google.com/intl/en/privacy</a>
 				</p>
 			</>
 		),
@@ -414,7 +383,6 @@ const locales: Locales<{
 				<p>Diese Webseite verwendet die folgenden Dienste:</p>
 				<ul>
 					<li>Picapica Search API</li>
-					<li>Google Analytics</li>
 				</ul>
 				<p>Nachfolgend finden Sie eine Datenschutzerklärung für jeden dieser Dienste.</p>
 				<h4>Picapica Search API</h4>
@@ -439,45 +407,6 @@ const locales: Locales<{
 					benötigen wir Ihre IP-Adresse und, falls Ihr Internetanbieter Ihre IP-Adresse dynamisch vergibt, die
 					Zeitpunkte zu denen Sie unter Verwendung dieser IP-Adresse Anfragen an Picapica gerichtet haben.
 					Bitte richten Sie ihr Gesuch an die im Impressum dieser Seite genannte Adresse.
-				</p>
-				<h4>Google Analytics</h4>
-				<p>
-					Diese Webseite benutzt Google Analytics, einen Webanalysedienst der Google Inc. ("Google"). Google
-					Analytics verwendet sog. "Cookies", Textdateien, die auf Ihrem Computer gespeichert werden und die
-					eine Analyse der Benutzung der Webseite durch Sie ermöglichen. Die durch den Cookie erzeugten
-					Informationen über Ihre Benutzung dieser Webseite werden in der Regel an einen Server von Google in
-					den USA übertragen und dort gespeichert. Im Falle der Aktivierung der IP-Anonymisierung auf dieser
-					Webseite, wird Ihre IP-Adresse von Google jedoch innerhalb von Mitgliedstaaten der Europäischen
-					Union oder in anderen Vertragsstaaten des Abkommens über den Europäischen Wirtschaftsraum zuvor
-					gekürzt. Nur in Ausnahmefällen wird die volle IP-Adresse an einen Server von Google in den USA
-					übertragen und dort gekürzt. Im Auftrag des Betreibers dieser Webseite wird Google diese
-					Informationen benutzen, um Ihre Nutzung der Webseite auszuwerten, um Reports über die
-					Webseitenaktivitäten zusammenzustellen und um weitere mit der Webseitennutzung und der
-					Internetnutzung verbundene Dienstleistungen gegenüber dem Webseitenbetreiber zu erbringen. Die im
-					Rahmen von Google Analytics von Ihrem Browser übermittelte IP-Adresse wird nicht mit anderen Daten
-					von Google zusammengeführt. Sie können die Speicherung der Cookies durch eine entsprechende
-					Einstellung Ihrer Browser-Software verhindern; wir weisen Sie jedoch darauf hin, dass Sie in diesem
-					Fall gegebenenfalls nicht sämtliche Funktionen dieser Webseite vollumfänglich werden nutzen können.
-					Sie können darüber hinaus die Erfassung der durch das Cookie erzeugten und auf Ihre Nutzung der
-					Webseite bezogenen Daten (inkl. Ihrer IP-Adresse) an Google sowie die Verarbeitung dieser Daten
-					durch Google verhindern, indem sie das unter dem folgenden Addresse verfügbare Browser-Plugin
-					herunterladen und installieren: http://tools.google.com/dlpage/gaoptout?hl=de. Sie können jederzeit
-					Auskunft über bzw. Löschung der über Sie gespeicherten Daten verlangen. Bitte richten Sie ein
-					solches Gesuch schriftlich an folgende Adresse:
-				</p>
-				<p>
-					Privacy Matters
-					<br /> c/o Google Inc.
-					<br /> 1600 Amphitheatre Parkway
-					<br /> Mountain View, California, 94043
-					<br /> USA
-				</p>
-				<p>
-					Weitere Information finden Sie hier:
-					<br />
-					<a href="http://www.google.com/intl/de/privacy/privacy.html">
-						http://www.google.com/intl/de/privacy/privacy.html
-					</a>
 				</p>
 			</>
 		),
