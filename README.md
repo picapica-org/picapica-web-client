@@ -27,12 +27,12 @@ For local testing, use this command to proxy a backend gRPC server of your choos
 
 Windows:
 ```powershell
-.\grpcwebproxy-v0.14.0-win64.exe --allow_all_origins --backend_addr=<backend domain>:<port> --backend_tls=false --run_tls_server=false
+.\grpcwebproxy-v0.14.0-win64.exe --allow_all_origins --backend_addr=<backend domain>:<port> --backend_tls=false --run_tls_server=false --backend_max_call_recv_msg_size=20971520
 ```
 
 Linux:
 ```bash
-./grpcwebproxy-v0.14.0-linux-x86_64 --allow_all_origins --backend_addr=<backend domain>:<port> --backend_tls=false --run_tls_server=false
+./grpcwebproxy-v0.14.0-linux-x86_64 --allow_all_origins --backend_addr=<backend domain>:<port> --backend_tls=false --run_tls_server=false--backend_max_call_recv_msg_size=20971520
 ```
 
 ## Build
