@@ -2,6 +2,28 @@ import * as jspb from 'google-protobuf'
 
 
 
+export class Timestamp extends jspb.Message {
+  getSeconds(): number;
+  setSeconds(value: number): Timestamp;
+
+  getNanos(): number;
+  setNanos(value: number): Timestamp;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): Timestamp.AsObject;
+  static toObject(includeInstance: boolean, msg: Timestamp): Timestamp.AsObject;
+  static serializeBinaryToWriter(message: Timestamp, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): Timestamp;
+  static deserializeBinaryFromReader(message: Timestamp, reader: jspb.BinaryReader): Timestamp;
+}
+
+export namespace Timestamp {
+  export type AsObject = {
+    seconds: number,
+    nanos: number,
+  }
+}
+
 export class Element extends jspb.Message {
   getSpan(): Span | undefined;
   setSpan(value?: Span): Element;
@@ -110,6 +132,11 @@ export class Result extends jspb.Message {
   getUrn(): string;
   setUrn(value: string): Result;
 
+  getCreatedAt(): Timestamp | undefined;
+  setCreatedAt(value?: Timestamp): Result;
+  hasCreatedAt(): boolean;
+  clearCreatedAt(): Result;
+
   getResources(): ResourcePair | undefined;
   setResources(value?: ResourcePair): Result;
   hasResources(): boolean;
@@ -134,6 +161,7 @@ export class Result extends jspb.Message {
 export namespace Result {
   export type AsObject = {
     urn: string,
+    createdAt?: Timestamp.AsObject,
     resources?: ResourcePair.AsObject,
     seedsList: Array<Seed.AsObject>,
     status: Result.ResultStatusCode,
@@ -223,6 +251,16 @@ export class Item extends jspb.Message {
   getUrn(): string;
   setUrn(value: string): Item;
 
+  getCreatedAt(): Timestamp | undefined;
+  setCreatedAt(value?: Timestamp): Item;
+  hasCreatedAt(): boolean;
+  clearCreatedAt(): Item;
+
+  getModifiedAt(): Timestamp | undefined;
+  setModifiedAt(value?: Timestamp): Item;
+  hasModifiedAt(): boolean;
+  clearModifiedAt(): Item;
+
   getMeta(): Item.Metadata | undefined;
   setMeta(value?: Item.Metadata): Item;
   hasMeta(): boolean;
@@ -244,6 +282,8 @@ export class Item extends jspb.Message {
 export namespace Item {
   export type AsObject = {
     urn: string,
+    createdAt?: Timestamp.AsObject,
+    modifiedAt?: Timestamp.AsObject,
     meta?: Item.Metadata.AsObject,
     resource?: Item.Resource.AsObject,
   }
@@ -362,6 +402,53 @@ export namespace Item {
       STATUS_RUNNING = 1,
       STATUS_COMPLETED = 2,
       STATUS_FAILED = 3,
+    }
+  }
+
+}
+
+export class Document extends jspb.Message {
+  getUrn(): string;
+  setUrn(value: string): Document;
+
+  getProperties(): Document.Properties | undefined;
+  setProperties(value?: Document.Properties): Document;
+  hasProperties(): boolean;
+  clearProperties(): Document;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): Document.AsObject;
+  static toObject(includeInstance: boolean, msg: Document): Document.AsObject;
+  static serializeBinaryToWriter(message: Document, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): Document;
+  static deserializeBinaryFromReader(message: Document, reader: jspb.BinaryReader): Document;
+}
+
+export namespace Document {
+  export type AsObject = {
+    urn: string,
+    properties?: Document.Properties.AsObject,
+  }
+
+  export class Properties extends jspb.Message {
+    getTitle(): string;
+    setTitle(value: string): Properties;
+
+    getSourceUrl(): string;
+    setSourceUrl(value: string): Properties;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): Properties.AsObject;
+    static toObject(includeInstance: boolean, msg: Properties): Properties.AsObject;
+    static serializeBinaryToWriter(message: Properties, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): Properties;
+    static deserializeBinaryFromReader(message: Properties, reader: jspb.BinaryReader): Properties;
+  }
+
+  export namespace Properties {
+    export type AsObject = {
+      title: string,
+      sourceUrl: string,
     }
   }
 

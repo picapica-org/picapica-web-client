@@ -318,6 +318,46 @@ export class RetrievalServiceClient {
     this.methodInfoGetText);
   }
 
+  methodInfoGetDocument = new grpcWeb.AbstractClientBase.MethodInfo(
+    v1_services_pb.GetDocumentResponse,
+    (request: v1_services_pb.GetDocumentRequest) => {
+      return request.serializeBinary();
+    },
+    v1_services_pb.GetDocumentResponse.deserializeBinary
+  );
+
+  getDocument(
+    request: v1_services_pb.GetDocumentRequest,
+    metadata: grpcWeb.Metadata | null): Promise<v1_services_pb.GetDocumentResponse>;
+
+  getDocument(
+    request: v1_services_pb.GetDocumentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.Error,
+               response: v1_services_pb.GetDocumentResponse) => void): grpcWeb.ClientReadableStream<v1_services_pb.GetDocumentResponse>;
+
+  getDocument(
+    request: v1_services_pb.GetDocumentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.Error,
+               response: v1_services_pb.GetDocumentResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/v1.RetrievalService/GetDocument',
+        request,
+        metadata || {},
+        this.methodInfoGetDocument,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/v1.RetrievalService/GetDocument',
+    request,
+    metadata || {},
+    this.methodInfoGetDocument);
+  }
+
   methodInfoGetCollections = new grpcWeb.AbstractClientBase.MethodInfo(
     v1_services_pb.GetCollectionsResponse,
     (request: v1_services_pb.GetCollectionsRequest) => {
@@ -1219,6 +1259,46 @@ export class SessionServiceClient {
     this.methodInfoGetText);
   }
 
+  methodInfoGetDocument = new grpcWeb.AbstractClientBase.MethodInfo(
+    v1_services_pb.GetDocumentResponse,
+    (request: v1_services_pb.GetDocumentRequest) => {
+      return request.serializeBinary();
+    },
+    v1_services_pb.GetDocumentResponse.deserializeBinary
+  );
+
+  getDocument(
+    request: v1_services_pb.GetDocumentRequest,
+    metadata: grpcWeb.Metadata | null): Promise<v1_services_pb.GetDocumentResponse>;
+
+  getDocument(
+    request: v1_services_pb.GetDocumentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.Error,
+               response: v1_services_pb.GetDocumentResponse) => void): grpcWeb.ClientReadableStream<v1_services_pb.GetDocumentResponse>;
+
+  getDocument(
+    request: v1_services_pb.GetDocumentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.Error,
+               response: v1_services_pb.GetDocumentResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/v1.SessionService/GetDocument',
+        request,
+        metadata || {},
+        this.methodInfoGetDocument,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/v1.SessionService/GetDocument',
+    request,
+    metadata || {},
+    this.methodInfoGetDocument);
+  }
+
 }
 
 export class ApiServiceClient {
@@ -1438,6 +1518,46 @@ export class ApiServiceClient {
     request,
     metadata || {},
     this.methodInfoGetText);
+  }
+
+  methodInfoGetDocument = new grpcWeb.AbstractClientBase.MethodInfo(
+    v1_services_pb.GetDocumentResponse,
+    (request: v1_services_pb.GetDocumentRequest) => {
+      return request.serializeBinary();
+    },
+    v1_services_pb.GetDocumentResponse.deserializeBinary
+  );
+
+  getDocument(
+    request: v1_services_pb.GetDocumentRequest,
+    metadata: grpcWeb.Metadata | null): Promise<v1_services_pb.GetDocumentResponse>;
+
+  getDocument(
+    request: v1_services_pb.GetDocumentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.Error,
+               response: v1_services_pb.GetDocumentResponse) => void): grpcWeb.ClientReadableStream<v1_services_pb.GetDocumentResponse>;
+
+  getDocument(
+    request: v1_services_pb.GetDocumentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.Error,
+               response: v1_services_pb.GetDocumentResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/v1.ApiService/GetDocument',
+        request,
+        metadata || {},
+        this.methodInfoGetDocument,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/v1.ApiService/GetDocument',
+    request,
+    metadata || {},
+    this.methodInfoGetDocument);
   }
 
 }

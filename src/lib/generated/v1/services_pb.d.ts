@@ -280,6 +280,16 @@ export class Session extends jspb.Message {
   getUrn(): string;
   setUrn(value: string): Session;
 
+  getCreatedAt(): v1_types_pb.Timestamp | undefined;
+  setCreatedAt(value?: v1_types_pb.Timestamp): Session;
+  hasCreatedAt(): boolean;
+  clearCreatedAt(): Session;
+
+  getModifiedAt(): v1_types_pb.Timestamp | undefined;
+  setModifiedAt(value?: v1_types_pb.Timestamp): Session;
+  hasModifiedAt(): boolean;
+  clearModifiedAt(): Session;
+
   getConfig(): v1_configs_pb.ApiConfig | undefined;
   setConfig(value?: v1_configs_pb.ApiConfig): Session;
   hasConfig(): boolean;
@@ -303,6 +313,11 @@ export class Session extends jspb.Message {
   getStatus(): Session.ComputeStatus;
   setStatus(value: Session.ComputeStatus): Session;
 
+  getComputedAt(): v1_types_pb.Timestamp | undefined;
+  setComputedAt(value?: v1_types_pb.Timestamp): Session;
+  hasComputedAt(): boolean;
+  clearComputedAt(): Session;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Session.AsObject;
   static toObject(includeInstance: boolean, msg: Session): Session.AsObject;
@@ -314,11 +329,14 @@ export class Session extends jspb.Message {
 export namespace Session {
   export type AsObject = {
     urn: string,
+    createdAt?: v1_types_pb.Timestamp.AsObject,
+    modifiedAt?: v1_types_pb.Timestamp.AsObject,
     config?: v1_configs_pb.ApiConfig.AsObject,
     itemsList: Array<v1_types_pb.Item.AsObject>,
     comparisonsList: Array<v1_types_pb.ResourcePair.AsObject>,
     resultsList: Array<v1_types_pb.Result.AsObject>,
     status: Session.ComputeStatus,
+    computedAt?: v1_types_pb.Timestamp.AsObject,
   }
 
   export enum ComputeStatus { 
@@ -1057,8 +1075,8 @@ export class GetTextRequest extends jspb.Message {
   getSessionUrn(): string;
   setSessionUrn(value: string): GetTextRequest;
 
-  getItemUrn(): string;
-  setItemUrn(value: string): GetTextRequest;
+  getResourceUrn(): string;
+  setResourceUrn(value: string): GetTextRequest;
 
   getSpan(): v1_types_pb.Span | undefined;
   setSpan(value?: v1_types_pb.Span): GetTextRequest;
@@ -1076,7 +1094,7 @@ export class GetTextRequest extends jspb.Message {
 export namespace GetTextRequest {
   export type AsObject = {
     sessionUrn: string,
-    itemUrn: string,
+    resourceUrn: string,
     span?: v1_types_pb.Span.AsObject,
   }
 }
@@ -1086,11 +1104,6 @@ export class GetTextResponse extends jspb.Message {
   setTextSpan(value?: GetTextResponse.TextSpan): GetTextResponse;
   hasTextSpan(): boolean;
   clearTextSpan(): GetTextResponse;
-
-  getMetadata(): GetTextResponse.Metadata | undefined;
-  setMetadata(value?: GetTextResponse.Metadata): GetTextResponse;
-  hasMetadata(): boolean;
-  clearMetadata(): GetTextResponse;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetTextResponse.AsObject;
@@ -1103,7 +1116,6 @@ export class GetTextResponse extends jspb.Message {
 export namespace GetTextResponse {
   export type AsObject = {
     textSpan?: GetTextResponse.TextSpan.AsObject,
-    metadata?: GetTextResponse.Metadata.AsObject,
   }
 
   export class TextSpan extends jspb.Message {
@@ -1130,29 +1142,48 @@ export namespace GetTextResponse {
     }
   }
 
+}
 
-  export class Metadata extends jspb.Message {
-    getTitle(): string;
-    setTitle(value: string): Metadata;
+export class GetDocumentRequest extends jspb.Message {
+  getSessionUrn(): string;
+  setSessionUrn(value: string): GetDocumentRequest;
 
-    getSource(): string;
-    setSource(value: string): Metadata;
+  getDocumentUrn(): string;
+  setDocumentUrn(value: string): GetDocumentRequest;
 
-    serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): Metadata.AsObject;
-    static toObject(includeInstance: boolean, msg: Metadata): Metadata.AsObject;
-    static serializeBinaryToWriter(message: Metadata, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): Metadata;
-    static deserializeBinaryFromReader(message: Metadata, reader: jspb.BinaryReader): Metadata;
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetDocumentRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetDocumentRequest): GetDocumentRequest.AsObject;
+  static serializeBinaryToWriter(message: GetDocumentRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetDocumentRequest;
+  static deserializeBinaryFromReader(message: GetDocumentRequest, reader: jspb.BinaryReader): GetDocumentRequest;
+}
+
+export namespace GetDocumentRequest {
+  export type AsObject = {
+    sessionUrn: string,
+    documentUrn: string,
   }
+}
 
-  export namespace Metadata {
-    export type AsObject = {
-      title: string,
-      source: string,
-    }
+export class GetDocumentResponse extends jspb.Message {
+  getDocument(): v1_types_pb.Document | undefined;
+  setDocument(value?: v1_types_pb.Document): GetDocumentResponse;
+  hasDocument(): boolean;
+  clearDocument(): GetDocumentResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetDocumentResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetDocumentResponse): GetDocumentResponse.AsObject;
+  static serializeBinaryToWriter(message: GetDocumentResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetDocumentResponse;
+  static deserializeBinaryFromReader(message: GetDocumentResponse, reader: jspb.BinaryReader): GetDocumentResponse;
+}
+
+export namespace GetDocumentResponse {
+  export type AsObject = {
+    document?: v1_types_pb.Document.AsObject,
   }
-
 }
 
 export class AlignPairRequest extends jspb.Message {

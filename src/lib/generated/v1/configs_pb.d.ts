@@ -1,6 +1,5 @@
 import * as jspb from 'google-protobuf'
 
-import * as v1_types_pb from '../v1/types_pb';
 
 
 export class ApiConfig extends jspb.Message {

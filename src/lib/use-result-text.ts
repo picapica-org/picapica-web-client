@@ -40,7 +40,7 @@ export function useResultText(result: DeepReadonly<Result.AsObject>): [readonly 
 
 					const req = new GetTextRequest();
 					req.setSessionUrn(sessionUrn);
-					req.setItemUrn(resourceUrn);
+					req.setResourceUrn(resourceUrn);
 					req.setSpan(s);
 
 					return client.getText(req, null);

@@ -12,8 +12,6 @@ var jspb = require('google-protobuf');
 var goog = jspb;
 var global = Function('return this')();
 
-var v1_types_pb = require('../v1/types_pb.js');
-goog.object.extend(proto, v1_types_pb);
 goog.exportSymbol('proto.v1.AlignmentConfig', null, global);
 goog.exportSymbol('proto.v1.AlignmentConfig.Combinator', null, global);
 goog.exportSymbol('proto.v1.AlignmentConfig.Combinator.CombinatorCase', null, global);
