@@ -6,15 +6,51 @@ import { v4 as uuidv4 } from "uuid";
 import { delay, lazy } from "../util";
 import { PicapicaSessionUrn, PicapicaUrn } from "./urn";
 
-const CLIENT: SessionServiceClient = new SessionServiceClient("http://localhost:8080");
+// Options for testing the UI
+
+/** Use a mock client that simulates a server locally. */
 const mock = false;
+/** The probability (number from 0 to 1) of a server call rejecting. */
+const clientErrorRate = 0;
+/** Added delay (randomly chosen between min and max) to each server call. */
+const clientDelay: [min: number, max: number] = [0, 0];
 
 export const getSessionClient = lazy(() => {
-	if (mock) {
-		return new MockClient();
-	}
-	return CLIENT;
+	let client = mock ? new MockClient() : new SessionServiceClient("http://localhost:8080");
+
+	if (clientErrorRate > 0) client = fallibleClient(client, clientErrorRate);
+	if (clientDelay[1] > 0) client = delayedClient(client, ...clientDelay);
+
+	return client;
 });
+
+function delayedClient(client: SessionServiceClient, min: number, max: number): SessionServiceClient {
+	return new Proxy(client, {
+		get(target, p) {
+			const fn = target[p as keyof SessionServiceClient];
+			if (typeof fn !== "function") return fn;
+			return async (...args: unknown[]) => {
+				await delay(min + Math.random() * (max - min));
+				return (fn as (...args: unknown[]) => unknown).call(target, ...args);
+			};
+		},
+	});
+}
+
+function fallibleClient(client: SessionServiceClient, errorRate: number): SessionServiceClient {
+	return new Proxy(client, {
+		get(target, p) {
+			const fn = target[p as keyof SessionServiceClient];
+			if (typeof fn !== "function") return fn;
+			return async (...args: unknown[]) => {
+				if (Math.random() < errorRate) {
+					throw new Error("Simulated network error");
+				}
+				return (fn as (...args: unknown[]) => unknown).call(target, ...args);
+			};
+		},
+	});
+}
 
 // Mock client
 
@@ -49,19 +85,6 @@ class MockClient extends SessionServiceClient {
 		super("foo.test");
 	}
 
-	private async simulateNetwork(): Promise<void> {
-		const DELAY_MIN = 500;
-		const DELAY_MAX = 1000;
-
-		await delay(DELAY_MIN + Math.random() * (DELAY_MAX - DELAY_MIN));
-
-		const FAILURE_RATE = 0;
-
-		if (Math.random() < FAILURE_RATE) {
-			throw new Error("Network error");
-		}
-	}
-
 	private async _getSessionRef(urn: string): Promise<v1_services_pb.Session> {
 		const session = this._sessions.get(urn);
 		if (session === undefined) {
@@ -80,8 +103,6 @@ class MockClient extends SessionServiceClient {
 	}
 
 	createSession = mockUnary<v1_services_pb.CreateSessionRequest, v1_services_pb.CreateSessionResponse>(async req => {
-		await this.simulateNetwork();
-
 		const urn = PicapicaUrn.stringify({ type: "session", sessionId: uuidv4() });
 		const session = new v1_services_pb.Session();
 		session.setUrn(urn);
@@ -90,14 +111,10 @@ class MockClient extends SessionServiceClient {
 		return new v1_services_pb.CreateSessionResponse().setSessionUrn(urn);
 	});
 	getSession = mockUnary<v1_services_pb.GetSessionRequest, v1_services_pb.GetSessionResponse>(async req => {
-		await this.simulateNetwork();
-
 		const sessionRef = await this._getSessionRef(req.getSessionUrn());
 		return new v1_services_pb.GetSessionResponse().setSession(sessionRef.clone());
 	});
 	deleteSession = mockUnary<v1_services_pb.DeleteSessionRequest, v1_services_pb.DeleteSessionResponse>(async req => {
-		await this.simulateNetwork();
-
 		const success = this._sessions.delete(req.getSessionUrn());
 		if (!success) {
 			return Promise.reject("Invalid session id");
@@ -107,28 +124,20 @@ class MockClient extends SessionServiceClient {
 
 	getCollections = mockUnary<v1_services_pb.GetCollectionsRequest, v1_services_pb.GetCollectionsResponse>(
 		async req => {
-			await this.simulateNetwork();
-
 			return new v1_services_pb.GetCollectionsResponse();
 		}
 	);
 
 	getConfig = mockUnary<v1_services_pb.GetConfigRequest, v1_services_pb.GetConfigResponse>(async req => {
-		await this.simulateNetwork();
-
 		const sessionRef = await this._getSessionRef(req.getSessionUrn());
 		return new v1_services_pb.GetConfigResponse().setConfig(sessionRef.getConfig()?.clone());
 	});
 	updateConfig = mockUnary<v1_services_pb.UpdateConfigRequest, v1_services_pb.UpdateConfigResponse>(async req => {
-		await this.simulateNetwork();
-
 		const sessionRef = await this._getSessionRef(req.getSessionUrn());
 		sessionRef.setConfig(req.getConfig()?.clone());
 		return new v1_services_pb.UpdateConfigResponse();
 	});
 	deleteConfig = mockUnary<v1_services_pb.DeleteConfigRequest, v1_services_pb.DeleteConfigResponse>(async req => {
-		await this.simulateNetwork();
-
 		const sessionRef = await this._getSessionRef(req.getSessionUrn());
 		sessionRef.setConfig(undefined);
 		return new v1_services_pb.DeleteConfigResponse();
@@ -136,8 +145,6 @@ class MockClient extends SessionServiceClient {
 
 	getComparisonSet = mockUnary<v1_services_pb.GetComparisonSetRequest, v1_services_pb.GetComparisonSetResponse>(
 		async req => {
-			await this.simulateNetwork();
-
 			const sessionRef = await this._getSessionRef(req.getSessionUrn());
 			return new v1_services_pb.GetComparisonSetResponse().setComparisonsList(
 				sessionRef.getComparisonsList().map(p => p.clone())
@@ -148,8 +155,6 @@ class MockClient extends SessionServiceClient {
 		v1_services_pb.UpdateComparisonSetRequest,
 		v1_services_pb.UpdateComparisonSetResponse
 	>(async req => {
-		await this.simulateNetwork();
-
 		const sessionRef = await this._getSessionRef(req.getSessionUrn());
 		sessionRef.setComparisonsList(req.getComparisonsList().map(p => p.clone()));
 		return new v1_services_pb.UpdateComparisonSetResponse();
@@ -158,16 +163,12 @@ class MockClient extends SessionServiceClient {
 		v1_services_pb.DeleteComparisonSetRequest,
 		v1_services_pb.DeleteComparisonSetResponse
 	>(async req => {
-		await this.simulateNetwork();
-
 		const sessionRef = await this._getSessionRef(req.getSessionUrn());
 		sessionRef.setComparisonsList([]);
 		return new v1_services_pb.DeleteComparisonSetResponse();
 	});
 
 	createItem = mockUnary<v1_services_pb.CreateItemRequest, v1_services_pb.CreateItemResponse>(async req => {
-		await this.simulateNetwork();
-
 		const sessionRef = await this._getSessionRef(req.getSessionUrn());
 
 		const raw = req.getRaw_asU8();
@@ -230,15 +231,11 @@ class MockClient extends SessionServiceClient {
 		return new v1_services_pb.CreateItemResponse().setItemUrn(item.getUrn());
 	});
 	updateItem = mockUnary<v1_services_pb.UpdateItemRequest, v1_services_pb.UpdateItemResponse>(async req => {
-		await this.simulateNetwork();
-
 		const itemRef = await this._getItemRef(req.getSessionUrn(), req.getItemUrn());
 		itemRef.setMeta(req.getMeta()?.clone());
 		return new v1_services_pb.UpdateItemResponse();
 	});
 	getItem = mockUnary<v1_services_pb.GetItemRequest, v1_services_pb.GetItemResponse>(async req => {
-		await this.simulateNetwork();
-
 		const res = new v1_services_pb.GetItemResponse();
 		for (const urn of req.getItemUrnList()) {
 			const itemRef = await this._getItemRef(req.getSessionUrn(), urn);
@@ -248,8 +245,6 @@ class MockClient extends SessionServiceClient {
 		return res;
 	});
 	deleteItem = mockUnary<v1_services_pb.DeleteItemRequest, v1_services_pb.DeleteItemResponse>(async req => {
-		await this.simulateNetwork();
-
 		const sessionRef = await this._getSessionRef(req.getSessionUrn());
 		const itemRef = await this._getItemRef(req.getSessionUrn(), req.getItemUrn());
 		sessionRef.setItemsList(sessionRef.getItemsList().filter(i => i !== itemRef));
@@ -259,8 +254,6 @@ class MockClient extends SessionServiceClient {
 
 	computeResults = mockUnary<v1_services_pb.ComputeResultsRequest, v1_services_pb.ComputeResultsResponse>(
 		async req => {
-			await this.simulateNetwork();
-
 			const sessionRef = await this._getSessionRef(req.getSessionUrn());
 			sessionRef.setStatus(v1_services_pb.Session.ComputeStatus.STATUS_RUNNING);
 
