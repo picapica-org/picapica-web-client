@@ -11,6 +11,7 @@ import { Buttons } from "../elements/buttons";
 import { EditInput } from "../elements/edit-input";
 import { deleteItemAction, updateItemAction } from "../lib/session/actions";
 import "./item-table.scss";
+import { sortSessionItems } from "../lib/session/util";
 
 export interface ItemTableProps {
 	readonly session: DeepReadonly<Session.AsObject>;
@@ -19,6 +20,8 @@ export interface ItemTableProps {
 export function ItemTable(props: ItemTableProps): JSX.Element {
 	const localizationOptions = useContext(LocalizationContext);
 	const l = useLocalization(locales);
+
+	const items = sortSessionItems(props.session.itemsList);
 
 	function deleteItem(item: Item.AsObject): void {
 		const { mutate, request } = deleteItemAction(props.session, item.urn);
@@ -78,7 +81,7 @@ export function ItemTable(props: ItemTableProps): JSX.Element {
 				</tr>
 			</thead>
 			<tbody>
-				{props.session.itemsList.map(item => {
+				{items.map(item => {
 					return (
 						<tr key={item.urn}>
 							<td className="icon">
@@ -107,7 +110,7 @@ export function ItemTable(props: ItemTableProps): JSX.Element {
 						</tr>
 					);
 				})}
-				{props.session.itemsList.length === 0 && (
+				{items.length === 0 && (
 					<tr>
 						<td className="empty" colSpan={4}>
 							<em>{l.emptyItemList}</em>

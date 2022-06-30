@@ -20,6 +20,7 @@ import { Buttons } from "../elements/buttons";
 import { Item } from "../lib/generated/v1/types_pb";
 import { CollectionLabel, SubmittedFilesLabel } from "../elements/labels";
 import "./analysis.scss";
+import { sortSessionItems } from "../lib/session/util";
 
 export default function AnalysisPage(): JSX.Element {
 	return (
@@ -105,7 +106,9 @@ interface ItemConfigProps {
 function ItemConfig(props: ItemConfigProps): JSX.Element {
 	const l = useLocalization(locales);
 
-	const allUrns: ItemUrn[] = props.session.itemsList.map(i => i.urn);
+	const items = sortSessionItems(props.session.itemsList);
+
+	const allUrns: ItemUrn[] = items.map(i => i.urn);
 	const allA = allUrns.every(urn => props.config.groupA.has(urn));
 	const allB = allUrns.every(urn => props.config.groupB.has(urn));
 	const all = allA && allB;
@@ -167,7 +170,7 @@ function ItemConfig(props: ItemConfigProps): JSX.Element {
 							B
 						</button>
 					</div>
-					{props.session.itemsList.map(item => {
+					{items.map(item => {
 						const a = props.config.groupA.has(item.urn);
 						const b = props.config.groupB.has(item.urn);
 
@@ -208,8 +211,9 @@ function CollectionConfig(props: CollectionConfigProps): JSX.Element {
 	const l = useLocalization(locales);
 
 	const set = props.config.collections.get(props.collection) ?? EMPTY_SET;
+	const items = sortSessionItems(props.session.itemsList);
 
-	const allUrns: ItemUrn[] = props.session.itemsList.map(i => i.urn);
+	const allUrns: ItemUrn[] = items.map(i => i.urn);
 	const all = allUrns.every(urn => set.has(urn));
 	const none = allUrns.every(urn => !set.has(urn));
 
@@ -257,7 +261,7 @@ function CollectionConfig(props: CollectionConfigProps): JSX.Element {
 							<Icon kind="close-line" />
 						</button>
 					</div>
-					{props.session.itemsList.map(item => {
+					{items.map(item => {
 						const has = set.has(item.urn);
 
 						return (
