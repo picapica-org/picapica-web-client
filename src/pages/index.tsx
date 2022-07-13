@@ -1,13 +1,13 @@
 import { Link } from "gatsby";
 import React from "react";
 import { Helmet } from "react-helmet";
-import { Page } from "../elements/page";
 import { NewAnalysis } from "../elements/new-analysis";
+import { Page } from "../elements/page";
 import { SharedHead } from "../elements/shared-header";
 import { Locales } from "../lib/localization";
-import { useLocalization } from "../lib/use-localization";
-import { dynamic } from "../lib/react-util";
 import { toPoster } from "../lib/page-links";
+import { dynamic } from "../lib/react-util";
+import { useLocalization } from "../lib/use-localization";
 import "./index.scss";
 
 export default function HomePage(): JSX.Element {

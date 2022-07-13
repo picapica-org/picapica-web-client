@@ -1,21 +1,21 @@
 import React from "react";
 import { Helmet } from "react-helmet";
 import { Page } from "../elements/page";
-import { SharedHead } from "../elements/shared-header";
-import { Locales, SimpleString } from "../lib/localization";
-import { useLocalization } from "../lib/use-localization";
-import { dynamic } from "../lib/react-util";
-import { getLinkToStep } from "../elements/step-selector";
-import { SessionState } from "../elements/session-creating-loading";
-import { getSessionUrn, Ready, useLoadSession } from "../lib/use-session";
-import { DeepReadonly, visitType } from "../lib/util";
-import { useCollections } from "../lib/use-collections";
 import { CollectionResultsOverview, ItemResultsOverview, ResultsOverview } from "../elements/results-overview";
-import { getLocationSearchParams } from "../lib/url-params";
-import { toResult, toResults } from "../lib/page-links";
+import { SessionState } from "../elements/session-creating-loading";
+import { SharedHead } from "../elements/shared-header";
+import { getLinkToStep } from "../elements/step-selector";
 import { Session } from "../lib/generated/v1/services_pb";
 import { Result } from "../lib/generated/v1/types_pb";
+import { Locales, SimpleString } from "../lib/localization";
+import { toResult, toResults } from "../lib/page-links";
+import { dynamic } from "../lib/react-util";
+import { getLocationSearchParams } from "../lib/url-params";
+import { useCollections } from "../lib/use-collections";
 import { useComputerResults } from "../lib/use-compute-results";
+import { useLocalization } from "../lib/use-localization";
+import { getSessionUrn, Ready, useLoadSession } from "../lib/use-session";
+import { DeepReadonly, visitType } from "../lib/util";
 import "./results.scss";
 
 export default function ResultsPage(): JSX.Element {

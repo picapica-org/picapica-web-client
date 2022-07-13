@@ -1,8 +1,8 @@
 import React from "react";
-import { Footer } from "./footer";
-import { BigHeader, SmallHeader } from "./header";
 import { DropzoneRootProps, DropzoneState } from "react-dropzone";
 import { identity } from "../lib/util";
+import { Footer } from "./footer";
+import { BigHeader, SmallHeader } from "./header";
 import "./page.scss";
 import "reactjs-popup/dist/index.css";
 

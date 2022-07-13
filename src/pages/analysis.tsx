@@ -1,26 +1,26 @@
 import React, { useCallback, useMemo } from "react";
 import { Helmet } from "react-helmet";
+import { Buttons } from "../elements/buttons";
+import { Icon, ItemTypeIcon } from "../elements/icon";
+import { CollectionLabel, SubmittedFilesLabel } from "../elements/labels";
 import { Page } from "../elements/page";
+import { SessionState } from "../elements/session-creating-loading";
 import { SharedHead } from "../elements/shared-header";
-import { Locales, SimpleString } from "../lib/localization";
-import { useLocalization } from "../lib/use-localization";
-import { dynamic } from "../lib/react-util";
-import { getLinkToStep, StepSelectorGroup } from "../elements/step-selector";
 import { StepActionBar } from "../elements/step-action-bar";
 import { BackButton, StartButton } from "../elements/step-buttons";
-import { SessionState } from "../elements/session-creating-loading";
-import { getSessionUrn, Ready, useLoadSession } from "../lib/use-session";
-import { Icon, ItemTypeIcon } from "../elements/icon";
-import { updateComparisonSetAction } from "../lib/session/actions";
+import { getLinkToStep, StepSelectorGroup } from "../elements/step-selector";
 import { Session } from "../lib/generated/v1/services_pb";
-import { AnalysisConfig, CollectionUrn, ItemUrn } from "../lib/session/analysis-config";
-import { DeepReadonly, EMPTY_ARRAY, EMPTY_SET, noop } from "../lib/util";
-import { getSessionClient } from "../lib/session/client";
-import { Buttons } from "../elements/buttons";
 import { Item } from "../lib/generated/v1/types_pb";
-import { CollectionLabel, SubmittedFilesLabel } from "../elements/labels";
-import "./analysis.scss";
+import { Locales, SimpleString } from "../lib/localization";
+import { dynamic } from "../lib/react-util";
+import { updateComparisonSetAction } from "../lib/session/actions";
+import { AnalysisConfig, CollectionUrn, ItemUrn } from "../lib/session/analysis-config";
+import { getSessionClient } from "../lib/session/client";
 import { sortSessionItems } from "../lib/session/util";
+import { useLocalization } from "../lib/use-localization";
+import { getSessionUrn, Ready, useLoadSession } from "../lib/use-session";
+import { DeepReadonly, EMPTY_ARRAY, EMPTY_SET, noop } from "../lib/util";
+import "./analysis.scss";
 
 export default function AnalysisPage(): JSX.Element {
 	return (

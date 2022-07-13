@@ -3,8 +3,8 @@ import { Helmet } from "react-helmet";
 import { Page } from "../elements/page";
 import { SharedHead } from "../elements/shared-header";
 import { Locales } from "../lib/localization";
-import { useLocalization } from "../lib/use-localization";
 import { dynamic } from "../lib/react-util";
+import { useLocalization } from "../lib/use-localization";
 import "./404.scss";
 
 export default function Error404Page(): JSX.Element {

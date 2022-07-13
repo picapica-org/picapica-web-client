@@ -34,7 +34,7 @@
 	}
 }
 
-.AddItemModal-content {
+.AddItemModal-overlay > .AddItemModal-content {
 	background-color: $white;
 	border-radius: 0.5em;
 	box-shadow: 0 0.3em 1em rgba(0, 0, 0, 0.5);

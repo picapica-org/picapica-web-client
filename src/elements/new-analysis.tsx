@@ -1,10 +1,10 @@
-import React from "react";
 import { Link } from "gatsby";
+import React from "react";
 import { Locales } from "../lib/localization";
-import { useLocalization } from "../lib/use-localization";
-import { PicaIcon } from "./icon";
-import { Buttons } from "./buttons";
 import { toSubmit } from "../lib/page-links";
+import { useLocalization } from "../lib/use-localization";
+import { Buttons } from "./buttons";
+import { PicaIcon } from "./icon";
 
 export function NewAnalysis(): JSX.Element {
 	const l = useLocalization(locales);

@@ -1,8 +1,8 @@
 import React, { useCallback, useRef, useState } from "react";
-import { Buttons } from "./buttons";
-import { Icon, PicaIcon } from "./icon";
 import Popup from "reactjs-popup";
 import { PopupActions } from "reactjs-popup/dist/types";
+import { Buttons } from "./buttons";
+import { Icon, PicaIcon } from "./icon";
 import "./edit-input.scss";
 
 export interface EditInputProps {

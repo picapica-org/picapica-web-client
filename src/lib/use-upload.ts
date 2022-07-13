@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { v4 as uuidV4 } from "uuid";
-import { ItemMeta, ItemProto, toItemResourceType } from "./session/create-item";
+import { Item, Timestamp } from "./generated/v1/types_pb";
 import { getSessionClient } from "./session/client";
+import { ItemMeta, ItemProto, toItemResourceType } from "./session/create-item";
 import { SessionMutator } from "./session/mutator";
 import { cloneSession, createTimestamp } from "./session/util";
-import { Item, Timestamp } from "./generated/v1/types_pb";
 
 export type UploadId = string & { readonly __uploadId: never };
 

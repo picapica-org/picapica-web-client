@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Locales } from "../lib/localization";
-import { useLocalization } from "../lib/use-localization";
-import { Buttons } from "./buttons";
-import { Icon, PicaIcon } from "./icon";
-import { PopupActions } from "reactjs-popup/dist/types";
 import Popup from "reactjs-popup";
-import { isValidUrl } from "../lib/util";
+import { PopupActions } from "reactjs-popup/dist/types";
+import { Locales } from "../lib/localization";
 import { useOpenFileDialog } from "../lib/react-util";
 import { ItemProto, ItemType } from "../lib/session/create-item";
+import { useLocalization } from "../lib/use-localization";
+import { isValidUrl } from "../lib/util";
+import { Buttons } from "./buttons";
+import { Icon, PicaIcon } from "./icon";
 import "./add-item.scss";
 
 export interface AddItemProps {

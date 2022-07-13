@@ -1,23 +1,23 @@
 import React from "react";
 import { Helmet } from "react-helmet";
+import { AlignmentView } from "../elements/alignment-view";
+import { CenterAlignTwo } from "../elements/center-align-two";
+import { ItemTypeIcon } from "../elements/icon";
 import { Page } from "../elements/page";
+import { OverviewContainer } from "../elements/results-overview";
 import { SessionState } from "../elements/session-creating-loading";
 import { SharedHead } from "../elements/shared-header";
-import { OverviewContainer } from "../elements/results-overview";
+import { Session } from "../lib/generated/v1/services_pb";
+import * as types from "../lib/generated/v1/types_pb";
 import { Locales, SimpleString } from "../lib/localization";
-import { useLocalization } from "../lib/use-localization";
 import { toResults } from "../lib/page-links";
 import { dynamic } from "../lib/react-util";
 import { getLocationSearchParams } from "../lib/url-params";
+import { useAlignment } from "../lib/use-alignment";
+import { useLocalization } from "../lib/use-localization";
+import { SeedText, useResultText } from "../lib/use-result-text";
 import { Ready, useLoadSession } from "../lib/use-session";
 import { DeepReadonly } from "../lib/util";
-import * as types from "../lib/generated/v1/types_pb";
-import { Session } from "../lib/generated/v1/services_pb";
-import { SeedText, useResultText } from "../lib/use-result-text";
-import { AlignmentView } from "../elements/alignment-view";
-import { ItemTypeIcon } from "../elements/icon";
-import { CenterAlignTwo } from "../elements/center-align-two";
-import { useAlignment } from "../lib/use-alignment";
 import "./result.scss";
 
 export default function ResultPage(): JSX.Element {

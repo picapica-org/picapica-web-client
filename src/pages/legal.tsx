@@ -4,8 +4,8 @@ import { H2 } from "../elements/headings";
 import { Page } from "../elements/page";
 import { SharedHead } from "../elements/shared-header";
 import { Locales } from "../lib/localization";
-import { useLocalization } from "../lib/use-localization";
 import { dynamic } from "../lib/react-util";
+import { useLocalization } from "../lib/use-localization";
 import "./legal.scss";
 
 export default function LegalPage(): JSX.Element {

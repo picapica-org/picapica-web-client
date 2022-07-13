@@ -1,8 +1,8 @@
 import React from "react";
 import { LeftChange, RightChange } from "../lib/alignment";
 import { Locales } from "../lib/localization";
-import { useLocalization } from "../lib/use-localization";
 import { useAlignment } from "../lib/use-alignment";
+import { useLocalization } from "../lib/use-localization";
 import "./alignment-view.scss";
 
 export interface Props {

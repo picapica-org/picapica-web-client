@@ -1,10 +1,10 @@
-import { SessionServiceClient } from "../generated/v1/ServicesServiceClientPb";
-import * as v1_services_pb from "../generated/v1/services_pb";
-import { Item, ResourcePair } from "../generated/v1/types_pb";
-import type * as grpcWeb from "grpc-web";
 import { v4 as uuidv4 } from "uuid";
+import * as v1_services_pb from "../generated/v1/services_pb";
+import { SessionServiceClient } from "../generated/v1/ServicesServiceClientPb";
+import { Item, ResourcePair } from "../generated/v1/types_pb";
 import { delay, lazy } from "../util";
 import { PicapicaSessionUrn, PicapicaUrn } from "./urn";
+import type * as grpcWeb from "grpc-web";
 
 // Options for testing the UI
 

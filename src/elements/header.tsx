@@ -1,11 +1,11 @@
-import React from "react";
-import { Locales } from "../lib/localization";
-import { useLocalization } from "../lib/use-localization";
 import { Link } from "gatsby";
-import { NewAnalysis } from "./new-analysis";
+import React from "react";
 import logoDark from "../../assets/images/picapica3-logo2-rgb-dark.min.svg";
 import logoWhite from "../../assets/images/picapica3-logo2-rgb-white.min.svg";
+import { Locales } from "../lib/localization";
 import { toIndex } from "../lib/page-links";
+import { useLocalization } from "../lib/use-localization";
+import { NewAnalysis } from "./new-analysis";
 import "./header.scss";
 
 export function SmallHeader(): JSX.Element {

@@ -1,20 +1,20 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { useDropzone } from "react-dropzone";
 import { Helmet } from "react-helmet";
-import { Page } from "../elements/page";
-import { SharedHead } from "../elements/shared-header";
-import { Locales, SimpleString } from "../lib/localization";
-import { useLocalization } from "../lib/use-localization";
-import { dynamic } from "../lib/react-util";
-import { getLinkToStep, StepSelectorGroup } from "../elements/step-selector";
 import { AddItem } from "../elements/add-item";
 import { ItemTable } from "../elements/item-table";
+import { Page } from "../elements/page";
+import { SessionState } from "../elements/session-creating-loading";
+import { SharedHead } from "../elements/shared-header";
 import { StepActionBar } from "../elements/step-action-bar";
 import { NextButton } from "../elements/step-buttons";
-import { SessionState } from "../elements/session-creating-loading";
+import { getLinkToStep, StepSelectorGroup } from "../elements/step-selector";
+import { Locales, SimpleString } from "../lib/localization";
+import { dynamic } from "../lib/react-util";
 import { ItemProto } from "../lib/session/create-item";
+import { useLocalization } from "../lib/use-localization";
 import { getSessionUrn, Ready, useCreateSession } from "../lib/use-session";
 import { FailedItem, optimisticallyAddItem, UploadedItem, UploadId, useUpload } from "../lib/use-upload";
-import { useDropzone } from "react-dropzone";
 import "./submit.scss";
 
 export default function SubmitPage(): JSX.Element {

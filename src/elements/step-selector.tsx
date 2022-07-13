@@ -1,8 +1,8 @@
 import { Link } from "gatsby";
 import React from "react";
 import { Locales, SimpleString } from "../lib/localization";
-import { useLocalization } from "../lib/use-localization";
 import { toAnalysis, toResults, toSubmit } from "../lib/page-links";
+import { useLocalization } from "../lib/use-localization";
 import { assertNever } from "../lib/util";
 import { Buttons } from "./buttons";
 import { Group } from "./group";

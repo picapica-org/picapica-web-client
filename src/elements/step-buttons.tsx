@@ -1,5 +1,5 @@
-import React from "react";
 import { Link } from "gatsby";
+import React from "react";
 import { Locales, SimpleString } from "../lib/localization";
 import { useLocalization } from "../lib/use-localization";
 import { Buttons } from "./buttons";

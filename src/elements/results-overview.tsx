@@ -1,18 +1,18 @@
-import React from "react";
 import { Link } from "gatsby";
-import { Locales, SimpleString } from "../lib/localization";
-import { useLocalization } from "../lib/use-localization";
-import { DeepReadonly } from "../lib/util";
+import React from "react";
 import { Session } from "../lib/generated/v1/services_pb";
 import { Collection, Result } from "../lib/generated/v1/types_pb";
+import { Locales, SimpleString } from "../lib/localization";
 import { categorizeResults } from "../lib/session/result-categories";
-import { Badge } from "./badge";
-import { CollectionLabel, Label, SubmittedFilesLabel } from "./labels";
-import { Buttons } from "./buttons";
-import { PicaIcon } from "./icon";
-import { LoaderAnimation } from "./loader-animation";
 import { PicapicaUrn } from "../lib/session/urn";
+import { useLocalization } from "../lib/use-localization";
+import { DeepReadonly } from "../lib/util";
+import { Badge } from "./badge";
+import { Buttons } from "./buttons";
 import { CenterAlignTwo } from "./center-align-two";
+import { PicaIcon } from "./icon";
+import { CollectionLabel, Label, SubmittedFilesLabel } from "./labels";
+import { LoaderAnimation } from "./loader-animation";
 import "./results-overview.scss";
 
 export interface OverviewContainerProps {

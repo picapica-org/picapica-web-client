@@ -2,8 +2,9 @@
  * Configure your Gatsby site with this file.
  *
  * See: https://www.gatsbyjs.org/docs/gatsby-config/
+ *
+ * @type {import("gatsby").GatsbyConfig}
  */
-
 module.exports = {
 	pathPrefix: `/demo`, // useful for publishing demos
 	plugins: [

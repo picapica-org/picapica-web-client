@@ -1,17 +1,17 @@
 import React, { useCallback, useContext } from "react";
+import { Buttons } from "../elements/buttons";
+import { EditInput, TextView } from "../elements/edit-input";
 import { ItemTypeIcon, PicaIcon } from "../elements/icon";
-import { UseSessionArray } from "../lib/use-session";
-import { getSessionClient } from "../lib/session/client";
 import { Session } from "../lib/generated/v1/services_pb";
 import { Item } from "../lib/generated/v1/types_pb";
 import { getIntlLocales, Locales, LocalizableOptions, SimpleString } from "../lib/localization";
-import { LocalizationContext, useLocalization } from "../lib/use-localization";
-import { DeepReadonly, noop } from "../lib/util";
-import { Buttons } from "../elements/buttons";
-import { EditInput, TextView } from "../elements/edit-input";
 import { deleteItemAction, updateItemAction } from "../lib/session/actions";
+import { getSessionClient } from "../lib/session/client";
 import { compareTimestamps, sortSessionItems } from "../lib/session/util";
+import { LocalizationContext, useLocalization } from "../lib/use-localization";
+import { UseSessionArray } from "../lib/use-session";
 import { FailedItem, UploadId, UploadingItem } from "../lib/use-upload";
+import { DeepReadonly, noop } from "../lib/util";
 import { LoaderAnimation } from "./loader-animation";
 import "./item-table.scss";
 

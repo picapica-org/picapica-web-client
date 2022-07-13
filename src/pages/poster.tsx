@@ -1,12 +1,12 @@
 import React, { useContext } from "react";
 import { Helmet } from "react-helmet";
+import PosterDe from "../../assets/images/poster-de.inline.svg";
+import PosterEn from "../../assets/images/poster-en.inline.svg";
 import { Page } from "../elements/page";
 import { SharedHead } from "../elements/shared-header";
 import { SupportedLanguage } from "../lib/localization";
-import { LocalizationContext } from "../lib/use-localization";
 import { dynamic } from "../lib/react-util";
-import PosterDe from "../../assets/images/poster-de.inline.svg";
-import PosterEn from "../../assets/images/poster-en.inline.svg";
+import { LocalizationContext } from "../lib/use-localization";
 import "./poster.scss";
 
 export default function PosterPage(): JSX.Element {

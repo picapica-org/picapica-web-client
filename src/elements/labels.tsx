@@ -1,8 +1,8 @@
 import React from "react";
 import { Collection } from "../lib/generated/v1/types_pb";
 import { Locales, SimpleString } from "../lib/localization";
-import { useLocalization } from "../lib/use-localization";
 import { PicapicaCollectionUrn, PicapicaUrn } from "../lib/session/urn";
+import { useLocalization } from "../lib/use-localization";
 import { DeepReadonly } from "../lib/util";
 import { PicaIcon, PicaIconKind } from "./icon";
 import "./labels.scss";

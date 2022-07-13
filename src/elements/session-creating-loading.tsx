@@ -1,9 +1,9 @@
-import React from "react";
 import { Link } from "gatsby";
+import React from "react";
 import { Locales, SimpleString } from "../lib/localization";
+import { toSubmit } from "../lib/page-links";
 import { useLocalization } from "../lib/use-localization";
 import { Creating, Loading, Ready, State, visitState } from "../lib/use-session";
-import { toSubmit } from "../lib/page-links";
 import "./session-creating-loading.scss";
 
 export interface SessionCreatingProps {

@@ -1,11 +1,11 @@
 import React from "react";
 import { Helmet } from "react-helmet";
+import { AlignmentView } from "../elements/alignment-view";
 import { Page } from "../elements/page";
 import { SharedHead } from "../elements/shared-header";
 import { Item } from "../lib/generated/v1/types_pb";
 import { dynamic } from "../lib/react-util";
 import { DeepRequired } from "../lib/util";
-import { AlignmentView } from "../elements/alignment-view";
 import "./legal.scss";
 
 export default function TestPage(): JSX.Element {
