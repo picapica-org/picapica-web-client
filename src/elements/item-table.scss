@@ -9,14 +9,16 @@
 		padding: 0.3em;
 	}
 
-	thead > tr {
-		border-bottom: 2px solid $grey2;
-	}
-	tbody > tr:nth-child(2n + 1) {
-		background-color: $grey1;
-	}
 	tbody > tr {
-		border-top: 1px solid $grey2;
+		border-top: 1px solid $grey3;
+
+		&:nth-child(2n + 1) {
+			background-color: $grey1;
+		}
+
+		&.first {
+			border-top-width: 2px;
+		}
 	}
 
 	th.name,
@@ -39,6 +41,10 @@
 	td.empty {
 		user-select: none;
 		color: $grey6;
+	}
+
+	.failed-item > td.icon .Icon {
+		color: $main-red;
 	}
 
 	button.delete {

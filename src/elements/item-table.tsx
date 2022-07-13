@@ -8,25 +8,30 @@ import { getIntlLocales, Locales, LocalizableOptions, SimpleString } from "../li
 import { LocalizationContext, useLocalization } from "../lib/use-localization";
 import { DeepReadonly, noop } from "../lib/util";
 import { Buttons } from "../elements/buttons";
-import { EditInput } from "../elements/edit-input";
+import { EditInput, TextView } from "../elements/edit-input";
 import { deleteItemAction, updateItemAction } from "../lib/session/actions";
+import { compareTimestamps, sortSessionItems } from "../lib/session/util";
+import { FailedItem, UploadId, UploadingItem } from "../lib/use-upload";
+import { LoaderAnimation } from "./loader-animation";
 import "./item-table.scss";
-import { sortSessionItems } from "../lib/session/util";
 
 export interface ItemTableProps {
 	readonly session: DeepReadonly<Session.AsObject>;
+	readonly uploading: readonly UploadingItem[];
+	readonly failed: readonly FailedItem[];
+	readonly removeFailed: (uploadId: UploadId) => void;
 	readonly update: UseSessionArray[1];
 }
-export function ItemTable(props: ItemTableProps): JSX.Element {
+export function ItemTable({ session, uploading, failed, removeFailed, update }: ItemTableProps): JSX.Element {
 	const localizationOptions = useContext(LocalizationContext);
 	const l = useLocalization(locales);
 
-	const items = sortSessionItems(props.session.itemsList);
+	const items = sortSessionItems(session.itemsList).reverse();
 
 	function deleteItem(item: Item.AsObject): void {
-		const { mutate, request } = deleteItemAction(props.session, item.urn);
+		const { mutate, request } = deleteItemAction(session, item.urn);
 
-		props.update(
+		update(
 			getSessionClient()
 				.deleteItem(request, null)
 				.then(noop, err => {
@@ -47,9 +52,9 @@ export function ItemTable(props: ItemTableProps): JSX.Element {
 		const meta = new Item.Metadata();
 		meta.setName(newName);
 
-		const { mutate, request } = updateItemAction(props.session, item.urn, meta);
+		const { mutate, request } = updateItemAction(session, item.urn, meta);
 
-		props.update(
+		update(
 			getSessionClient()
 				.updateItem(request, null)
 				.then(noop, err => {
@@ -81,9 +86,52 @@ export function ItemTable(props: ItemTableProps): JSX.Element {
 				</tr>
 			</thead>
 			<tbody>
-				{items.map(item => {
+				{[...failed]
+					.sort((a, b) => compareTimestamps(a.startTimestamp, b.startTimestamp))
+					.map(({ item, uploadId }, i) => {
+						return (
+							<tr key={uploadId} className={"failed-item" + (i === 0 ? " first" : "")}>
+								<td className="icon">
+									<PicaIcon kind="failed" />
+								</td>
+								<td className="name">
+									<TextView text={item.name} />
+								</td>
+								<td className="size">
+									<span className="size">{formatBytes(item.size, localizationOptions)}</span>
+								</td>
+								<td className="action">
+									<button
+										className={`delete ${Buttons.BUTTON} ${Buttons.SMALL} ${Buttons.RED}`}
+										onClick={() => removeFailed(uploadId)}>
+										<PicaIcon kind="delete" />
+										<span className="text">{l.delete}</span>
+									</button>
+								</td>
+							</tr>
+						);
+					})}
+				{[...uploading]
+					.sort((a, b) => -compareTimestamps(a.startTimestamp, b.startTimestamp))
+					.map(({ item, uploadId }, i) => {
+						return (
+							<tr key={uploadId} className={"uploading-item" + (i === 0 ? " first" : "")}>
+								<td className="icon">
+									<LoaderAnimation />
+								</td>
+								<td className="name">
+									<TextView text={item.name} />
+								</td>
+								<td className="size">
+									<span className="size">{formatBytes(item.size, localizationOptions)}</span>
+								</td>
+								<td className="action"></td>
+							</tr>
+						);
+					})}
+				{items.map((item, i) => {
 					return (
-						<tr key={item.urn}>
+						<tr key={item.urn} className={"session-item" + (i === 0 ? " first" : "")}>
 							<td className="icon">
 								<ItemTypeIcon type={item.resource?.type ?? Item.Resource.Type.TYPE_UNSPECIFIED} />
 							</td>
@@ -110,7 +158,7 @@ export function ItemTable(props: ItemTableProps): JSX.Element {
 						</tr>
 					);
 				})}
-				{items.length === 0 && (
+				{items.length === 0 && uploading.length === 0 && failed.length === 0 && (
 					<tr>
 						<td className="empty" colSpan={4}>
 							<em>{l.emptyItemList}</em>

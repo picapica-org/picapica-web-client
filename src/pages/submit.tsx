@@ -13,10 +13,8 @@ import { NextButton } from "../elements/step-buttons";
 import { SessionState } from "../elements/session-creating-loading";
 import { ItemProto } from "../lib/session/create-item";
 import { getSessionUrn, Ready, useCreateSession } from "../lib/use-session";
-import { FailedItem, optimisticallyAddItem, UploadedItem, UploadingItem, useUpload } from "../lib/use-upload";
-import { ItemTypeIcon } from "../elements/icon";
+import { FailedItem, optimisticallyAddItem, UploadedItem, UploadId, useUpload } from "../lib/use-upload";
 import { useDropzone } from "react-dropzone";
-import { LoaderAnimation } from "../elements/loader-animation";
 import "./submit.scss";
 
 export default function SubmitPage(): JSX.Element {
@@ -51,6 +49,10 @@ function Submit(): JSX.Element {
 
 	const [failed, setFailed] = useState<readonly FailedItem[]>([]);
 	const addFailed = useCallback((failed: FailedItem): void => setFailed(prev => [...prev, failed]), [setFailed]);
+	const removeFailed = useCallback(
+		(uploadId: UploadId): void => setFailed(prev => prev.filter(item => item.uploadId !== uploadId)),
+		[setFailed]
+	);
 
 	const successfulUpload = useCallback(
 		(uploadedItem: UploadedItem): void => {
@@ -122,9 +124,13 @@ function Submit(): JSX.Element {
 							instruction={l.instruction}
 						/>
 
-						<UploadingList uploading={uploading} />
-
-						<ItemTable session={session} update={update} />
+						<ItemTable
+							session={session}
+							uploading={uploading}
+							failed={failed}
+							removeFailed={removeFailed}
+							update={update}
+						/>
 					</>
 				)}
 			</>
@@ -140,26 +146,6 @@ function Submit(): JSX.Element {
 				<SessionState state={state} onReady={onReady} />
 			</StepSelectorGroup>
 		</Page>
-	);
-}
-
-function UploadingList(props: { uploading: readonly UploadingItem[] }): JSX.Element {
-	return (
-		<div className="UploadingList">
-			{props.uploading.map(({ uploadId, item }) => {
-				return (
-					<div key={uploadId} className="uploading-item">
-						<span className="loading">
-							<LoaderAnimation />
-						</span>
-						<span className="icon">
-							<ItemTypeIcon type={item.type} />
-						</span>
-						<span className="name">{item.name}</span>
-					</div>
-				);
-			})}
-		</div>
 	);
 }
 

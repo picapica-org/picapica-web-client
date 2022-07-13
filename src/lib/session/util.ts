@@ -6,6 +6,14 @@ export function cloneSession(session: DeepReadonly<Session.AsObject>): Session.A
 	return JSON.parse(JSON.stringify(session));
 }
 
+export function createTimestamp(): Timestamp.AsObject {
+	const ms = Date.now();
+	return {
+		seconds: Math.floor(ms / 1000),
+		nanos: (ms % 1000) * 1000_0000,
+	};
+}
+
 export function compareTimestamps(a: Timestamp.AsObject, b: Timestamp.AsObject): number {
 	if (a.seconds === b.seconds) return a.nanos - b.nanos;
 	return a.seconds - b.seconds;

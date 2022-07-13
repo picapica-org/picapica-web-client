@@ -21,7 +21,7 @@ export function EditInput(props: EditInputProps): JSX.Element {
 			{isEditing ? (
 				<EditView {...props} toggleIsEditing={toggleIsEditing} />
 			) : (
-				<TextView {...props} toggleIsEditing={toggleIsEditing} />
+				<TextView text={props.text} toggleIsEditing={toggleIsEditing} />
 			)}
 		</div>
 	);
@@ -102,15 +102,21 @@ function EditView(props: EditInputProps & { toggleIsEditing: () => void }): JSX.
 	);
 }
 
-function TextView(props: EditInputProps & { toggleIsEditing: () => void }): JSX.Element {
+export interface TextViewProps {
+	readonly text: string;
+	toggleIsEditing?: () => void;
+}
+export function TextView({ text, toggleIsEditing }: TextViewProps): JSX.Element {
 	return (
 		<div className="TextView">
 			<span className="text">
-				<span>{props.text.replace(/[\r\n]+/g, " ")}</span>
+				<span>{text.replace(/[\r\n]+/g, " ")}</span>
 			</span>
-			<button className={`edit ${Buttons.BUTTON} ${Buttons.SMALL}`} onClick={props.toggleIsEditing}>
-				<PicaIcon kind="rename" />
-			</button>
+			{toggleIsEditing && (
+				<button className={`edit ${Buttons.BUTTON} ${Buttons.SMALL}`} onClick={toggleIsEditing}>
+					<PicaIcon kind="rename" />
+				</button>
+			)}
 		</div>
 	);
 }

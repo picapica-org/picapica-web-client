@@ -3,21 +3,20 @@ import { v4 as uuidV4 } from "uuid";
 import { ItemMeta, ItemProto, toItemResourceType } from "./session/create-item";
 import { getSessionClient } from "./session/client";
 import { SessionMutator } from "./session/mutator";
-import { cloneSession } from "./session/util";
-import { Item } from "./generated/v1/types_pb";
+import { cloneSession, createTimestamp } from "./session/util";
+import { Item, Timestamp } from "./generated/v1/types_pb";
+
+export type UploadId = string & { readonly __uploadId: never };
 
 export interface UploadingItem {
-	readonly uploadId: string;
+	readonly uploadId: UploadId;
 	readonly item: ItemMeta;
+	readonly startTimestamp: Timestamp.AsObject;
 }
-export interface UploadedItem {
-	readonly uploadId: string;
-	readonly item: ItemMeta;
+export interface UploadedItem extends UploadingItem {
 	readonly itemUrn: string;
 }
-export interface FailedItem {
-	readonly uploadId: string;
-	readonly item: ItemMeta;
+export interface FailedItem extends UploadingItem {
 	readonly error: unknown;
 }
 
@@ -55,8 +54,9 @@ export function useUpload(
 
 			const newUploads = items.map(proto => {
 				const uploading: UploadingItem = {
-					uploadId: uuidV4(),
+					uploadId: uuidV4() as UploadId,
 					item: proto.getMeta(),
+					startTimestamp: createTimestamp(),
 				};
 
 				proto

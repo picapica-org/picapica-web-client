@@ -94,27 +94,4 @@
 			}
 		}
 	}
-
-	.UploadingList {
-		margin: 1em;
-
-		& > .uploading-item {
-			padding: 0.2em 0;
-			display: flex;
-
-			& > .loading {
-				flex-shrink: 0;
-			}
-			& > .icon {
-				flex-shrink: 0;
-				padding-right: 0.3em;
-				padding-left: 1em;
-			}
-			& > .name {
-				flex-grow: 1;
-				word-break: normal;
-				overflow-wrap: anywhere;
-			}
-		}
-	}
 }

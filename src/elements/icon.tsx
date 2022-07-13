@@ -2305,7 +2305,8 @@ export type PicaIconKind =
 	| "checkout"
 	| "results"
 	| "next"
-	| "back";
+	| "back"
+	| "failed";
 
 const KIND_MAP: Record<PicaIconKind, IconKind> = {
 	file: "file-line",
@@ -2320,6 +2321,7 @@ const KIND_MAP: Record<PicaIconKind, IconKind> = {
 	results: "list-check",
 	next: "arrow-right-s-line",
 	back: "arrow-left-s-line",
+	failed: "close-circle-fill",
 };
 
 export interface PicaIconProps {
