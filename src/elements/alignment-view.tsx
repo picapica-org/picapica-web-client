@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { LeftChange, RightChange } from "../lib/alignment";
 import { Locales } from "../lib/localization";
 import { useAlignment } from "../lib/use-alignment";
@@ -11,7 +11,7 @@ export interface Props {
 	readonly alignmentKey: string;
 }
 
-export function AlignmentView(props: Props): JSX.Element {
+export const AlignmentView = memo((props: Props): JSX.Element => {
 	const [alignments] = useAlignment(props.alignmentKey, [props]);
 
 	const diff = alignments[0]?.diff?.diff;
@@ -39,7 +39,7 @@ export function AlignmentView(props: Props): JSX.Element {
 			)}
 		</div>
 	);
-}
+});
 
 interface DiffLineProps {
 	index: number;
