@@ -36,8 +36,33 @@ export type CollectionProps =
 	  };
 
 export function CollectionLabel(props: CollectionProps): JSX.Element {
+	const known = useLocalization(knownCollections);
+	const processed = processProps(props);
+
+	if (!processed) return <UnknownCollectionLabel />;
+	const { urn, collection } = processed;
+
+	const knownLabel = known[urn.collectionId as keyof typeof known] as string | undefined;
+	if (typeof knownLabel === "string") {
+		return <Label text={knownLabel} />;
+	}
+
+	if (collection?.properties) {
+		return <Label text={`${collection.properties.name} - ${collection.properties.description}`} />;
+	}
+
+	return <UnknownCollectionLabel />;
+}
+interface ProcessedProps {
+	urn: PicapicaCollectionUrn;
+	collection: DeepReadonly<Collection.AsObject> | undefined;
+}
+function processProps(props: CollectionProps): ProcessedProps | undefined {
 	if ("collection" in props) {
-		return getCollectionLabel(PicapicaUrn.parse(props.collection.urn) as PicapicaCollectionUrn, props.collection);
+		return {
+			urn: PicapicaUrn.parse(props.collection.urn) as PicapicaCollectionUrn,
+			collection: props.collection,
+		};
 	} else {
 		let urn: PicapicaCollectionUrn;
 		let urnString: string;
@@ -47,7 +72,7 @@ export function CollectionLabel(props: CollectionProps): JSX.Element {
 				urn = parsed;
 				urnString = props.collectionUrn;
 			} else {
-				return <UnknownCollectionLabel />;
+				return undefined;
 			}
 		} else {
 			urn = props.collectionUrn;
@@ -56,47 +81,32 @@ export function CollectionLabel(props: CollectionProps): JSX.Element {
 
 		const collection = props.collections?.find(c => c.urn === urnString);
 
-		return getCollectionLabel(urn, collection);
+		return { urn, collection };
 	}
 }
-function getCollectionLabel(
-	urn: PicapicaCollectionUrn,
-	collection: DeepReadonly<Collection.AsObject> | undefined
-): JSX.Element {
-	const Known = getKnownCollectionLabel(urn);
-	if (Known) {
-		return <Known />;
-	}
 
-	const name = collection?.properties?.name;
-	if (name) {
-		return <Label text={name} />;
-	}
-
-	return <UnknownCollectionLabel />;
-}
-function getKnownCollectionLabel(urn: PicapicaCollectionUrn): (() => JSX.Element) | undefined {
-	if (urn.collectionId.startsWith("wikipedia")) {
-		return () => {
-			const l = useLocalization(locales);
-			return <Label text={l.wikipedia} />;
-		};
-	}
-}
 function UnknownCollectionLabel(): JSX.Element {
 	const l = useLocalization(locales);
 	return <Label text={l.unknown} />;
 }
 
-const locales: Locales<SimpleString<"submittedFiles" | "wikipedia" | "unknown">> = {
+const knownCollectionsEn = {
+	core_fulltext_languagenameenglish: "CORE - The world's largest collection of open-access research papers",
+} as const;
+const knownCollectionsDe = {
+	core_fulltext_languagenameenglish: "CORE - The world's largest collection of open-access research papers",
+} as const;
+const knownCollections: Locales<SimpleString<keyof typeof knownCollectionsEn | keyof typeof knownCollectionsDe>> = {
+	en: knownCollectionsEn,
+	de: knownCollectionsDe,
+};
+const locales: Locales<SimpleString<"submittedFiles" | "unknown">> = {
 	en: {
 		submittedFiles: "Your submitted files",
-		wikipedia: "Wikipedia - the free encyclopedia",
 		unknown: "Unknown",
 	},
 	de: {
 		submittedFiles: "Ihre eingereichten Dateien",
-		wikipedia: "Wikipedia - die freie Enzyklopädie",
 		unknown: "Unbekannt",
 	},
 };
