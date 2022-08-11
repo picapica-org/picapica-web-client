@@ -12,12 +12,14 @@ import * as types from "../lib/generated/v1/types_pb";
 import { Locales, SimpleString } from "../lib/localization";
 import { toResults } from "../lib/page-links";
 import { dynamic } from "../lib/react-util";
+import { PicapicaUrn } from "../lib/session/urn";
 import { getLocationSearchParams } from "../lib/url-params";
 import { useAlignment } from "../lib/use-alignment";
+import { useCollectionDocument } from "../lib/use-collection-document";
 import { useLocalization } from "../lib/use-localization";
 import { SeedText, useResultText } from "../lib/use-result-text";
 import { Ready, useLoadSession } from "../lib/use-session";
-import { DeepReadonly } from "../lib/util";
+import { debugAssert, DeepReadonly } from "../lib/util";
 import "./result.scss";
 
 export default function ResultPage(): JSX.Element {
@@ -35,14 +37,9 @@ export default function ResultPage(): JSX.Element {
 }
 
 function Result(): JSX.Element {
-	const l = useLocalization(locales);
-
 	const [state] = useLoadSession();
 
 	const onReady = ({ session }: Ready): JSX.Element => {
-		const pageUrn = getLocationSearchParams().get("urn");
-		const result = session.resultsList.find(r => r.urn === pageUrn);
-
 		return (
 			<OverviewContainer
 				title="Text alignment"
@@ -50,13 +47,7 @@ function Result(): JSX.Element {
 					urn: session.urn,
 					view: getLocationSearchParams().get("view") ?? undefined,
 				})}>
-				{result ? (
-					<ResultView session={session} result={result} />
-				) : (
-					<div className="invalid-result-error">
-						<p>{l.invalidUrn}</p>
-					</div>
-				)}
+				<ResultValidity session={session} />
 			</OverviewContainer>
 		);
 	};
@@ -68,66 +59,114 @@ function Result(): JSX.Element {
 	);
 }
 
-interface ResultViewProps {
-	readonly session: DeepReadonly<Session.AsObject>;
-	readonly result: DeepReadonly<types.Result.AsObject>;
-}
-
-function ResultView(props: ResultViewProps): JSX.Element {
+function ResultValidity({ session }: { session: DeepReadonly<Session.AsObject> }): JSX.Element {
 	const l = useLocalization(locales);
 
-	// TODO: Error view. For now, I'll assume that all results have status=OK
-	// TODO: Account for missing items
-	// TODO: Account for collections
-	const resources = getResultResources(props.result, props.session)!;
-	const [texts] = useResultText(props.result);
+	const pageUrn = getLocationSearchParams().get("urn");
+	const result = session.resultsList.find(r => r.urn === pageUrn);
+
+	if (!result) {
+		return (
+			<div className="invalid-result-error">
+				<p>{l.invalidUrn}</p>
+			</div>
+		);
+	}
+
+	if (result.status !== types.Result.ResultStatusCode.STATUS_OK) {
+		return <div className="invalid-result-error">{l.failedResult(result.status)}</div>;
+	}
+
+	debugAssert(result.resources !== undefined, "Expected that the result object has resources");
+	const left = getResultResource(result.resources.urnA, session);
+	const right = getResultResource(result.resources.urnB, session);
+
+	const error = left.type === "error" ? left : right.type === "error" ? right : undefined;
+	if (error) {
+		throw new Error("");
+	}
+
+	if (left.type === "error") {
+		return (
+			<div className="invalid-result-error">
+				<p>{l[`resultError${left.error}`]}</p>
+			</div>
+		);
+	}
+	if (right.type === "error") {
+		return (
+			<div className="invalid-result-error">
+				<p>{l[`resultError${right.error}`]}</p>
+			</div>
+		);
+	}
+
+	return <ResultView left={left} right={right} result={result} />;
+}
+
+type ResultResource = ResultResourceSessionItem | ResultResourceCollectionDocument;
+interface ResultResourceSessionItem {
+	type: "item";
+	item: DeepReadonly<types.Item.AsObject>;
+}
+interface ResultResourceCollectionDocument {
+	type: "document";
+	sessionUrn: string;
+	collectionUrn: string;
+	documentUrn: string;
+}
+interface ResultResourceError {
+	type: "error";
+	error: "InvalidUrnType" | "UnknownItem";
+}
+function getResultResource(urn: string, session: DeepReadonly<Session.AsObject>): ResultResource | ResultResourceError {
+	const parsed = PicapicaUrn.parse(urn);
+
+	if (parsed.type === "item") {
+		const item = session.itemsList.find(i => i.urn === urn);
+		if (!item) return { type: "error", error: "UnknownItem" };
+		return { type: "item", item };
+	}
+
+	if (parsed.type === "document") {
+		const collectionUrn = PicapicaUrn.stringify({ type: "collection", collectionId: parsed.collectionId });
+		return { type: "document", documentUrn: urn, sessionUrn: session.urn, collectionUrn };
+	}
+
+	return { type: "error", error: "InvalidUrnType" };
+}
+
+interface ResultViewProps {
+	readonly result: DeepReadonly<types.Result.AsObject>;
+	readonly left: ResultResource;
+	readonly right: ResultResource;
+}
+
+function ResultView({ result, left, right }: ResultViewProps): JSX.Element {
+	const [texts] = useResultText(result);
 
 	return (
 		<>
-			<ResultSummary {...props} resources={resources} />
+			<ResultSummary result={result} />
 			{texts?.map((text, i) => {
 				return (
-					<ResultSeedView
-						key={i}
-						alignmentKey={`${i}:${props.result.urn}`}
-						resources={resources}
-						text={text}
-					/>
+					<ResultSeedView key={i} alignmentKey={`${i}:${result.urn}`} left={left} right={right} text={text} />
 				);
 			})}
 		</>
 	);
 }
 
-interface ResultResources {
-	readonly left: DeepReadonly<types.Item.AsObject>;
-	readonly right: DeepReadonly<types.Item.AsObject>;
-}
-
-function getResultResources(
-	result: DeepReadonly<types.Result.AsObject>,
-	session: DeepReadonly<Session.AsObject>
-): ResultResources | undefined {
-	if (!result.resources) return undefined;
-	const { urnA, urnB } = result.resources;
-	const a = session.itemsList.find(i => i.urn === urnA);
-	const b = session.itemsList.find(i => i.urn === urnB);
-	if (!a || !b) return undefined;
-	return { left: a, right: b };
-}
-
 interface ResultSummaryProps {
-	readonly session: DeepReadonly<Session.AsObject>;
 	readonly result: DeepReadonly<types.Result.AsObject>;
-	readonly resources: ResultResources;
 }
-function ResultSummary(props: ResultSummaryProps): JSX.Element {
+function ResultSummary({ result }: ResultSummaryProps): JSX.Element {
 	const l = useLocalization(locales);
 
-	const [texts] = useResultText(props.result);
+	const [texts] = useResultText(result);
 
 	const [alignments] = useAlignment(
-		`${texts?.length}:${props.result.urn}`,
+		`${texts?.length}:${result.urn}`,
 		texts?.map(t => ({ left: t.a.text, right: t.b.text })) ?? []
 	);
 
@@ -142,26 +181,27 @@ function ResultSummary(props: ResultSummaryProps): JSX.Element {
 
 	return (
 		<div className="ResultSummary">
-			<p className="summary">{l.reusedPassages(props.result.seedsList.length)}</p>
-			<p className="details">{l.detailed(props.result.seedsList.length, sharedWords, incomplete)}</p>
+			<p className="summary">{l.reusedPassages(result.seedsList.length)}</p>
+			<p className="details">{l.detailed(result.seedsList.length, sharedWords, incomplete)}</p>
 		</div>
 	);
 }
 
 interface ResultSeedViewProps {
-	readonly resources: ResultResources;
+	readonly left: ResultResource;
+	readonly right: ResultResource;
 	readonly text: SeedText;
 	readonly alignmentKey: string;
 }
-function ResultSeedView({ resources, text, alignmentKey }: ResultSeedViewProps): JSX.Element {
+function ResultSeedView({ left, right, text, alignmentKey }: ResultSeedViewProps): JSX.Element {
 	return (
 		<div className="ResultSeedView">
 			<div className="header">
 				<div className="left">
-					<ResultLabel item={resources.left} />
+					<ResultLabel resource={left} />
 				</div>
 				<div className="right">
-					<ResultLabel item={resources.right} />
+					<ResultLabel resource={right} />
 				</div>
 			</div>
 			<div className="alignment">
@@ -172,29 +212,64 @@ function ResultSeedView({ resources, text, alignmentKey }: ResultSeedViewProps):
 }
 
 interface ResultLabelProps {
-	item: DeepReadonly<types.Item.AsObject>;
+	resource: ResultResource;
 }
-function ResultLabel(props: ResultLabelProps): JSX.Element {
+function ResultLabel({ resource }: ResultLabelProps): JSX.Element {
 	return (
 		<span className="ResultLabel">
-			<CenterAlignTwo
-				grow="right"
-				left={<ItemTypeIcon type={props.item.resource?.type ?? types.Item.Resource.Type.TYPE_UNSPECIFIED} />}
-				right={<span className="text">{props.item.meta?.name ?? ""}</span>}
-			/>
+			{resource.type === "item" ? (
+				<ItemResultLabel resource={resource} />
+			) : (
+				<DocumentResultLabel resource={resource} />
+			)}
+		</span>
+	);
+}
+function ItemResultLabel({ resource }: { resource: ResultResourceSessionItem }): JSX.Element {
+	const { item } = resource;
+
+	return (
+		<CenterAlignTwo
+			grow="right"
+			left={<ItemTypeIcon type={item.resource?.type ?? types.Item.Resource.Type.TYPE_UNSPECIFIED} />}
+			right={<span className="text">{item.meta?.name ?? ""}</span>}
+		/>
+	);
+}
+function DocumentResultLabel({ resource }: { resource: ResultResourceCollectionDocument }): JSX.Element {
+	const { documentUrn, sessionUrn } = resource;
+
+	const document = useCollectionDocument(sessionUrn, documentUrn);
+
+	return (
+		<span className="ResultLabel">
+			<span className="text">{document?.properties?.title ?? ""}</span>
 		</span>
 	);
 }
 
 const locales: Locales<
-	SimpleString<"invalidUrn"> & {
+	SimpleString<"invalidUrn" | `resultError${ResultResourceError["error"]}`> & {
+		failedResult: (status: types.Result.ResultStatusCode) => JSX.Element;
 		reusedPassages: (reused: number) => JSX.Element;
 		detailed: (reused: number, sharedWords: number, incomplete: boolean) => JSX.Element;
 	}
 > = {
 	en: {
-		// TODO: Better error message
 		invalidUrn: "Invalid link. The result you are trying to access is not available.",
+		failedResult(status) {
+			return (
+				<>
+					<p>Picapica was unable to calculate this result due to a server error.</p>
+					<p>Status code: {status}</p>
+				</>
+			);
+		},
+
+		resultErrorInvalidUrnType:
+			"Invalid URN type in result. This is a problem with Picapica itself. Please report this bug.",
+		resultErrorUnknownItem:
+			"Invalid item in result. The item has likely been deleted which means that this result can no longer be viewed.",
 
 		reusedPassages(reused) {
 			if (reused === 1) {
@@ -215,6 +290,19 @@ const locales: Locales<
 	},
 	de: {
 		invalidUrn: "Falscher Link. Das Ergebnis ist nicht verfügbar.",
+		failedResult(status) {
+			return (
+				<>
+					<p>Picapica konnte dieses Ergebnis nicht berechnen wegen eines Serverproblems.</p>
+					<p>Statuscode: {status}</p>
+				</>
+			);
+		},
+
+		resultErrorInvalidUrnType:
+			"Flascher URN-Type im Ergebnis. Dies ist ein Problem in der Picapica Software. Bitte melden Sie diesen Fehler.",
+		resultErrorUnknownItem:
+			"Invalid item in result. The item has likely been deleted which means that this result can no longer be viewed.",
 
 		reusedPassages(reused) {
 			if (reused === 1) {

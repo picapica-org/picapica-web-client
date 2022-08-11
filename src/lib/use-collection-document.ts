@@ -7,7 +7,7 @@ import { DeepReadonly } from "./util";
 export function useCollectionDocument(
 	sessionUrn: string,
 	documentUrn: string
-): [collections: DeepReadonly<Document.AsObject> | undefined] {
+): DeepReadonly<Document.AsObject> | undefined {
 	const query = useQuery(["collection-document", sessionUrn, documentUrn] as const, {
 		// collections are an immutable resource, so we don't need to refetch
 		refetchInterval: false,
@@ -25,5 +25,5 @@ export function useCollectionDocument(
 		},
 	});
 
-	return [query.data];
+	return query.data;
 }
