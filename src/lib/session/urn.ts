@@ -2,6 +2,11 @@ import { parse as parseURI, URIComponents } from "uri-js";
 
 export const NONE_URN = "urn:picapica:none";
 
+type UrnTypes = "collection" | "document" | "session" | "item" | "result" | "none";
+export type Urn<Type extends UrnTypes = UrnTypes> = Type extends "none"
+	? typeof NONE_URN
+	: `urn:picapica:${Type}:${string}`;
+
 export type PicapicaUrn =
 	| PicapicaCollectionUrn
 	| PicapicaDocumentUrn
@@ -10,30 +15,33 @@ export type PicapicaUrn =
 	| PicapicaResultUrn
 	| PicapicaNoneUrn;
 
-export interface PicapicaCollectionUrn {
+interface PicapicaUrnBase {
+	readonly type: UrnTypes;
+}
+export interface PicapicaCollectionUrn extends PicapicaUrnBase {
 	type: "collection";
 	collectionId: string;
 }
-export interface PicapicaDocumentUrn {
+export interface PicapicaDocumentUrn extends PicapicaUrnBase {
 	type: "document";
 	collectionId: string;
 	documentId: string;
 }
-export interface PicapicaSessionUrn {
+export interface PicapicaSessionUrn extends PicapicaUrnBase {
 	type: "session";
 	sessionId: string;
 }
-export interface PicapicaItemUrn {
+export interface PicapicaItemUrn extends PicapicaUrnBase {
 	type: "item";
 	sessionId: string;
 	itemId: string;
 }
-export interface PicapicaResultUrn {
+export interface PicapicaResultUrn extends PicapicaUrnBase {
 	type: "result";
 	sessionId: string;
 	resultId: string;
 }
-export interface PicapicaNoneUrn {
+export interface PicapicaNoneUrn extends PicapicaUrnBase {
 	type: "none";
 }
 
@@ -98,8 +106,8 @@ export namespace PicapicaUrn {
 		}
 	}
 
-	export function stringify(urn: PicapicaUrn): string {
-		return `urn:picapica:${urn.type}${stringifyContent(urn)}`;
+	export function stringify<T extends PicapicaUrn>(urn: T): Urn<T["type"]> {
+		return `urn:picapica:${urn.type}${stringifyContent(urn)}` as Urn<T["type"]>;
 	}
 	function stringifyContent(urn: PicapicaUrn): string {
 		switch (urn.type) {
