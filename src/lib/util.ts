@@ -6,6 +6,16 @@ export type DeepReadonly<T> = {
 	readonly [P in keyof T]: DeepReadonly<T[P]>;
 };
 
+export type Result<O, E> = ResultOk<O> | ResultError<E>;
+export interface ResultOk<O> {
+	readonly type: "Ok";
+	readonly value: O;
+}
+export interface ResultError<E> {
+	readonly type: "Error";
+	readonly error: E;
+}
+
 export function lazy<T>(supplier: () => NonNullable<T>): () => T {
 	let value: T | undefined = undefined;
 	return () => {

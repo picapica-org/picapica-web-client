@@ -5,6 +5,7 @@ import { getSessionClient } from "./session/client";
 import { ItemMeta, ItemProto, toItemResourceType } from "./session/create-item";
 import { SessionMutator } from "./session/mutator";
 import { cloneSession, createTimestamp } from "./session/util";
+import { Result } from "./util";
 
 export type UploadId = string & { readonly __uploadId: never };
 
@@ -19,8 +20,6 @@ export interface UploadedItem extends UploadingItem {
 export interface FailedItem extends UploadingItem {
 	readonly error: unknown;
 }
-
-type Result<O, E> = { readonly type: "Ok"; readonly value: O } | { readonly type: "Error"; readonly error: E };
 
 interface Done {
 	readonly item: UploadingItem;
