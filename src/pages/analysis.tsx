@@ -103,42 +103,42 @@ interface ItemConfigProps {
 	update: (config: AnalysisConfig) => void;
 }
 
-function ItemConfig(props: ItemConfigProps): JSX.Element {
+function ItemConfig({ session, config, update }: ItemConfigProps): JSX.Element {
 	const l = useLocalization(locales);
 
-	const items = sortSessionItems(props.session.itemsList);
+	const items = sortSessionItems(session.itemsList);
 
 	const allUrns: ItemUrn[] = items.map(i => i.urn);
-	const allA = allUrns.every(urn => props.config.groupA.has(urn));
-	const allB = allUrns.every(urn => props.config.groupB.has(urn));
+	const allA = allUrns.every(urn => config.groupA.has(urn));
+	const allB = allUrns.every(urn => config.groupB.has(urn));
 	const all = allA && allB;
-	const none = allUrns.every(urn => !props.config.groupA.has(urn) && !props.config.groupB.has(urn));
+	const none = allUrns.every(urn => !config.groupA.has(urn) && !config.groupB.has(urn));
 
 	const INACTIVE = "inactive";
 
 	function setAll(): void {
-		const newConfig = props.config.withGroupA(new Set(allUrns)).withGroupB(new Set(allUrns));
-		props.update(newConfig);
+		const newConfig = config.withGroupA(new Set(allUrns)).withGroupB(new Set(allUrns));
+		update(newConfig);
 	}
 	function setNone(): void {
-		const newConfig = props.config.withGroupA(EMPTY_SET).withGroupB(EMPTY_SET);
-		props.update(newConfig);
+		const newConfig = config.withGroupA(EMPTY_SET).withGroupB(EMPTY_SET);
+		update(newConfig);
 	}
 	function setAllA(): void {
-		const newConfig = props.config.withGroupA(new Set(allUrns));
-		props.update(newConfig);
+		const newConfig = config.withGroupA(new Set(allUrns));
+		update(newConfig);
 	}
 	function setAllB(): void {
-		const newConfig = props.config.withGroupB(new Set(allUrns));
-		props.update(newConfig);
+		const newConfig = config.withGroupB(new Set(allUrns));
+		update(newConfig);
 	}
 	function toggleA(urn: ItemUrn): void {
-		const newConfig = props.config.withGroupA(toggleSetValue(props.config.groupA, urn));
-		props.update(newConfig);
+		const newConfig = config.withGroupA(toggleSetValue(config.groupA, urn));
+		update(newConfig);
 	}
 	function toggleB(urn: ItemUrn): void {
-		const newConfig = props.config.withGroupB(toggleSetValue(props.config.groupB, urn));
-		props.update(newConfig);
+		const newConfig = config.withGroupB(toggleSetValue(config.groupB, urn));
+		update(newConfig);
 	}
 
 	return (
@@ -171,8 +171,8 @@ function ItemConfig(props: ItemConfigProps): JSX.Element {
 						</button>
 					</div>
 					{items.map(item => {
-						const a = props.config.groupA.has(item.urn);
-						const b = props.config.groupB.has(item.urn);
+						const a = config.groupA.has(item.urn);
+						const b = config.groupB.has(item.urn);
 
 						return (
 							<div key={item.urn} className={Buttons.BUTTON_GROUP}>
