@@ -99,9 +99,16 @@ export function optimisticallyAddItem({ item, itemUrn }: UploadedItem): SessionM
 	return oldSession => {
 		const session = cloneSession(oldSession);
 
+		const s = Date.now() / 1000;
+		const seconds = Math.floor(s);
+		const nanos = (s - seconds) * 10e9;
+		const now: Timestamp.AsObject = { nanos, seconds };
+
 		// add item
 		session.itemsList.push({
 			urn: itemUrn,
+			createdAt: now,
+			modifiedAt: now,
 			meta: { name: item.name },
 			resource: {
 				itemUrn,
