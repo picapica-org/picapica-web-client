@@ -1,6 +1,6 @@
 import { Result } from "../generated/v1/types_pb";
 import { DeepReadonly } from "../util";
-import { PicapicaDocumentUrn, PicapicaItemUrn, PicapicaUrn } from "./urn";
+import { PicapicaDocumentUrn, PicapicaItemUrn, PicapicaUrn, Urn } from "./urn";
 
 export interface ItemResult {
 	readonly a: PicapicaItemUrn;
@@ -21,7 +21,7 @@ export interface ResultCategories {
 	/**
 	 * A map from a collections URN to a non-empty list of results between an item and a document from key collection.
 	 */
-	collections: Map<string, CollectionResult[]>;
+	collections: Map<Urn<"collection">, CollectionResult[]>;
 	/**
 	 * A list of results that are invalid by not having valid URNs.
 	 */
