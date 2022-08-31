@@ -10,13 +10,14 @@ import { StepActionBar } from "../elements/step-action-bar";
 import { BackButton, StartButton } from "../elements/step-buttons";
 import { getLinkToStep, StepSelectorGroup } from "../elements/step-selector";
 import { Session } from "../lib/generated/v1/services_pb";
-import { Item } from "../lib/generated/v1/types_pb";
+import { Collection, Item } from "../lib/generated/v1/types_pb";
 import { Locales, SimpleString } from "../lib/localization";
 import { dynamic } from "../lib/react-util";
 import { updateComparisonSetAction } from "../lib/session/actions";
-import { AnalysisConfig, CollectionUrn, ItemUrn } from "../lib/session/analysis-config";
+import { AnalysisConfig, ItemUrn } from "../lib/session/analysis-config";
 import { getSessionClient } from "../lib/session/client";
 import { sortSessionItems } from "../lib/session/util";
+import { useCollections } from "../lib/use-collections";
 import { useLocalization } from "../lib/use-localization";
 import { getSessionUrn, Ready, useLoadSession } from "../lib/use-session";
 import { DeepReadonly, EMPTY_ARRAY, EMPTY_SET, noop } from "../lib/util";
@@ -40,6 +41,7 @@ function Analysis(): JSX.Element {
 	const l = useLocalization(locales);
 
 	const [state, update] = useLoadSession();
+	const [collections] = useCollections(getSessionUrn(state));
 
 	const updateConfig = useCallback(
 		(config: AnalysisConfig) => {
@@ -72,13 +74,19 @@ function Analysis(): JSX.Element {
 			/>
 
 			<ItemConfig session={session} config={config} update={updateConfig} />
-			<CollectionConfig
-				session={session}
-				config={config}
-				update={updateConfig}
-				collection="urn:picapica:collection:wikipedia"
-				instruction={l.wikipediaInstruction}
-			/>
+
+			{(collections ?? []).map(collection => {
+				return (
+					<CollectionConfig
+						key={collection.urn}
+						session={session}
+						config={config}
+						update={updateConfig}
+						collection={collection}
+						instruction={l.wikipediaInstruction}
+					/>
+				);
+			})}
 
 			<StepActionBar
 				left={<BackButton to={getLinkToStep("submit", session.urn)} />}
@@ -202,7 +210,7 @@ function ItemConfig({ session, config, update }: ItemConfigProps): JSX.Element {
 interface CollectionConfigProps {
 	session: DeepReadonly<Session.AsObject>;
 	config: AnalysisConfig;
-	collection: CollectionUrn;
+	collection: DeepReadonly<Collection.AsObject>;
 	instruction: string;
 	update: (config: AnalysisConfig) => void;
 }
@@ -210,7 +218,7 @@ interface CollectionConfigProps {
 function CollectionConfig(props: CollectionConfigProps): JSX.Element {
 	const l = useLocalization(locales);
 
-	const set = props.config.collections.get(props.collection) ?? EMPTY_SET;
+	const set = props.config.collections.get(props.collection.urn) ?? EMPTY_SET;
 	const items = sortSessionItems(props.session.itemsList);
 
 	const allUrns: ItemUrn[] = items.map(i => i.urn);
@@ -220,15 +228,15 @@ function CollectionConfig(props: CollectionConfigProps): JSX.Element {
 	const INACTIVE = "inactive";
 
 	function setAll(): void {
-		const newConfig = props.config.withCollection(props.collection, new Set(allUrns));
+		const newConfig = props.config.withCollection(props.collection.urn, new Set(allUrns));
 		props.update(newConfig);
 	}
 	function setNone(): void {
-		const newConfig = props.config.withCollection(props.collection, EMPTY_SET);
+		const newConfig = props.config.withCollection(props.collection.urn, EMPTY_SET);
 		props.update(newConfig);
 	}
 	function toggleHas(urn: ItemUrn): void {
-		const newConfig = props.config.withCollection(props.collection, toggleSetValue(set, urn));
+		const newConfig = props.config.withCollection(props.collection.urn, toggleSetValue(set, urn));
 		props.update(newConfig);
 	}
 
@@ -236,7 +244,7 @@ function CollectionConfig(props: CollectionConfigProps): JSX.Element {
 		<div className="CollectionConfig">
 			<div className="heading">
 				<span className="title">
-					<CollectionLabel collectionUrn={props.collection.urn as Urn<"collection">} />
+					<CollectionLabel collectionUrn={props.collection.urn} />
 				</span>
 				<span className="buttons">
 					<span className={Buttons.BUTTON_GROUP}>
