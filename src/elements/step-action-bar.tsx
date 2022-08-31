@@ -7,15 +7,15 @@ export interface StepActionBarProps {
 	instruction: string;
 }
 
-export function StepActionBar(props: StepActionBarProps): JSX.Element {
+export function StepActionBar({ left, right, instruction }: StepActionBarProps): JSX.Element {
 	return (
 		<div className="StepActionBar">
 			<div className="left">
-				<div>{props.left}</div>
+				<div>{left}</div>
 			</div>
-			<div className="instruction">{props.instruction}</div>
+			<div className="instruction">{instruction}</div>
 			<div className="right">
-				<div>{props.right}</div>
+				<div>{right}</div>
 			</div>
 		</div>
 	);

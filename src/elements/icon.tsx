@@ -2289,8 +2289,8 @@ export interface IconProps {
  * @param props
  * @returns
  */
-export function Icon(props: IconProps): JSX.Element {
-	return <span className={"Icon ri-" + props.kind} id={props.id}></span>;
+export function Icon({ kind, id }: IconProps): JSX.Element {
+	return <span className={"Icon ri-" + kind} id={id}></span>;
 }
 
 export type PicaIconKind =
@@ -2329,8 +2329,8 @@ export interface PicaIconProps {
 	id?: string;
 }
 
-export function PicaIcon(props: PicaIconProps): JSX.Element {
-	return Icon({ kind: KIND_MAP[props.kind], id: props.id });
+export function PicaIcon({ kind, id }: PicaIconProps): JSX.Element {
+	return Icon({ kind: KIND_MAP[kind], id });
 }
 
 export interface ItemTypeIconProps {
@@ -2338,7 +2338,7 @@ export interface ItemTypeIconProps {
 	id?: string;
 }
 
-export function ItemTypeIcon(props: ItemTypeIconProps): JSX.Element {
-	const type = typeof props.type === "string" ? props.type : toItemType(props.type);
-	return PicaIcon({ kind: type ?? "unknown", id: props.id });
+export function ItemTypeIcon({ type, id }: ItemTypeIconProps): JSX.Element {
+	const kind = typeof type === "string" ? type : toItemType(type);
+	return PicaIcon({ kind: kind ?? "unknown", id });
 }

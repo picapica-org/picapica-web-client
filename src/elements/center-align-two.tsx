@@ -8,11 +8,11 @@ export interface CenterAlignTwoProps {
 	readonly right: React.ReactNode;
 }
 
-export function CenterAlignTwo(props: CenterAlignTwoProps): JSX.Element {
+export function CenterAlignTwo({ className, grow, left, right }: CenterAlignTwoProps): JSX.Element {
 	return (
-		<div className={"CenterAlignTwo" + (props.className ? " " + props.className : "")}>
-			<div className={`left${props.grow === "left" ? " grow" : ""}`}>{props.left}</div>
-			<div className={`right${props.grow === "right" ? " grow" : ""}`}>{props.right}</div>
+		<div className={"CenterAlignTwo" + (className ? " " + className : "")}>
+			<div className={`left${grow === "left" ? " grow" : ""}`}>{left}</div>
+			<div className={`right${grow === "right" ? " grow" : ""}`}>{right}</div>
 		</div>
 	);
 }

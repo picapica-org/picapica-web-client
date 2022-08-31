@@ -8,12 +8,10 @@ interface Props {
 	children: React.ReactNode;
 }
 
-export function TransparentButton(props: Readonly<Props>): JSX.Element {
-	const className = props.className ? " " + props.className : "";
-
+export function TransparentButton({ id, className = "", onClick, children }: Readonly<Props>): JSX.Element {
 	return (
-		<button className={"TransparentButton" + className} id={props.id} onClick={props.onClick}>
-			{props.children}
+		<button className={`TransparentButton ${className}`.trim()} id={id} onClick={onClick}>
+			{children}
 		</button>
 	);
 }

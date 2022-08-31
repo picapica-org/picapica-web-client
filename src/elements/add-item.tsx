@@ -17,7 +17,7 @@ export interface AddItemProps {
 
 const INPUT_KINDS = ["file", "url", "text"] as const;
 
-export function AddItem(props: AddItemProps): JSX.Element {
+export function AddItem({ onAdd, accept }: AddItemProps): JSX.Element {
 	const l = useLocalization(locales);
 
 	const [currentTab, setCurrentTab] = useState<ItemType>("file");
@@ -34,9 +34,9 @@ export function AddItem(props: AddItemProps): JSX.Element {
 
 	const submit = useCallback(
 		async (items: ItemProto[]): Promise<void> => {
-			props.onAdd(items);
+			onAdd(items);
 		},
-		[props]
+		[onAdd]
 	);
 
 	const onSelect = useCallback(
@@ -55,7 +55,7 @@ export function AddItem(props: AddItemProps): JSX.Element {
 		}
 	}, [openModal]);
 
-	const [openFiles, input] = useOpenFileDialog(onSelect, { multiple: true, accept: props.accept });
+	const [openFiles, input] = useOpenFileDialog(onSelect, { multiple: true, accept });
 
 	const modalContent: Record<ItemType, (close: () => void) => JSX.Element> = {
 		file(close) {
@@ -162,24 +162,24 @@ interface OpenFilesProps {
 	readonly openFiles: () => void;
 }
 
-function ModalFileInput(props: OpenFilesProps & ClosableProps): JSX.Element {
+function ModalFileInput({ close, openFiles }: OpenFilesProps & ClosableProps): JSX.Element {
 	const l = useLocalization(locales);
 
 	return (
 		<>
 			<div className="modal-content">
 				<label>{l.file}</label>
-				<button className={Buttons.BUTTON} onClick={props.openFiles}>
+				<button className={Buttons.BUTTON} onClick={openFiles}>
 					{l.chooseFiles}
 				</button>
 				<p className="hint">{l.dragAndDropHint}</p>
 			</div>
-			<ModalFooter close={props.close} add={props.openFiles} />
+			<ModalFooter close={close} add={openFiles} />
 		</>
 	);
 }
 
-function ModalUrlInput(props: SubmitProps & ClosableProps): JSX.Element {
+function ModalUrlInput({ close, submit }: SubmitProps & ClosableProps): JSX.Element {
 	const l = useLocalization(locales);
 
 	const [url, setUrl] = useState("");
@@ -193,9 +193,9 @@ function ModalUrlInput(props: SubmitProps & ClosableProps): JSX.Element {
 		} else {
 			setError("");
 
-			props.submit([ItemProto.fromUrl(url)]).then(() => {
+			submit([ItemProto.fromUrl(url)]).then(() => {
 				setUrl("");
-				props.close();
+				close();
 			});
 		}
 	}
@@ -220,12 +220,12 @@ function ModalUrlInput(props: SubmitProps & ClosableProps): JSX.Element {
 				/>
 				{!!error && <p className="error">{error}</p>}
 			</div>
-			<ModalFooter close={props.close} add={trySubmit} />
+			<ModalFooter close={close} add={trySubmit} />
 		</>
 	);
 }
 
-function ModalTextInput(props: SubmitProps & ClosableProps): JSX.Element {
+function ModalTextInput({ close, submit }: SubmitProps & ClosableProps): JSX.Element {
 	const l = useLocalization(locales);
 
 	const [text, setText] = useState("");
@@ -237,9 +237,9 @@ function ModalTextInput(props: SubmitProps & ClosableProps): JSX.Element {
 		} else {
 			setError("");
 
-			props.submit([ItemProto.fromText(text)]).then(() => {
+			submit([ItemProto.fromText(text)]).then(() => {
 				setText("");
-				props.close();
+				close();
 			});
 		}
 	}
@@ -256,21 +256,21 @@ function ModalTextInput(props: SubmitProps & ClosableProps): JSX.Element {
 					spellCheck={false}></textarea>
 				{!!error && <p className="error">{error}</p>}
 			</div>
-			<ModalFooter close={props.close} add={trySubmit} />
+			<ModalFooter close={close} add={trySubmit} />
 		</>
 	);
 }
 
-function ModalFooter(props: { add?: () => void } & ClosableProps): JSX.Element {
+function ModalFooter({ close, add }: { add?: () => void } & ClosableProps): JSX.Element {
 	const l = useLocalization(locales);
 
 	return (
 		<div className="ModalFooter">
-			<button className={`${Buttons.BUTTON}`} onClick={props.close}>
+			<button className={`${Buttons.BUTTON}`} onClick={close}>
 				{l.cancel}
 			</button>
-			{!!props.add && (
-				<button className={`${Buttons.BUTTON} ${Buttons.GREEN}`} onClick={props.add}>
+			{!!add && (
+				<button className={`${Buttons.BUTTON} ${Buttons.GREEN}`} onClick={add}>
 					<Icon kind="add-line" />
 					{l.add}
 				</button>

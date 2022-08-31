@@ -215,11 +215,11 @@ interface CollectionConfigProps {
 	update: (config: AnalysisConfig) => void;
 }
 
-function CollectionConfig(props: CollectionConfigProps): JSX.Element {
+function CollectionConfig({ session, config, collection, instruction, update }: CollectionConfigProps): JSX.Element {
 	const l = useLocalization(locales);
 
-	const set = props.config.collections.get(props.collection.urn) ?? EMPTY_SET;
-	const items = sortSessionItems(props.session.itemsList);
+	const set = config.collections.get(collection.urn) ?? EMPTY_SET;
+	const items = sortSessionItems(session.itemsList);
 
 	const allUrns: ItemUrn[] = items.map(i => i.urn);
 	const all = allUrns.every(urn => set.has(urn));
@@ -228,23 +228,23 @@ function CollectionConfig(props: CollectionConfigProps): JSX.Element {
 	const INACTIVE = "inactive";
 
 	function setAll(): void {
-		const newConfig = props.config.withCollection(props.collection.urn, new Set(allUrns));
-		props.update(newConfig);
+		const newConfig = config.withCollection(collection.urn, new Set(allUrns));
+		update(newConfig);
 	}
 	function setNone(): void {
-		const newConfig = props.config.withCollection(props.collection.urn, EMPTY_SET);
-		props.update(newConfig);
+		const newConfig = config.withCollection(collection.urn, EMPTY_SET);
+		update(newConfig);
 	}
 	function toggleHas(urn: ItemUrn): void {
-		const newConfig = props.config.withCollection(props.collection.urn, toggleSetValue(set, urn));
-		props.update(newConfig);
+		const newConfig = config.withCollection(collection.urn, toggleSetValue(set, urn));
+		update(newConfig);
 	}
 
 	return (
 		<div className="CollectionConfig">
 			<div className="heading">
 				<span className="title">
-					<CollectionLabel collectionUrn={props.collection.urn} />
+					<CollectionLabel collectionUrn={collection.urn} />
 				</span>
 				<span className="buttons">
 					<span className={Buttons.BUTTON_GROUP}>
@@ -258,7 +258,7 @@ function CollectionConfig(props: CollectionConfigProps): JSX.Element {
 				</span>
 			</div>
 			<div className="content">
-				<div className="instruction">{props.instruction}</div>
+				<div className="instruction">{instruction}</div>
 				<div className="table">
 					<div className={Buttons.BUTTON_GROUP}>
 						<span className={Buttons.NON_BUTTON}>{l.file}</span>

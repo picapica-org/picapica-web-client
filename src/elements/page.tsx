@@ -17,21 +17,20 @@ export interface Props {
 	header: HeaderType;
 	className: string;
 	dropState?: DropzoneState;
-	children: React.ReactNode;
 }
 
-export function Page(props: Props): JSX.Element {
-	const Header = HEADER_MAP[props.header];
+export function Page({ header, className, dropState, children }: React.PropsWithChildren<Props>): JSX.Element {
+	const Header = HEADER_MAP[header];
 
-	const getRootProps: (x: DropzoneRootProps) => DropzoneRootProps = props.dropState?.getRootProps ?? identity;
+	const getRootProps: (x: DropzoneRootProps) => DropzoneRootProps = dropState?.getRootProps ?? identity;
 
 	return (
-		<div {...getRootProps({ id: "Page", className: props.header + "-header", tabIndex: -1 })}>
-			{props.dropState && <input {...props.dropState.getInputProps()} />}
+		<div {...getRootProps({ id: "Page", className: header + "-header", tabIndex: -1 })}>
+			{dropState && <input {...dropState.getInputProps()} />}
 
 			<Header />
-			<div id="content" className={props.className}>
-				{props.children}
+			<div id="content" className={className}>
+				{children}
 			</div>
 			<div className="footer-wrapper">
 				<Footer />

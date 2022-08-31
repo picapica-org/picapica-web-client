@@ -7,6 +7,6 @@ export interface BadgeProps {
 	readonly kind: BadgeKind;
 }
 
-export function Badge(props: React.PropsWithChildren<BadgeProps>): JSX.Element {
-	return <span className={`Badge ${props.kind}`}>{props.children}</span>;
+export function Badge({ kind, children }: React.PropsWithChildren<BadgeProps>): JSX.Element {
+	return <span className={`Badge ${kind}`}>{children}</span>;
 }

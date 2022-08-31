@@ -10,12 +10,12 @@ export interface SessionCreatingProps {
 	readonly state: Creating;
 }
 
-export function SessionCreating(props: SessionCreatingProps): JSX.Element {
+export function SessionCreating({ state }: SessionCreatingProps): JSX.Element {
 	const l = useLocalization(locales);
 
 	return (
 		<div className="SessionCreating">
-			{props.state.retries < 3 ? (
+			{state.retries < 3 ? (
 				<div className="first">
 					<p>{l.creatingSession}</p>
 				</div>
@@ -32,12 +32,12 @@ export interface SessionLoadingProps {
 	readonly state: Loading;
 }
 
-export function SessionLoading(props: SessionLoadingProps): JSX.Element {
+export function SessionLoading({ state }: SessionLoadingProps): JSX.Element {
 	const l = useLocalization(locales);
 
 	return (
 		<div className="SessionLoading">
-			{props.state.retries < 3 ? (
+			{state.retries < 3 ? (
 				<div className="first">
 					<p>{l.loadingSession}</p>
 				</div>
@@ -56,17 +56,15 @@ export interface SessionStateProps {
 	readonly onReady: (state: Ready) => JSX.Element;
 }
 
-export function SessionState(props: SessionStateProps): JSX.Element {
-	return visitState(props.state, {
+export function SessionState({ state, onReady }: SessionStateProps): JSX.Element {
+	return visitState(state, {
 		Creating(state) {
 			return <SessionCreating state={state} />;
 		},
 		Loading(state) {
 			return <SessionLoading state={state} />;
 		},
-		Ready(state) {
-			return props.onReady(state);
-		},
+		Ready: onReady,
 	});
 }
 

@@ -6,9 +6,9 @@ export interface LoaderAnimationProps {
 	readonly id?: string;
 }
 
-export function LoaderAnimation(props: LoaderAnimationProps): JSX.Element {
+export function LoaderAnimation({ id }: LoaderAnimationProps): JSX.Element {
 	return (
-		<span className="LoaderAnimation" id={props.id}>
+		<span className="LoaderAnimation" id={id}>
 			{" "}
 			<Icon kind="loader-5-line" />
 			<Icon kind="loader-5-line" />

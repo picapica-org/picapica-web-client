@@ -43,7 +43,7 @@ const ICONS: Readonly<Record<StepKind, PicaIconKind>> = {
 
 const ENABLE_CHECKOUT = false;
 
-export function StepSelector(props: StepSelectorProps): JSX.Element {
+export function StepSelector({ current, sessionUrn, disableOthers }: StepSelectorProps): JSX.Element {
 	const l = useLocalization(locales);
 
 	return (
@@ -51,7 +51,7 @@ export function StepSelector(props: StepSelectorProps): JSX.Element {
 			{STEPS.filter(step => ENABLE_CHECKOUT || step !== "checkout").map(step => {
 				const title = l[step];
 
-				const disabled = props.disableOthers && step !== props.current;
+				const disabled = disableOthers && step !== current;
 				if (disabled) {
 					return (
 						<span key={step} className={`${Buttons.BUTTON} ${Buttons.DISABLED}`} title={title}>
@@ -64,8 +64,8 @@ export function StepSelector(props: StepSelectorProps): JSX.Element {
 				return (
 					<Link
 						key={step}
-						to={getLinkToStep(step, props.sessionUrn)}
-						className={`${Buttons.BUTTON}${step === props.current ? " " + Buttons.ACTIVE : ""}`}
+						to={getLinkToStep(step, sessionUrn)}
+						className={`${Buttons.BUTTON}${step === current ? " " + Buttons.ACTIVE : ""}`}
 						title={title}>
 						<PicaIcon kind={ICONS[step]} />
 						<span className="text">{title}</span>
@@ -76,16 +76,21 @@ export function StepSelector(props: StepSelectorProps): JSX.Element {
 	);
 }
 
-export function StepSelectorGroup(props: React.PropsWithChildren<StepSelectorProps>): JSX.Element {
+export function StepSelectorGroup({
+	current,
+	sessionUrn,
+	disableOthers,
+	children,
+}: React.PropsWithChildren<StepSelectorProps>): JSX.Element {
 	return (
 		<div className="StepSelectorGroup">
 			<Group
 				heading={
 					<div className="heading-wrapper">
-						<StepSelector {...props} />
+						<StepSelector current={current} sessionUrn={sessionUrn} disableOthers={disableOthers} />
 					</div>
 				}>
-				{props.children}
+				{children}
 			</Group>
 		</div>
 	);

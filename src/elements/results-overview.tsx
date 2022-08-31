@@ -20,20 +20,24 @@ export interface OverviewContainerProps {
 	readonly title: React.ReactNode;
 }
 
-export function OverviewContainer(props: React.PropsWithChildren<OverviewContainerProps>): JSX.Element {
+export function OverviewContainer({
+	backTo,
+	title,
+	children,
+}: React.PropsWithChildren<OverviewContainerProps>): JSX.Element {
 	const l = useLocalization(locales);
 
 	return (
 		<div className="OverviewContainer">
 			<div className="head">
-				{props.backTo && (
-					<Link className={Buttons.BUTTON} to={props.backTo} title={l.back}>
+				{backTo && (
+					<Link className={Buttons.BUTTON} to={backTo} title={l.back}>
 						<PicaIcon kind="back" />
 					</Link>
 				)}
-				<div>{props.title}</div>
+				<div>{title}</div>
 			</div>
-			<div className="content">{props.children}</div>
+			<div className="content">{children}</div>
 		</div>
 	);
 }
@@ -46,10 +50,16 @@ export interface ResultsOverviewProps {
 	readonly collectionTo: (collectionUrn: string) => string;
 }
 
-export function ResultsOverview(props: ResultsOverviewProps): JSX.Element {
+export function ResultsOverview({
+	session,
+	collections,
+	backTo,
+	itemTo,
+	collectionTo,
+}: ResultsOverviewProps): JSX.Element {
 	const l = useLocalization(locales);
 
-	const categories = categorizeResults(props.session.resultsList);
+	const categories = categorizeResults(session.resultsList);
 
 	if (categories.invalid.length) {
 		console.error("Not displaying the following results:");
@@ -64,13 +74,13 @@ export function ResultsOverview(props: ResultsOverviewProps): JSX.Element {
 		/>
 	);
 
-	const running = props.session.status === Session.ComputeStatus.STATUS_RUNNING;
+	const running = session.status === Session.ComputeStatus.STATUS_RUNNING;
 
 	return (
 		<div className="ResultsOverview">
-			<OverviewContainer backTo={props.backTo} title={title}>
+			<OverviewContainer backTo={backTo} title={title}>
 				<div>
-					<Link className={Buttons.BUTTON} to={props.itemTo}>
+					<Link className={Buttons.BUTTON} to={itemTo}>
 						<CenterAlignTwo
 							grow="left"
 							left={<SubmittedFilesLabel />}
@@ -86,10 +96,10 @@ export function ResultsOverview(props: ResultsOverviewProps): JSX.Element {
 				{[...categories.collections].map(([urn, results]) => {
 					return (
 						<div key={urn}>
-							<Link className={Buttons.BUTTON} to={props.collectionTo(urn)}>
+							<Link className={Buttons.BUTTON} to={collectionTo(urn)}>
 								<CenterAlignTwo
 									grow="left"
-									left={<CollectionLabel collectionUrn={urn} collections={props.collections} />}
+									left={<CollectionLabel collectionUrn={urn} collections={collections} />}
 									right={<Badge kind="Light">{results.length}</Badge>}
 								/>
 							</Link>
@@ -107,28 +117,27 @@ export interface ItemResultsOverviewProps {
 	readonly resultTo: (result: DeepReadonly<Result.AsObject>) => string;
 }
 
-export function ItemResultsOverview(props: ItemResultsOverviewProps): JSX.Element {
+export function ItemResultsOverview({ session, backTo, resultTo }: ItemResultsOverviewProps): JSX.Element {
 	const l = useLocalization(locales);
 
-	const { status } = props.session;
-	const { items } = categorizeResults(props.session.resultsList);
+	const { items } = categorizeResults(session.resultsList);
 
 	const title = (
 		<CenterAlignTwo grow="left" left={<SubmittedFilesLabel />} right={<Badge kind="Dark">{l.matches}</Badge>} />
 	);
 
-	const itemNameMap = new Map(props.session.itemsList.map(item => [item.urn, item.meta?.name]));
+	const itemNameMap = new Map(session.itemsList.map(item => [item.urn, item.meta?.name]));
 
 	return (
 		<div className="ItemResultsOverview">
-			<OverviewContainer backTo={props.backTo} title={title}>
+			<OverviewContainer backTo={backTo} title={title}>
 				{items.map(({ result }) => {
 					const leftName = itemNameMap.get(result.resources?.urnA ?? "") ?? l.unknownItem;
 					const rightName = itemNameMap.get(result.resources?.urnB ?? "") ?? l.unknownItem;
 
 					return (
 						<div key={result.urn}>
-							<Link className={Buttons.BUTTON} to={props.resultTo(result)}>
+							<Link className={Buttons.BUTTON} to={resultTo(result)}>
 								<CenterAlignTwo
 									grow="left"
 									left={
@@ -139,7 +148,7 @@ export function ItemResultsOverview(props: ItemResultsOverviewProps): JSX.Elemen
 										</span>
 									}
 									right={
-										status === Session.ComputeStatus.STATUS_COMPLETED ? (
+										session.status === Session.ComputeStatus.STATUS_COMPLETED ? (
 											<Badge kind="Light">{result.seedsList.length}</Badge>
 										) : (
 											<LoaderAnimation />
@@ -165,33 +174,37 @@ export interface CollectionResultsOverviewProps {
 	readonly resultTo: (result: DeepReadonly<Result.AsObject>) => string;
 }
 
-export function CollectionResultsOverview(props: CollectionResultsOverviewProps): JSX.Element {
+export function CollectionResultsOverview({
+	session,
+	collectionUrn,
+	collections,
+	backTo,
+	resultTo,
+}: CollectionResultsOverviewProps): JSX.Element {
 	const l = useLocalization(locales);
 
-	const { status } = props.session;
-	const results =
-		categorizeResults(props.session.resultsList).collections.get(props.collectionUrn as Urn<"collection">) ?? [];
+	const results = categorizeResults(session.resultsList).collections.get(collectionUrn as Urn<"collection">) ?? [];
 
 	const title = (
 		<CenterAlignTwo
 			grow="left"
-			left={<CollectionLabel collectionUrn={props.collectionUrn} collections={props.collections} />}
+			left={<CollectionLabel collectionUrn={collectionUrn} collections={collections} />}
 			right={<Badge kind="Dark">{l.matches}</Badge>}
 		/>
 	);
 
-	const itemNameMap = new Map(props.session.itemsList.map(item => [item.urn, item.meta?.name]));
+	const itemNameMap = new Map(session.itemsList.map(item => [item.urn, item.meta?.name]));
 
 	return (
 		<div className="CollectionResultsOverview">
-			<OverviewContainer backTo={props.backTo} title={title}>
+			<OverviewContainer backTo={backTo} title={title}>
 				{results.map(({ item, document, result }) => {
 					const itemName = itemNameMap.get(PicapicaUrn.stringify(item)) ?? l.unknownItem;
 					const documentName = document.documentId;
 
 					return (
 						<div key={result.urn}>
-							<Link className={Buttons.BUTTON} to={props.resultTo(result)}>
+							<Link className={Buttons.BUTTON} to={resultTo(result)}>
 								<CenterAlignTwo
 									grow="left"
 									left={
@@ -202,7 +215,7 @@ export function CollectionResultsOverview(props: CollectionResultsOverviewProps)
 										</span>
 									}
 									right={
-										status === Session.ComputeStatus.STATUS_COMPLETED ? (
+										session.status === Session.ComputeStatus.STATUS_COMPLETED ? (
 											<Badge kind="Light">{result.seedsList.length}</Badge>
 										) : (
 											<LoaderAnimation />
