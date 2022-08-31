@@ -236,7 +236,7 @@ function CollectionConfig(props: CollectionConfigProps): JSX.Element {
 		<div className="CollectionConfig">
 			<div className="heading">
 				<span className="title">
-					<CollectionLabel collectionUrn={props.collection} />
+					<CollectionLabel collectionUrn={props.collection.urn as Urn<"collection">} />
 				</span>
 				<span className="buttons">
 					<span className={Buttons.BUTTON_GROUP}>
