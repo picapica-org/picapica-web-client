@@ -7,6 +7,9 @@ export type Urn<Type extends UrnTypes = UrnTypes> = Type extends "none"
 	? typeof NONE_URN
 	: `urn:picapica:${Type}:${string}`;
 
+type WithType<O, T extends string> = O extends { readonly type: T } ? O : never;
+export type Parsed<T extends UrnTypes> = WithType<PicapicaUrn, T>;
+
 export type PicapicaUrn =
 	| PicapicaCollectionUrn
 	| PicapicaDocumentUrn
@@ -47,6 +50,8 @@ export interface PicapicaNoneUrn extends PicapicaUrnBase {
 
 // eslint-disable-next-line @typescript-eslint/no-namespace, @typescript-eslint/no-redeclare
 export namespace PicapicaUrn {
+	export function parse<T extends UrnTypes>(urn: Urn<T>): Parsed<T>;
+	export function parse(urn: string): PicapicaUrn;
 	export function parse(urn: string): PicapicaUrn {
 		const parsed = parseURI(urn) as URIComponents & { nid?: string; nss?: string };
 		if (parsed.scheme !== "urn" || parsed.nid !== "picapica" || !parsed.nss) {

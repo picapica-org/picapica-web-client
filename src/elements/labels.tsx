@@ -1,8 +1,9 @@
 import React from "react";
 import { Collection } from "../lib/generated/v1/types_pb";
 import { Locales, SimpleString } from "../lib/localization";
-import { PicapicaCollectionUrn, PicapicaUrn } from "../lib/session/urn";
+import { PicapicaCollectionUrn, PicapicaUrn, Urn } from "../lib/session/urn";
 import { useLocalization } from "../lib/use-localization";
+import { useCollectionLocalization } from "../lib/useCollectionLocalization";
 import { DeepReadonly } from "../lib/util";
 import { PicaIcon, PicaIconKind } from "./icon";
 import "./labels.scss";
@@ -28,7 +29,7 @@ export function SubmittedFilesLabel(): JSX.Element {
 
 export type CollectionProps =
 	| {
-			readonly collectionUrn: string | PicapicaCollectionUrn;
+			readonly collectionUrn: Urn<"collection"> | PicapicaCollectionUrn;
 			readonly collections?: DeepReadonly<Collection.AsObject[]>;
 	  }
 	| {
@@ -36,28 +37,22 @@ export type CollectionProps =
 	  };
 
 export function CollectionLabel(props: CollectionProps): JSX.Element {
-	const known = useLocalization(knownCollections);
-	const processed = processProps(props);
+	const { urn, collection } = processProps(props);
+	const { title } = useCollectionLocalization(urn);
 
-	if (!processed) return <UnknownCollectionLabel />;
-	const { urn, collection } = processed;
-
-	const knownLabel = known[urn.collectionId as keyof typeof known] as string | undefined;
-	if (typeof knownLabel === "string") {
-		return <Label text={knownLabel} />;
-	}
-
-	if (collection?.properties) {
+	if (title) {
+		return <Label text={title} />;
+	} else if (collection?.properties) {
 		return <Label text={`${collection.properties.name} - ${collection.properties.description}`} />;
+	} else {
+		return <UnknownCollectionLabel />;
 	}
-
-	return <UnknownCollectionLabel />;
 }
 interface ProcessedProps {
 	urn: PicapicaCollectionUrn;
 	collection: DeepReadonly<Collection.AsObject> | undefined;
 }
-function processProps(props: CollectionProps): ProcessedProps | undefined {
+function processProps(props: CollectionProps): ProcessedProps {
 	if ("collection" in props) {
 		return {
 			urn: PicapicaUrn.parse(props.collection.urn) as PicapicaCollectionUrn,
@@ -67,13 +62,9 @@ function processProps(props: CollectionProps): ProcessedProps | undefined {
 		let urn: PicapicaCollectionUrn;
 		let urnString: string;
 		if (typeof props.collectionUrn === "string") {
-			const parsed = PicapicaUrn.tryParse(props.collectionUrn);
-			if (parsed && parsed.type === "collection") {
-				urn = parsed;
-				urnString = props.collectionUrn;
-			} else {
-				return undefined;
-			}
+			const parsed = PicapicaUrn.parse(props.collectionUrn);
+			urn = parsed;
+			urnString = props.collectionUrn;
 		} else {
 			urn = props.collectionUrn;
 			urnString = PicapicaUrn.stringify(urn);
@@ -90,16 +81,6 @@ function UnknownCollectionLabel(): JSX.Element {
 	return <Label text={l.unknown} />;
 }
 
-const knownCollectionsEn = {
-	core_fulltext_languagenameenglish: "CORE - The world's largest collection of open-access research papers",
-} as const;
-const knownCollectionsDe = {
-	core_fulltext_languagenameenglish: "CORE - The world's largest collection of open-access research papers",
-} as const;
-const knownCollections: Locales<SimpleString<keyof typeof knownCollectionsEn | keyof typeof knownCollectionsDe>> = {
-	en: knownCollectionsEn,
-	de: knownCollectionsDe,
-};
 const locales: Locales<SimpleString<"submittedFiles" | "unknown">> = {
 	en: {
 		submittedFiles: "Your submitted files",
