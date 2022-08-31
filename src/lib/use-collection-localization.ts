@@ -23,7 +23,9 @@ const knownCollections: Locales<Record<KnownCollections, CollectionLocalization>
 
 const EMPTY_OBJ = {};
 
-export function useCollectionLocalization(urn: PicapicaUrn | string): Partial<CollectionLocalization> {
+export function useCollectionLocalization(
+	urn: PicapicaUrn | string | undefined | null
+): Partial<CollectionLocalization> {
 	const l: Readonly<Record<string, CollectionLocalization | undefined>> = useLocalization(knownCollections);
 
 	const parsed = typeof urn === "string" ? PicapicaUrn.tryParse(urn) : urn;

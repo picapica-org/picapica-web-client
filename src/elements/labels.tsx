@@ -29,7 +29,7 @@ export function SubmittedFilesLabel(): JSX.Element {
 
 export type CollectionProps =
 	| {
-			readonly collectionUrn: Urn<"collection"> | PicapicaCollectionUrn;
+			readonly collectionUrn: string | PicapicaCollectionUrn;
 			readonly collections?: DeepReadonly<Collection.AsObject[]>;
 	  }
 	| {
@@ -49,20 +49,23 @@ export function CollectionLabel(props: CollectionProps): JSX.Element {
 	}
 }
 interface ProcessedProps {
-	urn: PicapicaCollectionUrn;
+	urn: PicapicaCollectionUrn | undefined;
 	collection: DeepReadonly<Collection.AsObject> | undefined;
 }
 function processProps(props: CollectionProps): ProcessedProps {
 	if ("collection" in props) {
 		return {
-			urn: PicapicaUrn.parse(props.collection.urn) as PicapicaCollectionUrn,
+			urn: PicapicaUrn.parse(props.collection.urn as Urn<"collection">),
 			collection: props.collection,
 		};
 	} else {
 		let urn: PicapicaCollectionUrn;
 		let urnString: string;
 		if (typeof props.collectionUrn === "string") {
-			const parsed = PicapicaUrn.parse(props.collectionUrn);
+			const parsed = PicapicaUrn.tryParse(props.collectionUrn);
+			if (!parsed || parsed.type !== "collection") {
+				return { urn: undefined, collection: undefined };
+			}
 			urn = parsed;
 			urnString = props.collectionUrn;
 		} else {

@@ -4,7 +4,7 @@ import { Session } from "../lib/generated/v1/services_pb";
 import { Collection, Result } from "../lib/generated/v1/types_pb";
 import { Locales, SimpleString } from "../lib/localization";
 import { categorizeResults } from "../lib/session/result-categories";
-import { PicapicaUrn } from "../lib/session/urn";
+import { PicapicaUrn, Urn } from "../lib/session/urn";
 import { useLocalization } from "../lib/use-localization";
 import { DeepReadonly } from "../lib/util";
 import { Badge } from "./badge";
@@ -169,7 +169,8 @@ export function CollectionResultsOverview(props: CollectionResultsOverviewProps)
 	const l = useLocalization(locales);
 
 	const { status } = props.session;
-	const results = categorizeResults(props.session.resultsList).collections.get(props.collectionUrn) ?? [];
+	const results =
+		categorizeResults(props.session.resultsList).collections.get(props.collectionUrn as Urn<"collection">) ?? [];
 
 	const title = (
 		<CenterAlignTwo
