@@ -5,6 +5,7 @@
 	grid-template-columns: repeat(2, 1fr);
 	column-gap: 2em;
 	word-break: break-word;
+	color: $grey9;
 
 	& > .left,
 	& > .right {
@@ -19,7 +20,7 @@
 
 	.unchanged {
 		background-color: $light-green;
-		text-shadow: 0 0.1em 0.1em $white;
+		text-shadow: 0 0 0.14em rgba(255, 255, 255, 0.5);
 	}
 }
 
