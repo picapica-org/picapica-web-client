@@ -16,7 +16,7 @@ const clientErrorRate = 0;
 const clientDelay: [min: number, max: number] = [0, 0];
 
 export const getSessionClient = lazy(() => {
-	let client = mock ? new MockClient() : new SessionServiceClient("http://localhost:8080");
+	let client = mock ? new MockClient() : new SessionServiceClient("https://picapica-api.web.webis.de:443");
 
 	if (clientErrorRate > 0) client = fallibleClient(client, clientErrorRate);
 	if (clientDelay[1] > 0) client = delayedClient(client, ...clientDelay);
