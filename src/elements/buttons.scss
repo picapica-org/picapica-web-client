@@ -55,8 +55,7 @@
 .NonButton {
 	// This specificity hack is necessary to over-rule the above `:not([disabled]):not(.disabled)` rule
 	&.red.red {
-		// TODO: The color contrast is too low
-		--button-background: #{$main-red};
+		--button-background: #{$dark-red-1};
 		--button-color: #{$white};
 		--button-border-color: #{$dark-red-2};
 
@@ -68,8 +67,7 @@
 		}
 	}
 	&.green.green {
-		// TODO: The color contrast is too low
-		--button-background: #{$main-green};
+		--button-background: #{$dark-green-1};
 		--button-color: #{$white};
 		--button-border-color: #{$dark-green-2};
 
