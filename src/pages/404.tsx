@@ -1,25 +1,19 @@
 import React from "react";
-import { Helmet } from "react-helmet";
 import { Page } from "../elements/page";
 import { SharedHead } from "../elements/shared-header";
 import { Locales } from "../lib/localization";
-import { dynamic } from "../lib/react-util";
+import { dynamicComponent } from "../lib/react-util";
 import { useLocalization } from "../lib/use-localization";
 import "./404.scss";
 
-export default function Error404Page(): JSX.Element {
-	return (
-		<>
-			{dynamic(() => (
-				<Error404 />
-			))}
-			<SharedHead />
-			<Helmet>
-				<title>Picapica - 404</title>
-			</Helmet>
-		</>
-	);
-}
+export const Head = (): JSX.Element => (
+	<>
+		<title>Picapica - 404</title>
+		<SharedHead />
+	</>
+);
+
+export default dynamicComponent(Error404);
 
 function Error404(): JSX.Element {
 	const l = useLocalization(locales);

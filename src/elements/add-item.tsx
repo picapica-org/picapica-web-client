@@ -57,15 +57,15 @@ export function AddItem({ onAdd, accept }: AddItemProps): JSX.Element {
 
 	const [openFiles, input] = useOpenFileDialog(onSelect, { multiple: true, accept });
 
-	const modalContent: Record<ItemType, (close: () => void) => JSX.Element> = {
-		file(close) {
-			return <ModalFileInput close={close} openFiles={openFiles} />;
+	const modalContent: Record<ItemType, () => JSX.Element> = {
+		file() {
+			return <ModalFileInput close={closeModal} openFiles={openFiles} />;
 		},
-		url(close) {
-			return <ModalUrlInput close={close} submit={submit} />;
+		url() {
+			return <ModalUrlInput close={closeModal} submit={submit} />;
 		},
-		text(close) {
-			return <ModalTextInput close={close} submit={submit} />;
+		text() {
+			return <ModalTextInput close={closeModal} submit={submit} />;
 		},
 	};
 
@@ -94,29 +94,27 @@ export function AddItem({ onAdd, accept }: AddItemProps): JSX.Element {
 			{input}
 
 			<Popup ref={ref} modal closeOnDocumentClick closeOnEscape className="AddItemModal">
-				{(close: () => void) => (
-					<div className="modal">
-						<div className="tabs">
-							{INPUT_KINDS.map(kind => {
-								return (
-									<button
-										key={kind}
-										className={`tab${currentTab === kind ? " active" : ""}`}
-										onClick={() => setCurrentTab(kind)}>
-										<PicaIcon kind={kind} />
-										<span className="long">{l[`modal-tab-${kind}-long`]}</span>
-										<span className="short">{l[`modal-tab-${kind}-short`]}</span>
-									</button>
-								);
-							})}
-							<button className="close" onClick={close}>
-								<Icon kind="close-line" />
-							</button>
-						</div>
-
-						{modalContent[currentTab](close)}
+				<div className="modal">
+					<div className="tabs">
+						{INPUT_KINDS.map(kind => {
+							return (
+								<button
+									key={kind}
+									className={`tab${currentTab === kind ? " active" : ""}`}
+									onClick={() => setCurrentTab(kind)}>
+									<PicaIcon kind={kind} />
+									<span className="long">{l[`modal-tab-${kind}-long`]}</span>
+									<span className="short">{l[`modal-tab-${kind}-short`]}</span>
+								</button>
+							);
+						})}
+						<button className="close" onClick={closeModal}>
+							<Icon kind="close-line" />
+						</button>
 					</div>
-				)}
+
+					{modalContent[currentTab]()}
+				</div>
 			</Popup>
 		</span>
 	);

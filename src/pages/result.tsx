@@ -1,5 +1,4 @@
 import React from "react";
-import { Helmet } from "react-helmet";
 import { AlignmentView } from "../elements/alignment-view";
 import { CenterAlignTwo } from "../elements/center-align-two";
 import { ItemTypeIcon } from "../elements/icon";
@@ -11,7 +10,7 @@ import { Session } from "../lib/generated/v1/services_pb";
 import * as types from "../lib/generated/v1/types_pb";
 import { Locales, SimpleString } from "../lib/localization";
 import { toResults } from "../lib/page-links";
-import { dynamic } from "../lib/react-util";
+import { dynamicComponent } from "../lib/react-util";
 import { PicapicaUrn, Urn } from "../lib/session/urn";
 import { getLocationSearchParams } from "../lib/url-params";
 import { useAlignment } from "../lib/use-alignment";
@@ -22,19 +21,14 @@ import { Ready, useLoadSession } from "../lib/use-session";
 import { debugAssert, DeepReadonly } from "../lib/util";
 import "./result.scss";
 
-export default function ResultPage(): JSX.Element {
-	return (
-		<>
-			{dynamic(() => (
-				<Result />
-			))}
-			<SharedHead />
-			<Helmet>
-				<title>Picapica</title>
-			</Helmet>
-		</>
-	);
-}
+export const Head = (): JSX.Element => (
+	<>
+		<title>Picapica</title>
+		<SharedHead />
+	</>
+);
+
+export default dynamicComponent(Result);
 
 function Result(): JSX.Element {
 	const [state] = useLoadSession();

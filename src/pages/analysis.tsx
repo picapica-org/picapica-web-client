@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo } from "react";
-import { Helmet } from "react-helmet";
 import { Buttons } from "../elements/buttons";
 import { Icon, ItemTypeIcon } from "../elements/icon";
 import { CollectionLabel, SubmittedFilesLabel } from "../elements/labels";
@@ -12,7 +11,7 @@ import { getLinkToStep, StepSelectorGroup } from "../elements/step-selector";
 import { Session } from "../lib/generated/v1/services_pb";
 import { Collection, Item } from "../lib/generated/v1/types_pb";
 import { Locales, SimpleString } from "../lib/localization";
-import { dynamic } from "../lib/react-util";
+import { dynamicComponent } from "../lib/react-util";
 import { updateComparisonSetAction } from "../lib/session/actions";
 import { AnalysisConfig, ItemUrn } from "../lib/session/analysis-config";
 import { getSessionClient } from "../lib/session/client";
@@ -23,19 +22,14 @@ import { getSessionUrn, Ready, useLoadSession } from "../lib/use-session";
 import { DeepReadonly, EMPTY_ARRAY, EMPTY_SET, noop } from "../lib/util";
 import "./analysis.scss";
 
-export default function AnalysisPage(): JSX.Element {
-	return (
-		<>
-			{dynamic(() => (
-				<Analysis />
-			))}
-			<SharedHead />
-			<Helmet>
-				<title>Picapica</title>
-			</Helmet>
-		</>
-	);
-}
+export const Head = (): JSX.Element => (
+	<>
+		<title>Picapica</title>
+		<SharedHead />
+	</>
+);
+
+export default dynamicComponent(Analysis);
 
 function Analysis(): JSX.Element {
 	const l = useLocalization(locales);

@@ -1,26 +1,20 @@
 import React from "react";
-import { Helmet } from "react-helmet";
 import { H2 } from "../elements/headings";
 import { Page } from "../elements/page";
 import { SharedHead } from "../elements/shared-header";
 import { Locales } from "../lib/localization";
-import { dynamic } from "../lib/react-util";
+import { dynamicComponent } from "../lib/react-util";
 import { useLocalization } from "../lib/use-localization";
 import "./legal.scss";
 
-export default function LegalPage(): JSX.Element {
-	return (
-		<>
-			{dynamic(() => (
-				<Legal />
-			))}
-			<SharedHead />
-			<Helmet>
-				<title>Picapica</title>
-			</Helmet>
-		</>
-	);
-}
+export const Head = (): JSX.Element => (
+	<>
+		<title>Picapica</title>
+		<SharedHead />
+	</>
+);
+
+export default dynamicComponent(Legal);
 
 function Legal(): JSX.Element {
 	const l = useLocalization(locales);

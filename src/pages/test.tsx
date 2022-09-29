@@ -1,26 +1,20 @@
 import React from "react";
-import { Helmet } from "react-helmet";
 import { AlignmentView } from "../elements/alignment-view";
 import { Page } from "../elements/page";
 import { SharedHead } from "../elements/shared-header";
 import { Item } from "../lib/generated/v1/types_pb";
-import { dynamic } from "../lib/react-util";
+import { dynamicComponent } from "../lib/react-util";
 import { DeepRequired } from "../lib/util";
 import "./legal.scss";
 
-export default function TestPage(): JSX.Element {
-	return (
-		<>
-			{dynamic(() => (
-				<Test />
-			))}
-			<SharedHead />
-			<Helmet>
-				<title>Picapica</title>
-			</Helmet>
-		</>
-	);
-}
+export const Head = (): JSX.Element => (
+	<>
+		<title>Picapica</title>
+		<SharedHead />
+	</>
+);
+
+export default dynamicComponent(Test);
 
 function Test(): JSX.Element {
 	const foo: DeepRequired<Item.Resource.AsObject> = {

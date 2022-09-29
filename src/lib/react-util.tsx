@@ -5,17 +5,23 @@ import { LocalizationProvider } from "./use-localization";
 
 const queryClient = new QueryClient();
 
-export function dynamic(supplier: () => JSX.Element): JSX.Element {
+export function dynamic(Supplier: () => JSX.Element): JSX.Element {
 	const isSSR = typeof window === "undefined";
 	if (isSSR) {
 		return <></>;
 	} else {
 		return (
 			<LocalizationProvider>
-				<QueryClientProvider client={queryClient}>{supplier()}</QueryClientProvider>
+				<QueryClientProvider client={queryClient}>
+					<Supplier />
+				</QueryClientProvider>
 			</LocalizationProvider>
 		);
 	}
+}
+
+export function dynamicComponent(Supplier: () => JSX.Element): () => JSX.Element {
+	return () => dynamic(Supplier);
 }
 
 /**
@@ -113,7 +119,7 @@ if (typeof history !== "undefined") {
 export interface OpenFileDialogOptions {
 	readonly multiple?: boolean;
 	readonly accept?: string;
-	readonly capture?: string;
+	readonly capture?: React.InputHTMLAttributes<HTMLInputElement>["capture"];
 }
 
 export function useOpenFileDialog(

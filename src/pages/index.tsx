@@ -1,37 +1,31 @@
 import { Link } from "gatsby";
 import React from "react";
-import { Helmet } from "react-helmet";
 import { NewAnalysis } from "../elements/new-analysis";
 import { Page } from "../elements/page";
 import { SharedHead } from "../elements/shared-header";
 import { Locales } from "../lib/localization";
 import { toPoster } from "../lib/page-links";
-import { dynamic } from "../lib/react-util";
+import { dynamicComponent } from "../lib/react-util";
 import { useLocalization } from "../lib/use-localization";
 import "./index.scss";
 
-export default function HomePage(): JSX.Element {
-	return (
-		<>
-			{dynamic(() => (
-				<Home />
-			))}
-			<SharedHead />
-			<Helmet>
-				<title>Picapica</title>
-				{/* TODO: */}
-				{/* <meta
-					name="keywords"
-					content=""
-				/>
-				<meta
-					name="description"
-					content=""0
-				/> */}
-			</Helmet>
-		</>
-	);
-}
+export const Head = (): JSX.Element => (
+	<>
+		<title>Picapica</title>
+		{/* TODO: */}
+		{/* <meta
+			name="keywords"
+			content=""
+		/>
+		<meta
+			name="description"
+			content=""0
+		/> */}
+		<SharedHead />
+	</>
+);
+
+export default dynamicComponent(Home);
 
 function Home(): JSX.Element {
 	const l = useLocalization(locales);

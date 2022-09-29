@@ -1,5 +1,4 @@
 import React from "react";
-import { Helmet } from "react-helmet";
 import { Page } from "../elements/page";
 import { CollectionResultsOverview, ItemResultsOverview, ResultsOverview } from "../elements/results-overview";
 import { SessionState } from "../elements/session-creating-loading";
@@ -9,7 +8,7 @@ import { Session } from "../lib/generated/v1/services_pb";
 import { Result } from "../lib/generated/v1/types_pb";
 import { Locales, SimpleString } from "../lib/localization";
 import { toResult, toResults } from "../lib/page-links";
-import { dynamic } from "../lib/react-util";
+import { dynamicComponent } from "../lib/react-util";
 import { getLocationSearchParams } from "../lib/url-params";
 import { useCollections } from "../lib/use-collections";
 import { useComputerResults } from "../lib/use-compute-results";
@@ -18,19 +17,14 @@ import { getSessionUrn, Ready, useLoadSession } from "../lib/use-session";
 import { DeepReadonly, visitType } from "../lib/util";
 import "./results.scss";
 
-export default function ResultsPage(): JSX.Element {
-	return (
-		<>
-			{dynamic(() => (
-				<Results />
-			))}
-			<SharedHead />
-			<Helmet>
-				<title>Picapica</title>
-			</Helmet>
-		</>
-	);
-}
+export const Head = (): JSX.Element => (
+	<>
+		<title>Picapica</title>
+		<SharedHead />
+	</>
+);
+
+export default dynamicComponent(Results);
 
 function Results(): JSX.Element {
 	const l = useLocalization(locales);

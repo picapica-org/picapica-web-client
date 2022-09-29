@@ -1,27 +1,21 @@
 import React, { useContext } from "react";
-import { Helmet } from "react-helmet";
 import PosterDe from "../../assets/images/poster-de.inline.svg";
 import PosterEn from "../../assets/images/poster-en.inline.svg";
 import { Page } from "../elements/page";
 import { SharedHead } from "../elements/shared-header";
 import { SupportedLanguage } from "../lib/localization";
-import { dynamic } from "../lib/react-util";
+import { dynamicComponent } from "../lib/react-util";
 import { LocalizationContext } from "../lib/use-localization";
 import "./poster.scss";
 
-export default function PosterPage(): JSX.Element {
-	return (
-		<>
-			{dynamic(() => (
-				<Poster />
-			))}
-			<SharedHead />
-			<Helmet>
-				<title>Picapica</title>
-			</Helmet>
-		</>
-	);
-}
+export const Head = (): JSX.Element => (
+	<>
+		<title>Picapica</title>
+		<SharedHead />
+	</>
+);
+
+export default dynamicComponent(Poster);
 
 const POSTERS: Record<SupportedLanguage, () => JSX.Element> = {
 	en: PosterEn,
