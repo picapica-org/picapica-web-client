@@ -2,6 +2,7 @@ import React from "react";
 import { AlignmentView } from "../elements/alignment-view";
 import { CenterAlignTwo } from "../elements/center-align-two";
 import { ItemTypeIcon } from "../elements/icon";
+import { LoaderAnimation } from "../elements/loader-animation";
 import { Page } from "../elements/page";
 import { OverviewContainer } from "../elements/results-overview";
 import { SessionState } from "../elements/session-creating-loading";
@@ -238,7 +239,7 @@ function DocumentResultLabel({ resource }: { resource: ResultResourceCollectionD
 
 	return (
 		<span className="DocumentResultLabel">
-			<span className="text">{document?.properties?.title ?? ""}</span>
+			<span className="text">{document?.properties?.title ?? <LoaderAnimation />}</span>
 		</span>
 	);
 }
