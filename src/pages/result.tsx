@@ -12,7 +12,7 @@ import * as types from "../lib/generated/v1/types_pb";
 import { Locales, SimpleString } from "../lib/localization";
 import { toResults } from "../lib/page-links";
 import { dynamic } from "../lib/react-util";
-import { PicapicaUrn } from "../lib/session/urn";
+import { PicapicaUrn, Urn } from "../lib/session/urn";
 import { getLocationSearchParams } from "../lib/url-params";
 import { useAlignment } from "../lib/use-alignment";
 import { useCollectionDocument } from "../lib/use-collection-document";
@@ -112,8 +112,8 @@ interface ResultResourceSessionItem {
 interface ResultResourceCollectionDocument {
 	type: "document";
 	sessionUrn: string;
-	collectionUrn: string;
-	documentUrn: string;
+	collectionUrn: Urn<"collection">;
+	documentUrn: Urn<"document">;
 }
 interface ResultResourceError {
 	type: "error";
@@ -130,7 +130,7 @@ function getResultResource(urn: string, session: DeepReadonly<Session.AsObject>)
 
 	if (parsed.type === "document") {
 		const collectionUrn = PicapicaUrn.stringify({ type: "collection", collectionId: parsed.collectionId });
-		return { type: "document", documentUrn: urn, sessionUrn: session.urn, collectionUrn };
+		return { type: "document", documentUrn: PicapicaUrn.stringify(parsed), sessionUrn: session.urn, collectionUrn };
 	}
 
 	return { type: "error", error: "InvalidUrnType" };

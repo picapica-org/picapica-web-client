@@ -3,8 +3,9 @@ import React from "react";
 import { Session } from "../lib/generated/v1/services_pb";
 import { Collection, Result } from "../lib/generated/v1/types_pb";
 import { Locales, SimpleString } from "../lib/localization";
-import { categorizeResults } from "../lib/session/result-categories";
+import { categorizeResults, CollectionResult } from "../lib/session/result-categories";
 import { PicapicaUrn, Urn } from "../lib/session/urn";
+import { useCollectionDocument, usePreloadCollectionDocuments } from "../lib/use-collection-document";
 import { useLocalization } from "../lib/use-localization";
 import { DeepReadonly } from "../lib/util";
 import { Badge } from "./badge";
@@ -96,6 +97,7 @@ export function ResultsOverview({
 				{[...categories.collections].map(([urn, results]) => {
 					return (
 						<div key={urn}>
+							<PreloadDocument sessionUrn={session.urn} results={results} />
 							<Link className={Buttons.BUTTON} to={collectionTo(urn)}>
 								<CenterAlignTwo
 									grow="left"
@@ -109,6 +111,14 @@ export function ResultsOverview({
 			</OverviewContainer>
 		</div>
 	);
+}
+
+function PreloadDocument({ sessionUrn, results }: { sessionUrn: string; results: CollectionResult[] }): JSX.Element {
+	usePreloadCollectionDocuments(
+		sessionUrn,
+		results.map(r => PicapicaUrn.stringify(r.document))
+	);
+	return <></>;
 }
 
 export interface ItemResultsOverviewProps {
@@ -200,7 +210,9 @@ export function CollectionResultsOverview({
 			<OverviewContainer backTo={backTo} title={title}>
 				{results.map(({ item, document, result }) => {
 					const itemName = itemNameMap.get(PicapicaUrn.stringify(item)) ?? l.unknownItem;
-					const documentName = document.documentId;
+					const documentName = (
+						<DocumentName sessionUrn={session.urn} urn={PicapicaUrn.stringify(document)} />
+					);
 
 					return (
 						<div key={result.urn}>
@@ -231,6 +243,14 @@ export function CollectionResultsOverview({
 			</OverviewContainer>
 		</div>
 	);
+}
+
+function DocumentName({ sessionUrn, urn }: { sessionUrn: string; urn: Urn<"document"> }): JSX.Element {
+	const document = useCollectionDocument(sessionUrn, urn);
+	if (document?.properties) {
+		return <>{document.properties?.title}</>;
+	}
+	return <LoaderAnimation />;
 }
 
 const locales: Locales<SimpleString<"back" | "analysisResults" | "results" | "matches" | "noResults" | "unknownItem">> =
