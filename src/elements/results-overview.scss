@@ -49,20 +49,8 @@
 }
 
 .ResultsOverview,
-.ItemResultsOverview {
-	.Badge {
-		font-size: 85%;
-
-		.LoaderAnimation {
-			margin-right: 0.5em;
-			font-weight: normal;
-		}
-	}
-
-	.CenterAlignTwo {
-		gap: 0.5em;
-	}
-
+.ItemResultsOverview,
+.CollectionResultsOverview {
 	.head .Label {
 		color: $grey6;
 
@@ -84,6 +72,22 @@
 			border-radius: 0;
 			height: auto;
 			white-space: normal;
+		}
+	}
+
+	.CenterAlignTwo {
+		gap: 0.5em;
+	}
+}
+
+.ResultsOverview,
+.ItemResultsOverview {
+	.Badge {
+		font-size: 85%;
+
+		.LoaderAnimation {
+			margin-right: 0.5em;
+			font-weight: normal;
 		}
 	}
 }
