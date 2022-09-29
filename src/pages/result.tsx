@@ -230,6 +230,7 @@ function ItemResultLabel({ resource }: { resource: ResultResourceSessionItem }):
 
 	return (
 		<CenterAlignTwo
+			className="ItemResultLabel"
 			grow="right"
 			left={<ItemTypeIcon type={item.resource?.type ?? types.Item.Resource.Type.TYPE_UNSPECIFIED} />}
 			right={<span className="text">{item.meta?.name ?? ""}</span>}
@@ -242,7 +243,7 @@ function DocumentResultLabel({ resource }: { resource: ResultResourceCollectionD
 	const document = useCollectionDocument(sessionUrn, documentUrn);
 
 	return (
-		<span className="ResultLabel">
+		<span className="DocumentResultLabel">
 			<span className="text">{document?.properties?.title ?? ""}</span>
 		</span>
 	);

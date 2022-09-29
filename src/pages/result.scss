@@ -43,3 +43,40 @@
 		padding: 1em;
 	}
 }
+
+.ResultLabel {
+	display: inline-block;
+	border: 1px solid $grey4;
+	border-radius: 0.3em;
+	background-color: $grey2;
+	color: $black;
+
+	.ItemResultLabel {
+		& > * {
+			padding: 0.33em 0.66em;
+			box-shadow: 0 0.1em 0.4em inset $grey3;
+		}
+		.left {
+			border-right: 1px solid $grey4;
+			.Icon {
+				top: auto;
+			}
+		}
+		.right {
+			word-break: break-word;
+		}
+	}
+
+	.DocumentResultLabel {
+		padding: 0.33em 0.66em;
+		box-shadow: 0 0.1em 0.4em inset $grey3;
+		display: inline-block;
+	}
+
+	.text {
+		font-size: 90%;
+		line-height: 1.4em;
+		max-height: 1.4em * 3;
+		overflow: hidden;
+	}
+}
