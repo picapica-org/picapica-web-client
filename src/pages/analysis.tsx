@@ -25,6 +25,7 @@ import "./analysis.scss";
 export const Head = (): JSX.Element => (
 	<>
 		<title>Picapica</title>
+		<meta name="robots" content="noindex"></meta>
 		<SharedHead />
 	</>
 );

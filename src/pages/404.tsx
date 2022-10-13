@@ -9,6 +9,7 @@ import "./404.scss";
 export const Head = (): JSX.Element => (
 	<>
 		<title>Picapica - 404</title>
+		<meta name="robots" content="noindex"></meta>
 		<SharedHead />
 	</>
 );
