@@ -85,7 +85,7 @@ function Results(): JSX.Element {
 	};
 
 	return (
-		<Page className="Results" header="small">
+		<Page className="Results" title={l.title} header="small">
 			<SessionState state={state} onReady={onReady} />
 		</Page>
 	);
@@ -130,11 +130,15 @@ function getLinkToView(sessionUrn: string, view: View): string {
 	return toResults({ urn: sessionUrn, view: stringifyView(view) });
 }
 
-const locales: Locales<SimpleString<"running">> = {
+const locales: Locales<SimpleString<"title" | "running">> = {
 	en: {
+		title: "Results - Picapica",
+
 		running: "Your submitted files are currently being processed. This might take a few seconds.",
 	},
 	de: {
+		title: "Ergebnisse - Picapica",
+
 		running: "Ihre Eingabe wird bearbeitet. Dies kann ein paar Sekunden dauern.",
 	},
 };

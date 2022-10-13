@@ -32,6 +32,7 @@ export const Head = (): JSX.Element => (
 export default dynamicComponent(Result);
 
 function Result(): JSX.Element {
+	const l = useLocalization(locales);
 	const [state] = useLoadSession();
 
 	const onReady = ({ session }: Ready): JSX.Element => {
@@ -48,7 +49,7 @@ function Result(): JSX.Element {
 	};
 
 	return (
-		<Page className="Result" header="small">
+		<Page className="Result" title={l.title} header="small">
 			<SessionState state={state} onReady={onReady} />
 		</Page>
 	);
@@ -245,13 +246,15 @@ function DocumentResultLabel({ resource }: { resource: ResultResourceCollectionD
 }
 
 const locales: Locales<
-	SimpleString<"invalidUrn" | `resultError${ResultResourceError["error"]}`> & {
+	SimpleString<"title" | "invalidUrn" | `resultError${ResultResourceError["error"]}`> & {
 		failedResult: (status: types.Result.ResultStatusCode) => JSX.Element;
 		reusedPassages: (reused: number) => JSX.Element;
 		detailed: (reused: number, sharedWords: number, incomplete: boolean) => JSX.Element;
 	}
 > = {
 	en: {
+		title: "Result - Picapica",
+
 		invalidUrn: "Invalid link. The result you are trying to access is not available.",
 		failedResult(status) {
 			return (
@@ -285,6 +288,8 @@ const locales: Locales<
 		},
 	},
 	de: {
+		title: "Ergebnis - Picapica",
+
 		invalidUrn: "Falscher Link. Das Ergebnis ist nicht verfügbar.",
 		failedResult(status) {
 			return (

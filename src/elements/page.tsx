@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { DropzoneRootProps, DropzoneState } from "react-dropzone";
 import { identity } from "../lib/util";
 import { Footer } from "./footer";
@@ -14,15 +14,26 @@ const HEADER_MAP: Record<HeaderType, typeof SmallHeader | typeof BigHeader> = {
 };
 
 export interface Props {
+	title?: string;
 	header: HeaderType;
 	className: string;
 	dropState?: DropzoneState;
 }
 
-export function Page({ header, className, dropState, children }: React.PropsWithChildren<Props>): JSX.Element {
+export function Page({
+	title = "Picapica",
+	header,
+	className,
+	dropState,
+	children,
+}: React.PropsWithChildren<Props>): JSX.Element {
 	const Header = HEADER_MAP[header];
 
 	const getRootProps: (x: DropzoneRootProps) => DropzoneRootProps = dropState?.getRootProps ?? identity;
+
+	useEffect(() => {
+		document.title = title;
+	}, [title]);
 
 	return (
 		<div {...getRootProps({ id: "Page", className: header + "-header", tabIndex: -1 })}>

@@ -136,7 +136,7 @@ function Submit(): JSX.Element {
 	};
 
 	return (
-		<Page className="Submit" header="small" dropState={dropState}>
+		<Page className="Submit" title={l.title} header="small" dropState={dropState}>
 			<StepSelectorGroup
 				sessionUrn={getSessionUrn(state) ?? ""}
 				current="submit"
@@ -169,14 +169,18 @@ function randomText(): string {
 	return s;
 }
 
-const locales: Locales<SimpleString<"instruction" | "addItemHint" | "cannotDropUntilReady">> = {
+const locales: Locales<SimpleString<"title" | "instruction" | "addItemHint" | "cannotDropUntilReady">> = {
 	en: {
+		title: "Upload - Picapica",
+
 		instruction: "Add more files, or proceed",
 		addItemHint: "Click here to upload documents.",
 		cannotDropUntilReady:
 			"You cannot upload files until the session is fully loaded. Please wait until the session is loaded and try again.",
 	},
 	de: {
+		title: "Hochladen - Picapica",
+
 		instruction: "Es können weitere Dateien hinzugefügt werden",
 		addItemHint: "Hier klicken, um Dokumente hochzuladen.",
 		cannotDropUntilReady:

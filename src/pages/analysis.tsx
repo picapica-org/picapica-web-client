@@ -91,7 +91,7 @@ function Analysis(): JSX.Element {
 	);
 
 	return (
-		<Page className="Analysis" header="small">
+		<Page className="Analysis" title={l.title} header="small">
 			<StepSelectorGroup sessionUrn={getSessionUrn(state)} current="analysis">
 				<SessionState state={state} onReady={onReady} />
 			</StepSelectorGroup>
@@ -302,9 +302,11 @@ function toggleSetValue<T>(set: ReadonlySet<T>, value: T): Set<T> {
 }
 
 const locales: Locales<
-	SimpleString<"instruction" | "all" | "none" | "file" | "itemInstruction" | "wikipediaInstruction">
+	SimpleString<"title" | "instruction" | "all" | "none" | "file" | "itemInstruction" | "wikipediaInstruction">
 > = {
 	en: {
+		title: "Analysis - Picapica",
+
 		instruction: "Select analysis options",
 
 		all: "All",
@@ -315,6 +317,8 @@ const locales: Locales<
 		wikipediaInstruction: "Compare your submitted files with all of Wikipedia.",
 	},
 	de: {
+		title: "Analyse - Picapica",
+
 		instruction: "Analyseoptionen auswählen",
 
 		all: "Alles",

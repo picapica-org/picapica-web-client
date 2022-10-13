@@ -19,7 +19,7 @@ function Error404(): JSX.Element {
 	const l = useLocalization(locales);
 
 	return (
-		<Page className="Error404" header="small">
+		<Page className="Error404" title="Picapica - 404" header="small">
 			<h2 id="publisher">{l.title}</h2>
 			{l.content()}
 		</Page>
