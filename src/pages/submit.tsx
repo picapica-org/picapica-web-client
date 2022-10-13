@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { useAlert } from "../context/alert";
 import { AddItem } from "../elements/add-item";
 import { ItemTable } from "../elements/item-table";
 import { Page } from "../elements/page";
@@ -38,6 +39,7 @@ const ACCEPT = [
 
 function Submit(): JSX.Element {
 	const l = useLocalization(locales);
+	const { sendAlert } = useAlert();
 
 	const [state, update] = useCreateSession();
 
@@ -73,14 +75,16 @@ function Submit(): JSX.Element {
 
 	// file drop
 	const sessionUrn = getSessionUrn(state);
+	const sessionState = state.type;
 	const dropFiles = useCallback(
 		(files: readonly File[]) => {
-			// TODO: Handle rejected files
-			if (sessionUrn) {
+			if (sessionUrn && sessionState === "Ready") {
 				upload(files.map(ItemProto.fromFile), sessionUrn);
+			} else {
+				sendAlert({ type: "error", message: l.cannotDropUntilReady });
 			}
 		},
-		[sessionUrn, upload]
+		[sessionUrn, sessionState, upload, sendAlert, l]
 	);
 
 	const dropState = useDropzone({
@@ -165,13 +169,17 @@ function randomText(): string {
 	return s;
 }
 
-const locales: Locales<SimpleString<"instruction" | "addItemHint">> = {
+const locales: Locales<SimpleString<"instruction" | "addItemHint" | "cannotDropUntilReady">> = {
 	en: {
 		instruction: "Add more files, or proceed",
 		addItemHint: "Click here to upload documents.",
+		cannotDropUntilReady:
+			"You cannot upload files until the session is fully loaded. Please wait until the session is loaded and try again.",
 	},
 	de: {
 		instruction: "Es können weitere Dateien hinzugefügt werden",
 		addItemHint: "Hier klicken, um Dokumente hochzuladen.",
+		cannotDropUntilReady:
+			"Sie können keine Dateien hochladen bis die Seite vollständig geladen ist. Bitte warten Sie bis die Seite geladen ist und versuchen Sie es erneut.",
 	},
 };
