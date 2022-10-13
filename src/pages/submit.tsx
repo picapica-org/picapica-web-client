@@ -14,7 +14,7 @@ import { dynamicComponent } from "../lib/react-util";
 import { ItemProto } from "../lib/session/create-item";
 import { useLocalization } from "../lib/use-localization";
 import { getSessionUrn, Ready, useCreateSession } from "../lib/use-session";
-import { FailedItem, optimisticallyAddItem, UploadedItem, UploadId, useUpload } from "../lib/use-upload";
+import { optimisticallyAddItem, UploadedItem, useUpload } from "../lib/use-upload";
 import "./submit.scss";
 
 export const Head = (): JSX.Element => (
@@ -44,13 +44,6 @@ function Submit(): JSX.Element {
 
 	const [state, update] = useCreateSession();
 
-	const [failed, setFailed] = useState<readonly FailedItem[]>([]);
-	const addFailed = useCallback((failed: FailedItem): void => setFailed(prev => [...prev, failed]), [setFailed]);
-	const removeFailed = useCallback(
-		(uploadId: UploadId): void => setFailed(prev => prev.filter(item => item.uploadId !== uploadId)),
-		[setFailed]
-	);
-
 	const successfulUpload = useCallback(
 		(uploadedItem: UploadedItem): void => {
 			update(Promise.resolve(), optimisticallyAddItem(uploadedItem));
@@ -58,7 +51,7 @@ function Submit(): JSX.Element {
 		[update]
 	);
 
-	const [uploading, upload] = useUpload(successfulUpload, addFailed);
+	const { uploading, upload, failed, removeFailed } = useUpload(successfulUpload);
 
 	const emptySession = useCallback((): boolean => {
 		return (

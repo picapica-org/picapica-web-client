@@ -26,16 +26,22 @@ interface Done {
 	readonly result: Result<string, unknown>;
 }
 
-export type UseUploadArray = [
-	uploading: readonly UploadingItem[],
-	upload: (items: readonly ItemProto[], sessionUrn: string) => void
-];
-export function useUpload(
-	successfulUpload: (item: UploadedItem) => void,
-	failedUpload: (item: FailedItem) => void
-): UseUploadArray {
+export interface UseUpload {
+	readonly uploading: readonly UploadingItem[];
+	readonly upload: (items: readonly ItemProto[], sessionUrn: string) => void;
+	readonly failed: readonly FailedItem[];
+	readonly removeFailed: (uploadId: UploadId) => void;
+}
+export function useUpload(successfulUpload: (item: UploadedItem) => void): UseUpload {
 	const [uploadingItems, setUploadingItems] = useState<readonly UploadingItem[]>([]);
 	const [done, setDone] = useState<readonly Done[]>([]);
+
+	const [failed, setFailed] = useState<readonly FailedItem[]>([]);
+	const addFailed = useCallback((failed: FailedItem): void => setFailed(prev => [...prev, failed]), [setFailed]);
+	const removeFailed = useCallback(
+		(uploadId: UploadId): void => setFailed(prev => prev.filter(item => item.uploadId !== uploadId)),
+		[setFailed]
+	);
 
 	const addDone = useCallback(
 		(done: Done): void => {
@@ -45,7 +51,7 @@ export function useUpload(
 		[setUploadingItems, setDone]
 	);
 
-	const upload: UseUploadArray[1] = useCallback(
+	const upload: UseUpload["upload"] = useCallback(
 		(items, sessionUrn) => {
 			if (items.length === 0) {
 				return;
@@ -85,14 +91,14 @@ export function useUpload(
 				if (result.type === "Ok") {
 					successfulUpload({ ...item, itemUrn: result.value });
 				} else {
-					failedUpload({ ...item, error: result.error });
+					addFailed({ ...item, error: result.error });
 				}
 			}
 			setDone([]);
 		}
-	}, [done, setDone, successfulUpload, failedUpload]);
+	}, [done, setDone, successfulUpload, addFailed]);
 
-	return [uploadingItems, upload];
+	return { uploading: uploadingItems, upload, failed, removeFailed };
 }
 
 export function optimisticallyAddItem({ item, itemUrn }: UploadedItem): SessionMutator {
