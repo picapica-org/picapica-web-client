@@ -1,0 +1,56 @@
+@import "../colors.scss";
+
+.AlertModal-overlay > .AlertModal-content {
+	background-color: $white;
+	border-radius: 0.5em;
+	box-shadow: 0 0.3em 1em rgba(0, 0, 0, 0.5);
+	padding: 0;
+	border: 1px solid $grey7;
+
+	--max-width: 500px;
+
+	width: calc(min(var(--max-width), 100% - 4em));
+	max-height: calc(100% - 4em);
+	overflow: auto;
+
+	@media screen and (max-width: 500px), screen and (max-height: 400px) {
+		& {
+			width: calc(min(var(--max-width), 100% - 2em));
+			max-height: calc(100% - 2em);
+		}
+	}
+
+	& > .modal {
+		--accent-color: #{$grey5};
+
+		&.error {
+			--accent-color: #{$dark-red-2};
+		}
+
+		& > .title {
+			padding: 1em 1em 0.66em 1em;
+			border-bottom: 4px solid var(--accent-color);
+
+			span {
+				color: $black;
+				font-size: 130%;
+			}
+			span.progress {
+				color: inherit;
+				padding-left: 0.5em;
+			}
+		}
+		& > .body {
+			padding: 0 1em;
+
+			p {
+				color: $black;
+				font-size: 110%;
+			}
+		}
+		& > .buttons {
+			padding: 0.5em 1em 1em 1em;
+			text-align: right;
+		}
+	}
+}

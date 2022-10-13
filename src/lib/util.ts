@@ -160,3 +160,12 @@ export function visitType<V extends TypeVariant, R>(value: V, visitor: TypeVisit
 	const fn = visitor[value.type as never] as (value: V) => R;
 	return fn(value);
 }
+
+const isReadonlyArray: <T>(value: unknown) => value is readonly T[] = Array.isArray;
+export function asArray<T>(value: T | readonly T[]): readonly T[] {
+	if (isReadonlyArray(value)) {
+		return value;
+	} else {
+		return [value];
+	}
+}

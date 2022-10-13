@@ -1,5 +1,6 @@
 import React, { DependencyList, useCallback, useEffect, useRef } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { AlertProvider } from "../context/alert";
 import { CancellationController, CancellationToken } from "./cancellation";
 import { LocalizationProvider } from "./use-localization";
 
@@ -12,9 +13,11 @@ export function dynamic(Supplier: () => JSX.Element): JSX.Element {
 	} else {
 		return (
 			<LocalizationProvider>
-				<QueryClientProvider client={queryClient}>
-					<Supplier />
-				</QueryClientProvider>
+				<AlertProvider>
+					<QueryClientProvider client={queryClient}>
+						<Supplier />
+					</QueryClientProvider>
+				</AlertProvider>
 			</LocalizationProvider>
 		);
 	}
