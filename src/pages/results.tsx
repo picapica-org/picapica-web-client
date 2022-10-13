@@ -135,6 +135,6 @@ const locales: Locales<SimpleString<"running">> = {
 		running: "Your submitted files are currently being processed. This might take a few seconds.",
 	},
 	de: {
-		running: "Ihre Eingabe wird bearbeited. Dies kann ein paar Sekunden dauern.",
+		running: "Ihre Eingabe wird bearbeitet. Dies kann ein paar Sekunden dauern.",
 	},
 };
