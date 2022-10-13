@@ -12,15 +12,8 @@ import "./index.scss";
 export const Head = (): JSX.Element => (
 	<>
 		<title>Picapica</title>
-		{/* TODO: */}
-		{/* <meta
-			name="keywords"
-			content=""
-		/>
-		<meta
-			name="description"
-			content=""0
-		/> */}
+		<meta name="keywords" content="picapica, text, text reuse" />
+		<meta name="description" content="Picapica offers tools to analyze text reuse" />
 		<SharedHead />
 	</>
 );
