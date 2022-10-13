@@ -43,6 +43,7 @@ function Submit(): JSX.Element {
 	const { sendAlert } = useAlert();
 
 	const [state, update] = useCreateSession();
+	const isReady = state.type === "Ready";
 
 	const successfulUpload = useCallback(
 		(uploadedItem: UploadedItem): void => {
@@ -53,38 +54,33 @@ function Submit(): JSX.Element {
 
 	const { uploading, upload, failed, removeFailed } = useUpload(successfulUpload);
 
-	const emptySession = useCallback((): boolean => {
-		return (
-			!(state.type === "Ready" && state.session.itemsList.length > 0) &&
-			uploading.length === 0 &&
-			failed.length === 0
-		);
-	}, [state, failed, uploading]);
+	const emptySession =
+		!(isReady && state.session.itemsList.length > 0) && uploading.length === 0 && failed.length === 0;
+
 	const [blank, setBlank] = useState(true);
 	useEffect(() => {
-		if (!emptySession()) {
+		if (!emptySession) {
 			setBlank(false);
 		}
 	}, [emptySession, setBlank]);
 
 	// file drop
 	const sessionUrn = getSessionUrn(state);
-	const sessionState = state.type;
 	const dropFiles = useCallback(
 		(files: readonly File[]) => {
-			if (sessionUrn && sessionState === "Ready") {
+			if (sessionUrn && isReady) {
 				upload(files.map(ItemProto.fromFile), sessionUrn);
 			} else {
 				sendAlert({ type: "error", message: l.cannotDropUntilReady });
 			}
 		},
-		[sessionUrn, sessionState, upload, sendAlert, l]
+		[sessionUrn, isReady, upload, sendAlert, l]
 	);
 
 	const dropState = useDropzone({
 		accept: ACCEPT,
 		multiple: true,
-		disabled: state.type !== "Ready",
+		disabled: !isReady,
 		onDrop: dropFiles,
 		noClick: true,
 	});
@@ -107,7 +103,7 @@ function Submit(): JSX.Element {
 					Random Text
 				</button>
 
-				{emptySession() && blank ? (
+				{emptySession && blank ? (
 					<>
 						<div className="blank-session">
 							{addItem}
