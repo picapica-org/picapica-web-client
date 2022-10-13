@@ -99,11 +99,18 @@ function Submit(): JSX.Element {
 	const onReady = ({ session }: Ready): JSX.Element => {
 		const addItem = <AddItem onAdd={items => upload(items, session.urn)} accept={ACCEPT} />;
 
+		const showRandomTextButton = false;
+
 		return (
 			<>
 				<button
 					onClick={() => upload([ItemProto.fromText(randomText())], session.urn)}
-					style={{ position: "absolute", opacity: ".3", zIndex: 1000 }}>
+					style={{
+						display: showRandomTextButton ? undefined : "none",
+						position: "absolute",
+						opacity: ".4",
+						zIndex: 1000,
+					}}>
 					Random Text
 				</button>
 
