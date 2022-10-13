@@ -42,7 +42,6 @@ function Analysis(): JSX.Element {
 		(config: AnalysisConfig) => {
 			if (state.type === "Ready") {
 				const { mutate, request } = updateComparisonSetAction(state.session, config);
-				// TODO: Handle errors
 				update(getSessionClient().updateComparisonSet(request, null).then(noop), mutate);
 			}
 		},
