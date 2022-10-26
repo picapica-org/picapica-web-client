@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { Buttons } from "../elements/buttons";
 import { Icon, ItemTypeIcon } from "../elements/icon";
 import { CollectionLabel, SubmittedFilesLabel } from "../elements/labels";
@@ -16,10 +16,11 @@ import { updateComparisonSetAction } from "../lib/session/actions";
 import { AnalysisConfig, ItemUrn } from "../lib/session/analysis-config";
 import { getSessionClient } from "../lib/session/client";
 import { sortSessionItems } from "../lib/session/util";
+import { useAnalysisConfig } from "../lib/use-analysis-config";
 import { useCollections } from "../lib/use-collections";
 import { useLocalization } from "../lib/use-localization";
 import { getSessionUrn, Ready, useLoadSession } from "../lib/use-session";
-import { DeepReadonly, EMPTY_ARRAY, EMPTY_SET, noop } from "../lib/util";
+import { DeepReadonly, EMPTY_SET, noop } from "../lib/util";
 import "./analysis.scss";
 
 export const Head = (): JSX.Element => (
@@ -48,16 +49,7 @@ function Analysis(): JSX.Element {
 		[state, update]
 	);
 
-	const config = useMemo(() => {
-		if (state.type === "Ready") {
-			return AnalysisConfig.fromResourcePairs(
-				state.session.comparisonsList ?? EMPTY_ARRAY,
-				state.session.itemsList.map(i => i.urn)
-			);
-		} else {
-			return AnalysisConfig.EMPTY;
-		}
-	}, [state]);
+	const config = useAnalysisConfig(state);
 
 	const onReady = ({ session }: Ready): JSX.Element => (
 		<>

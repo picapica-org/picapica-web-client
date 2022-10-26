@@ -46,6 +46,7 @@ export function OverviewContainer({
 export interface ResultsOverviewProps {
 	readonly session: DeepReadonly<Session.AsObject>;
 	readonly collections?: DeepReadonly<Collection.AsObject[]>;
+	readonly selectedCollections: readonly Urn<"collection">[];
 	readonly backTo: string;
 	readonly itemTo: string;
 	readonly collectionTo: (collectionUrn: string) => string;
@@ -54,6 +55,7 @@ export interface ResultsOverviewProps {
 export function ResultsOverview({
 	session,
 	collections,
+	selectedCollections,
 	backTo,
 	itemTo,
 	collectionTo,
@@ -61,6 +63,11 @@ export function ResultsOverview({
 	const l = useLocalization(locales);
 
 	const categories = categorizeResults(session.resultsList);
+
+	// add selected collections
+	for (const collection of selectedCollections) {
+		categories.collections.set(collection, categories.collections.get(collection) ?? []);
+	}
 
 	if (categories.invalid.length) {
 		console.error("Not displaying the following results:");

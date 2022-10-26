@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Page } from "../elements/page";
 import { CollectionResultsOverview, ItemResultsOverview, ResultsOverview } from "../elements/results-overview";
 import { SessionState } from "../elements/session-creating-loading";
@@ -9,7 +9,9 @@ import { Result } from "../lib/generated/v1/types_pb";
 import { Locales, SimpleString } from "../lib/localization";
 import { toResult, toResults } from "../lib/page-links";
 import { dynamicComponent } from "../lib/react-util";
+import { Urn } from "../lib/session/urn";
 import { getLocationSearchParams } from "../lib/url-params";
+import { useAnalysisConfig } from "../lib/use-analysis-config";
 import { useCollections } from "../lib/use-collections";
 import { useComputerResults } from "../lib/use-compute-results";
 import { useLocalization } from "../lib/use-localization";
@@ -43,12 +45,19 @@ function Results(): JSX.Element {
 		return toResult({ urn: result.urn, view: stringifyView(view) });
 	};
 
+	const config = useAnalysisConfig(state);
+	const selectedCollections = useMemo(
+		() => [...config.collections].filter(e => e[1].size > 0).map(e => e[0] as Urn<"collection">),
+		[config]
+	);
+
 	const onReady = ({ session }: Ready): JSX.Element => {
 		const current: JSX.Element = visitType(view, {
 			overview: () => (
 				<ResultsOverview
 					session={session}
 					collections={collections}
+					selectedCollections={selectedCollections}
 					backTo={getLinkToStep("analysis", session.urn)}
 					itemTo={getLinkToView(session.urn, VIEW_ITEMS)}
 					collectionTo={collectionUrn => getLinkToView(session.urn, { type: "collection", collectionUrn })}
