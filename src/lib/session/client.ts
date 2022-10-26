@@ -8,6 +8,8 @@ import type * as grpcWeb from "grpc-web";
 
 // Options for testing the UI
 
+const serverAddress = "https://picapica-api.web.webis.de:443";
+
 /** Use a mock client that simulates a server locally. */
 const mock = false;
 /** The probability (number from 0 to 1) of a server call rejecting. */
@@ -16,7 +18,7 @@ const clientErrorRate = 0;
 const clientDelay: [min: number, max: number] = [0, 0];
 
 export const getSessionClient = lazy(() => {
-	let client = mock ? new MockClient() : new SessionServiceClient("https://picapica-api.web.webis.de:443");
+	let client = mock ? new MockClient() : new SessionServiceClient(serverAddress);
 
 	if (clientErrorRate > 0) client = fallibleClient(client, clientErrorRate);
 	if (clientDelay[1] > 0) client = delayedClient(client, ...clientDelay);
