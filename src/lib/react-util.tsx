@@ -1,4 +1,4 @@
-import React, { DependencyList, useCallback, useEffect, useRef } from "react";
+import React, { DependencyList, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { AlertProvider } from "../context/alert";
 import { LocalizationProvider } from "../context/localization";
@@ -117,46 +117,4 @@ function addUrlChange(): void {
 
 if (typeof history !== "undefined") {
 	addUrlChange();
-}
-
-export interface OpenFileDialogOptions {
-	readonly multiple?: boolean;
-	readonly accept?: string;
-	readonly capture?: React.InputHTMLAttributes<HTMLInputElement>["capture"];
-}
-
-export function useOpenFileDialog(
-	onSelect: (files: File[]) => void,
-	options: OpenFileDialogOptions
-): [open: () => void, element: JSX.Element] {
-	const input = useRef<HTMLInputElement>(null);
-
-	const open = useCallback(() => {
-		input.current?.click();
-	}, [input]);
-
-	const onChange = useCallback(
-		(e: React.ChangeEvent<HTMLInputElement>): void => {
-			e.stopPropagation();
-			e.preventDefault();
-
-			if (e.target.files) {
-				const files = fileListToArray(e.target.files);
-				if (files.length > 0) {
-					onSelect(files);
-				}
-			}
-		},
-		[onSelect]
-	);
-
-	return [open, <input type="file" ref={input} style={{ display: "none" }} onChange={onChange} {...options} />];
-}
-
-export function fileListToArray(fileList: FileList): File[] {
-	const files: File[] = [];
-	for (let i = 0; i < fileList.length; i++) {
-		files.push(fileList[i]);
-	}
-	return files;
 }
