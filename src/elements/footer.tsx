@@ -1,8 +1,9 @@
 import { Link } from "gatsby";
 import React, { useContext } from "react";
+import { LocalizationContext } from "../context/localization";
 import { Locales, SupportedLanguage } from "../lib/localization";
 import { toHelp, toLegal, toPoster } from "../lib/page-links";
-import { LocalizationContext, useLocalization } from "../lib/use-localization";
+import { useLocalization } from "../lib/use-localization";
 import "./footer.scss";
 
 export function Footer(): JSX.Element {

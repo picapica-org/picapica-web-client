@@ -1,4 +1,5 @@
 import React, { useCallback, useContext } from "react";
+import { LocalizationContext } from "../context/localization";
 import { Buttons } from "../elements/buttons";
 import { EditInput, TextView } from "../elements/edit-input";
 import { ItemTypeIcon, PicaIcon } from "../elements/icon";
@@ -8,7 +9,7 @@ import { getIntlLocales, Locales, LocalizableOptions, SimpleString } from "../li
 import { deleteItemAction, updateItemAction } from "../lib/session/actions";
 import { getSessionClient } from "../lib/session/client";
 import { compareTimestamps, sortSessionItems } from "../lib/session/util";
-import { LocalizationContext, useLocalization } from "../lib/use-localization";
+import { useLocalization } from "../lib/use-localization";
 import { UseSessionArray } from "../lib/use-session";
 import { FailedItem, UploadId, UploadingItem } from "../lib/use-upload";
 import { DeepReadonly, noop } from "../lib/util";
