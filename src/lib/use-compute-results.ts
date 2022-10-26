@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { ComputeResultsRequest, Session } from "./generated/v1/services_pb";
-import { getLastCompute, setLastCompute } from "./last-compute";
 import { useAsyncEffect } from "./react-util";
 import { getSessionClient } from "./session/client";
 import { SessionMutator } from "./session/mutator";
-import { cloneSession } from "./session/util";
+import { cloneSession, compareTimestamps } from "./session/util";
 import { State, UseSessionArray } from "./use-session";
 import { delay, noop } from "./util";
 
@@ -28,7 +27,16 @@ export function useComputerResults(state: State, update: UseSessionArray[1]): vo
 
 			const { session } = state;
 			if (session.status === Session.ComputeStatus.STATUS_RUNNING) return;
-			if (getLastCompute(session) !== undefined) return;
+			if (
+				session.status === Session.ComputeStatus.STATUS_COMPLETED ||
+				session.status === Session.ComputeStatus.STATUS_FAILED
+			) {
+				const { computedAt, modifiedAt } = session;
+				if (compareTimestamps(computedAt!, modifiedAt!) >= 0) {
+					// We have already computed the results since the last time the session was modified
+					return;
+				}
+			}
 
 			if (retryCount > 0) {
 				// wait some time and retry
@@ -44,16 +52,15 @@ export function useComputerResults(state: State, update: UseSessionArray[1]): vo
 				.computeResults(req, null)
 				.then(
 					() => {
-						setLastCompute(session);
+						update(action, mutator);
 						setRetryCount(0);
 					},
 					e => {
 						setRetryCount(prev => prev + 1);
 						throw e;
 					}
-				);
-
-			update(action, mutator);
+				)
+				.catch(console.log);
 		},
 		noop,
 		noop,

@@ -14,7 +14,10 @@ export function createTimestamp(): Timestamp.AsObject {
 	};
 }
 
-export function compareTimestamps(a: Timestamp.AsObject, b: Timestamp.AsObject): number {
+/**
+ * Returns a number < 0 if a < b, returns a number > 0 if a > b, and returns 0 if a = b.
+ */
+export function compareTimestamps(a: DeepReadonly<Timestamp.AsObject>, b: DeepReadonly<Timestamp.AsObject>): number {
 	if (a.seconds === b.seconds) return a.nanos - b.nanos;
 	return a.seconds - b.seconds;
 }
