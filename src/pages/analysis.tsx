@@ -69,18 +69,9 @@ function Analysis(): JSX.Element {
 
 			<ItemConfig session={session} config={config} update={updateConfig} />
 
-			{(collections ?? []).map(collection => {
-				return (
-					<CollectionConfig
-						key={collection.urn}
-						session={session}
-						config={config}
-						update={updateConfig}
-						collection={collection}
-						instruction={l.wikipediaInstruction}
-					/>
-				);
-			})}
+			{collections && collections.length > 0 && (
+				<CollectionsConfig session={session} collections={collections} config={config} update={updateConfig} />
+			)}
 
 			<StepActionBar
 				left={<BackButton to={getLinkToStep("submit", session.urn)} />}
@@ -201,15 +192,77 @@ function ItemConfig({ session, config, update }: ItemConfigProps): JSX.Element {
 	);
 }
 
+interface CollectionsConfigProps {
+	session: DeepReadonly<Session.AsObject>;
+	config: AnalysisConfig;
+	collections: readonly DeepReadonly<Collection.AsObject>[];
+	update: (config: AnalysisConfig) => void;
+}
+
+function CollectionsConfig({ session, config, collections, update }: CollectionsConfigProps): JSX.Element {
+	const l = useLocalization(locales);
+
+	const allUrns: readonly ItemUrn[] = session.itemsList.map(i => i.urn);
+	const all = collections.every(c => {
+		const set = config.collections.get(c.urn) ?? EMPTY_SET;
+		return allUrns.every(urn => set.has(urn));
+	});
+	const none = collections.every(c => {
+		const set = config.collections.get(c.urn) ?? EMPTY_SET;
+		return allUrns.every(urn => !set.has(urn));
+	});
+
+	const INACTIVE = "inactive";
+
+	function setAll(): void {
+		const all = new Set(allUrns);
+		const newConfig = config.withCollections(new Map(collections.map(c => [c.urn, all])));
+		update(newConfig);
+	}
+	function setNone(): void {
+		const newConfig = config.withCollections(new Map(collections.map(c => [c.urn, EMPTY_SET])));
+		update(newConfig);
+	}
+
+	return (
+		<div className="CollectionsConfig">
+			<div className="heading">
+				<span className="title">{l.collections}</span>
+				<span className="buttons">
+					<span className={Buttons.BUTTON_GROUP}>
+						<button className={`${Buttons.BUTTON} ${all ? Buttons.ACTIVE : INACTIVE}`} onClick={setAll}>
+							{l.all}
+						</button>
+						<button className={`${Buttons.BUTTON} ${none ? Buttons.ACTIVE : INACTIVE}`} onClick={setNone}>
+							{l.none}
+						</button>
+					</span>
+				</span>
+			</div>
+			<div className="content">
+				<div className="instruction">{l.collectionsInstruction}</div>
+				{collections.map(collection => (
+					<CollectionConfig
+						key={collection.urn}
+						session={session}
+						collection={collection}
+						config={config}
+						update={update}
+					/>
+				))}
+			</div>
+		</div>
+	);
+}
+
 interface CollectionConfigProps {
 	session: DeepReadonly<Session.AsObject>;
 	config: AnalysisConfig;
 	collection: DeepReadonly<Collection.AsObject>;
-	instruction: string;
 	update: (config: AnalysisConfig) => void;
 }
 
-function CollectionConfig({ session, config, collection, instruction, update }: CollectionConfigProps): JSX.Element {
+function CollectionConfig({ session, config, collection, update }: CollectionConfigProps): JSX.Element {
 	const l = useLocalization(locales);
 
 	const set = config.collections.get(collection.urn) ?? EMPTY_SET;
@@ -236,56 +289,41 @@ function CollectionConfig({ session, config, collection, instruction, update }: 
 
 	return (
 		<div className="CollectionConfig">
-			<div className="heading">
-				<span className="title">
-					<CollectionLabel collectionUrn={collection.urn} />
-				</span>
-				<span className="buttons">
-					<span className={Buttons.BUTTON_GROUP}>
-						<button className={`${Buttons.BUTTON} ${all ? Buttons.ACTIVE : INACTIVE}`} onClick={setAll}>
-							{l.all}
-						</button>
-						<button className={`${Buttons.BUTTON} ${none ? Buttons.ACTIVE : INACTIVE}`} onClick={setNone}>
-							{l.none}
-						</button>
-					</span>
-				</span>
+			<div className="collection-label">
+				<CollectionLabel collectionUrn={collection.urn} />
 			</div>
-			<div className="content">
-				<div className="instruction">{instruction}</div>
-				<div className="table">
-					<div className={Buttons.BUTTON_GROUP}>
-						<span className={Buttons.NON_BUTTON}>{l.file}</span>
-						<button className={`${Buttons.BUTTON} ${all ? Buttons.ACTIVE : INACTIVE}`} onClick={setAll}>
-							<Icon kind="check-line" />
-						</button>
-						<button className={`${Buttons.BUTTON} ${none ? Buttons.ACTIVE : INACTIVE}`} onClick={setNone}>
-							<Icon kind="close-line" />
-						</button>
-					</div>
-					{items.map(item => {
-						const has = set.has(item.urn);
-
-						return (
-							<div key={item.urn} className={Buttons.BUTTON_GROUP}>
-								<span className={Buttons.NON_BUTTON}>
-									<ItemTypeIcon type={item.resource?.type ?? Item.Resource.Type.TYPE_UNSPECIFIED} />
-									{item.meta?.name}
-								</span>
-								<button
-									className={`${Buttons.BUTTON} ${has ? Buttons.ACTIVE : INACTIVE}`}
-									onClick={() => toggleHas(item.urn)}>
-									<Icon kind="check-line" />
-								</button>
-								<button
-									className={`${Buttons.BUTTON} ${!has ? Buttons.ACTIVE : INACTIVE}`}
-									onClick={() => toggleHas(item.urn)}>
-									<Icon kind="close-line" />
-								</button>
-							</div>
-						);
-					})}
+			<div className="table">
+				<div className={Buttons.BUTTON_GROUP}>
+					<span className={Buttons.NON_BUTTON}>{l.file}</span>
+					<button className={`${Buttons.BUTTON} ${all ? Buttons.ACTIVE : INACTIVE}`} onClick={setAll}>
+						<Icon kind="check-line" />
+					</button>
+					<button className={`${Buttons.BUTTON} ${none ? Buttons.ACTIVE : INACTIVE}`} onClick={setNone}>
+						<Icon kind="close-line" />
+					</button>
 				</div>
+				{items.map(item => {
+					const has = set.has(item.urn);
+
+					return (
+						<div key={item.urn} className={Buttons.BUTTON_GROUP}>
+							<span className={Buttons.NON_BUTTON}>
+								<ItemTypeIcon type={item.resource?.type ?? Item.Resource.Type.TYPE_UNSPECIFIED} />
+								{item.meta?.name}
+							</span>
+							<button
+								className={`${Buttons.BUTTON} ${has ? Buttons.ACTIVE : INACTIVE}`}
+								onClick={() => toggleHas(item.urn)}>
+								<Icon kind="check-line" />
+							</button>
+							<button
+								className={`${Buttons.BUTTON} ${!has ? Buttons.ACTIVE : INACTIVE}`}
+								onClick={() => toggleHas(item.urn)}>
+								<Icon kind="close-line" />
+							</button>
+						</div>
+					);
+				})}
 			</div>
 		</div>
 	);
@@ -302,7 +340,9 @@ function toggleSetValue<T>(set: ReadonlySet<T>, value: T): Set<T> {
 }
 
 const locales: Locales<
-	SimpleString<"title" | "instruction" | "all" | "none" | "file" | "itemInstruction" | "wikipediaInstruction">
+	SimpleString<
+		"title" | "instruction" | "all" | "none" | "file" | "collections" | "itemInstruction" | "collectionsInstruction"
+	>
 > = {
 	en: {
 		title: "Analysis - Picapica",
@@ -313,8 +353,10 @@ const locales: Locales<
 		none: "None",
 		file: "File",
 
+		collections: "Document collections",
+
 		itemInstruction: "Compare your submitted files among each other. Group A will be compared with Group B.",
-		wikipediaInstruction: "Compare your submitted files with all of Wikipedia.",
+		collectionsInstruction: "Compare your submitted files with our indexed document collection.",
 	},
 	de: {
 		title: "Analyse - Picapica",
@@ -325,8 +367,11 @@ const locales: Locales<
 		none: "Nichts",
 		file: "Datei",
 
+		collections: "Dokumentensammlungen",
+
 		itemInstruction:
 			"Vergleichen Sie Ihre eingereichten Dateien miteinander. Gruppe A wird mit Gruppe B verglichen.",
-		wikipediaInstruction: "Vergleichen Sie Ihre eingereichten Dateien mit der gesamten Wikipedia.",
+		collectionsInstruction:
+			"Vergleichen Sie Ihre eingereichten Dateien mit underen indexierten Dokumentensammlungen.",
 	},
 };
