@@ -1,8 +1,8 @@
 import React, { DependencyList, useCallback, useEffect, useRef } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { AlertProvider } from "../context/alert";
+import { LocalizationProvider } from "../context/localization";
 import { CancellationController, CancellationToken } from "./cancellation";
-import { LocalizationProvider } from "./use-localization";
 
 const queryClient = new QueryClient();
 

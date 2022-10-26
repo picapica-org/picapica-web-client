@@ -1,6 +1,6 @@
-import React, { createContext, useCallback, useContext, useMemo, useState } from "react";
-import { getCurrentLang, getLocalization, Locales, setCurrentLang, SupportedLanguage } from "./localization";
-import { noop } from "./util";
+import React, { createContext, useCallback, useMemo, useState } from "react";
+import { getCurrentLang, setCurrentLang, SupportedLanguage } from "../lib/localization";
+import { noop } from "../lib/util";
 
 export interface LocalizationSettings {
 	readonly lang: SupportedLanguage;
@@ -30,9 +30,4 @@ export function LocalizationProvider({ children }: React.PropsWithChildren<unkno
 	value = useMemo(() => value, Object.values(value));
 
 	return <LocalizationContext.Provider value={value}>{children}</LocalizationContext.Provider>;
-}
-
-export function useLocalization<T>(locales: Locales<T>): Readonly<T> {
-	const l = useContext(LocalizationContext);
-	return getLocalization(l, locales);
 }
